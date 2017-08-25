@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 [CreateAssetMenu]
-public class WeaponQualitiesCollection : ScriptableObject
+public class WeaponQualityCollection : ScriptableObject
 {
     public WeaponQuality[] qualities = new WeaponQuality[0];
 
@@ -64,27 +64,27 @@ public class WeaponQualitiesCollection : ScriptableObject
     }
 
 
-    public static string GetJsonString (WeaponQualitiesCollection weaponQualitiesCollection)
+    public static string GetJsonString (WeaponQualityCollection weaponQualityCollection)
     {
         string jsonString = "";
-        for (int i = 0; i < weaponQualitiesCollection.qualities.Length; i++)
+        for (int i = 0; i < weaponQualityCollection.qualities.Length; i++)
         {
-            jsonString += WeaponQuality.GetJsonString(weaponQualitiesCollection.qualities[i]) + k_JsonSplitter[0];
+            jsonString += WeaponQuality.GetJsonString(weaponQualityCollection.qualities[i]) + k_JsonSplitter[0];
         }
         return jsonString;
     }
 
 
-    public static WeaponQualitiesCollection CreateFromJsonString (string jsonString)
+    public static WeaponQualityCollection CreateFromJsonString (string jsonString)
     {
         string[] splitJsonString = jsonString.Split(k_JsonSplitter, System.StringSplitOptions.RemoveEmptyEntries);
 
-        WeaponQualitiesCollection weaponQualitiesCollection = CreateInstance<WeaponQualitiesCollection>();
-        weaponQualitiesCollection.qualities = new WeaponQuality[splitJsonString.Length];
+        WeaponQualityCollection weaponQualityCollection = CreateInstance<WeaponQualityCollection>();
+        weaponQualityCollection.qualities = new WeaponQuality[splitJsonString.Length];
         for (int i = 0; i < splitJsonString.Length; i++)
         {
-            weaponQualitiesCollection.qualities[i] = WeaponQuality.CreateFromJsonString(splitJsonString[i]);
+            weaponQualityCollection.qualities[i] = WeaponQuality.CreateFromJsonString(splitJsonString[i]);
         }
-        return weaponQualitiesCollection;
+        return weaponQualityCollection;
     }
 }

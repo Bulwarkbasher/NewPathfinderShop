@@ -3,10 +3,10 @@ using System.Collections;
 using UnityEditor;
 using System;
 
-[CustomEditor(typeof(WeaponQualitiesCollection))]
+[CustomEditor(typeof(WeaponQualityCollection))]
 public class WeaponQualitiesCollectionEditor : Editor
 {
-    private WeaponQualitiesCollection weaponQualitiesCollection;
+    private WeaponQualityCollection weaponQualityCollection;
     private SerializedProperty qualitiesProp;
     private TableEditor<WeaponQuality> weaponQualitiesTable;
 
@@ -15,7 +15,7 @@ public class WeaponQualitiesCollectionEditor : Editor
     {
         qualitiesProp = serializedObject.FindProperty("qualities");
 
-        weaponQualitiesCollection = (WeaponQualitiesCollection)target;
+        weaponQualityCollection = (WeaponQualityCollection)target;
 
         Column[] columns =
         {
@@ -51,6 +51,6 @@ public class WeaponQualitiesCollectionEditor : Editor
     {
         weaponQualitiesTable.OnGUI(qualitiesProp);
 
-        weaponQualitiesTable.AddElementButtonGUI(qualitiesProp, weaponQualitiesCollection);
+        weaponQualitiesTable.AddElementButtonGUI(qualitiesProp, weaponQualityCollection);
     }
 }

@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CampaignCollection : SaveableToDiskScriptableObject<CampaignCollection>
+// TODO NEXT remove this and use static Campaign stuff instead.
+public class CampaignCollection //: SaveableToDiskScriptableObject<CampaignCollection>
 {
-    public static CampaignCollection Instance
+    /*public static CampaignCollection Instance
     {
         get
         {
@@ -28,5 +29,5 @@ public class CampaignCollection : SaveableToDiskScriptableObject<CampaignCollect
     public override string GetJsonString()
     {
         throw new NotImplementedException();
-    }
+    }*/
 }

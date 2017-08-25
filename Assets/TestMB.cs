@@ -10,7 +10,7 @@ public class TestMB : MonoBehaviour
     public int budget = 30000;
     public int budgetRange = 20000;
     public WeaponCollection allWeapons;
-    public WeaponQualitiesCollection allWeaponQualities;
+    public WeaponQualityCollection allWeaponQualities;
 
 
     private void Start ()

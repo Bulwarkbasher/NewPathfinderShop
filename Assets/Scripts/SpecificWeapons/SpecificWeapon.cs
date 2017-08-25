@@ -9,10 +9,9 @@ public class SpecificWeapon : SpecificItem
     public WeaponQuality enhancementBonus;
     public WeaponQuality specialMaterial;
     public WeaponQuality[] specialAbilities;
-    public int cost;
 
 
-    private string description;
+    private string m_Description;
 
 
     private static readonly string[] k_JsonSplitter = 
@@ -21,7 +20,7 @@ public class SpecificWeapon : SpecificItem
     };
 
     
-    public static SpecificWeapon CreateRandom (PowerLevel powerLevel, int budget, WeaponCollection availableWeapons, WeaponQualitiesCollection availableQualities)
+    public static SpecificWeapon CreateRandom (PowerLevel powerLevel, int budget, WeaponCollection availableWeapons, WeaponQualityCollection availableQualities)
     {
         int originalBudget = budget;
         SpecificWeapon newSpecificWeapon = CreateInstance<SpecificWeapon>();
@@ -33,7 +32,7 @@ public class SpecificWeapon : SpecificItem
             return null;
 
         bool weaponHasMaterial = false;
-        bool weaponHasBonus = CampaignCollection.Current.UsesAutomaticBonusProgressionRules;
+        bool weaponHasBonus = Campaign.Current.UsesAutomaticBonusProgressionRules;
 
         List<WeaponQuality> weaponSpecialAbilities = new List<WeaponQuality>();
 
@@ -165,22 +164,22 @@ public class SpecificWeapon : SpecificItem
 
     public override string ToString()
     {
-        description = "";
+        m_Description = "";
 
         if(enhancementBonus)
-            description += enhancementBonus.description + " ";
+            m_Description += enhancementBonus.description + " ";
         
         for (int i = 0; i < specialAbilities.Length; i++)
         {
-            description += specialAbilities[i].description + " ";
+            m_Description += specialAbilities[i].description + " ";
         }
 
         if (specialMaterial)
-            description += specialMaterial.description + " ";
+            m_Description += specialMaterial.description + " ";
 
-        description += weapon.description;
+        m_Description += weapon.description;
 
-        return description;
+        return m_Description;
     }
 
 

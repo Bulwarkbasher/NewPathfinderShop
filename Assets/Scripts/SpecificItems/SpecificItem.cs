@@ -10,7 +10,7 @@ public class SpecificItem : ScriptableObject
         Medium,
         Major,
     }
-
-
+    
     public PowerLevel powerLevel;
+    public int cost;
 }
