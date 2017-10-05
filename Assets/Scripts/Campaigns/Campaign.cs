@@ -13,7 +13,7 @@ public class Campaign : ScriptableObject
 
     protected static Campaign current;
     protected readonly static string k_FolderPath = Application.persistentDataPath + "/Campaigns";
-    protected static readonly string[] k_JsonSplitter = { "###CampaignSplitter###", };
+    protected readonly static string[] k_JsonSplitter = { "###CampaignSplitter###", };
 
     public static Campaign Create (string name, bool usesAutomaticBonusProgressionRules)
     {
@@ -43,7 +43,7 @@ public class Campaign : ScriptableObject
 
     public static void Load (string campaignName)
     {
-        string fileLocation = k_FolderPath + campaignName + ".dat";
+        string fileLocation = k_FolderPath + "/" + campaignName + ".dat";
 
         if (!File.Exists(fileLocation))
             throw new Exception("A file doesn't exist at the given location.");
@@ -59,10 +59,12 @@ public class Campaign : ScriptableObject
         string[] splitJsonString = jsonString.Split (k_JsonSplitter, StringSplitOptions.RemoveEmptyEntries);
         campaign.name = splitJsonString[0];
 
-        campaign.settlements = new Settlement[splitJsonString.Length - 1];
+        campaign.m_UsesAutomaticBonusProgressionRules = Wrapper<bool>.CreateFromJsonString (splitJsonString[1]);
+
+        campaign.settlements = new Settlement[splitJsonString.Length - 2];
         for (int i = 0; i < campaign.settlements.Length; i++)
         {
-            campaign.settlements[i] = Settlement.CreateFromJsonString(splitJsonString[i + 1]);
+            campaign.settlements[i] = Settlement.CreateFromJsonString(splitJsonString[i + 2]);
         }
         
         current = campaign;
@@ -82,7 +84,7 @@ public class Campaign : ScriptableObject
     }
 
     private bool m_UsesAutomaticBonusProgressionRules;
-
+    // TODO: change to static call through current
     public void Save ()
     {
         if (!Directory.Exists(k_FolderPath))
@@ -94,12 +96,14 @@ public class Campaign : ScriptableObject
 
         jsonString += name + k_JsonSplitter[0];
 
+        jsonString += Wrapper<bool>.GetJsonString (m_UsesAutomaticBonusProgressionRules) + k_JsonSplitter[0];
+
         for (int i = 0; i < settlements.Length; i++)
         {
             jsonString += Settlement.GetJsonString (settlements[i]) + k_JsonSplitter[0];
         }
 
-        string filePath = k_FolderPath + name + ".dat";
+        string filePath = k_FolderPath + "/" + name + ".dat";
         File.WriteAllText(filePath, jsonString);
     }
 }

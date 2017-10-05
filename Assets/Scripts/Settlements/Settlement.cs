@@ -80,7 +80,7 @@ public class Settlement : ScriptableObject
     public RestockSettings restockSettings;
     public Shop[] shops = new Shop[0];
     
-    public static Settlement Create (string name, string notes, Size size, Dictionary<Size, RestockSettings> restockSettings)
+    public static Settlement Create (string name, string notes, Size size, PerSizeRestockSettings restockSettings)
     {
         Settlement newSettlement = CreateInstance<Settlement>();
         newSettlement.name = name;
@@ -92,7 +92,7 @@ public class Settlement : ScriptableObject
     
     public static Settlement Create (string name, string notes, Size size)
     {
-        return Create(name, notes, size, defaultRestockSettings);
+        return Create(name, notes, size, ResourceHolder.DefaultPerSizeRestockSettings);
     }
 
     public static string GetJsonString (Settlement settlement)
