@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class PerStockTypePerSizeAvailability : ScriptableObject
+public class PerStockTypePerSizeAvailability : ScriptableObject, ISaveable
 {
+    public string GetFolderPath() { return Application.persistentDataPath + "/PerStockTypePerSizeAvailability"; }
+    protected readonly static string[] k_JsonSplitter = { "###PerStockTypePerSizeAvailabilitySplitter###", };
+
     [SerializeField]
     protected PerSizeAvailability m_ArmourPerSizeAvailability;
     [SerializeField]
@@ -53,5 +56,53 @@ public class PerStockTypePerSizeAvailability : ScriptableObject
                     throw new ArgumentOutOfRangeException ("type", type, "Unknown Shop Stock Type.");
             }
         }
+    }
+
+    public void Save ()
+    {
+        string jsonString = "";
+
+        jsonString += name + k_JsonSplitter[0];
+        jsonString += m_ArmourPerSizeAvailability.name + k_JsonSplitter[0];
+        jsonString += m_PotionPerSizeAvailability.name + k_JsonSplitter[0];
+        jsonString += m_RingPerSizeAvailability.name + k_JsonSplitter[0];
+        jsonString += m_RodPerSizeAvailability.name + k_JsonSplitter[0];
+        jsonString += m_ScrollPerSizeAvailability.name + k_JsonSplitter[0];
+        jsonString += m_StaffPerSizeAvailability.name + k_JsonSplitter[0];
+        jsonString += m_WandPerSizeAvailability.name + k_JsonSplitter[0];
+        jsonString += m_WeaponPerSizeAvailability.name + k_JsonSplitter[0];
+        jsonString += m_WondrousPerSizeAvailability.name + k_JsonSplitter[0];
+
+        this.WriteJsonStringToFile (name, jsonString);
+
+        m_ArmourPerSizeAvailability.Save ();
+        m_PotionPerSizeAvailability.Save ();
+        m_RingPerSizeAvailability.Save ();
+        m_RodPerSizeAvailability.Save ();
+        m_ScrollPerSizeAvailability.Save ();
+        m_StaffPerSizeAvailability.Save ();
+        m_WandPerSizeAvailability.Save ();
+        m_WeaponPerSizeAvailability.Save ();
+        m_WondrousPerSizeAvailability.Save();
+    }
+
+    public static PerStockTypePerSizeAvailability Load (string name)
+    {
+        PerStockTypePerSizeAvailability perStockTypePerSizeAvailability = CreateInstance<PerStockTypePerSizeAvailability> ();
+
+        string[] splitJsonString = perStockTypePerSizeAvailability.GetSplitJsonStringsFromFile (name, k_JsonSplitter);
+
+        perStockTypePerSizeAvailability.name = splitJsonString[0];
+        perStockTypePerSizeAvailability.m_ArmourPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[1]);
+        perStockTypePerSizeAvailability.m_PotionPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[2]);
+        perStockTypePerSizeAvailability.m_RingPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[3]);
+        perStockTypePerSizeAvailability.m_RodPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[4]);
+        perStockTypePerSizeAvailability.m_ScrollPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[5]);
+        perStockTypePerSizeAvailability.m_StaffPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[6]);
+        perStockTypePerSizeAvailability.m_WandPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[7]);
+        perStockTypePerSizeAvailability.m_WeaponPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[8]);
+        perStockTypePerSizeAvailability.m_WondrousPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[9]);
+
+        return perStockTypePerSizeAvailability;
     }
 }

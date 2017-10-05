@@ -32,7 +32,7 @@ public class SpecificWeapon : SpecificItem
             return null;
 
         bool weaponHasMaterial = false;
-        bool weaponHasBonus = Campaign.Current.UsesAutomaticBonusProgressionRules;
+        bool weaponHasBonus = Campaign.UsesAutomaticBonusProgressionRules;
 
         List<WeaponQuality> weaponSpecialAbilities = new List<WeaponQuality>();
 

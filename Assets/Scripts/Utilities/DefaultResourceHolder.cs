@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+// TODO: need something like this for non default settings - needs arrays of each setting so they can be applied anywhere
+// Should load them from JSON on demand rather than keep references to them
 public class DefaultResourceHolder : MonoBehaviour
 {
     public static DefaultResourceHolder Instance

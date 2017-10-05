@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 
-// TODO: restock function that calls all shop restocks
 public class Settlement : ScriptableObject
 {
     public enum Size
@@ -25,22 +22,27 @@ public class Settlement : ScriptableObject
 
     public string notes;
     public Size size;
-    public RestockSettings restockSettings;
+    public PerSizeRestockSettings perSizeRestockSettings;
     public Shop[] shops = new Shop[0];
+
+    public RestockSettings RestockSettings
+    {
+        get { return perSizeRestockSettings[size]; }
+    }
     
-    public static Settlement Create (string name, string notes, Size size, RestockSettings restockSettings)
+    public static Settlement Create (string name, string notes, Size size, PerSizeRestockSettings perSizeRestockSettings)
     {
         Settlement newSettlement = CreateInstance<Settlement>();
         newSettlement.name = name;
         newSettlement.notes = notes;
         newSettlement.size = size;
-        newSettlement.restockSettings = restockSettings;
+        newSettlement.perSizeRestockSettings = perSizeRestockSettings;
         return newSettlement;
     }
     
     public static Settlement Create (string name, string notes, Size size)
     {
-        return Create(name, notes, size, DefaultResourceHolder.DefaultPerSizeRestockSettings[size]);
+        return Create(name, notes, size, DefaultResourceHolder.DefaultPerSizeRestockSettings);
     }
 
     public static string GetJsonString (Settlement settlement)
@@ -50,7 +52,8 @@ public class Settlement : ScriptableObject
         jsonString += settlement.name + k_JsonSplitter[0];
         jsonString += settlement.notes + k_JsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)settlement.size) + k_JsonSplitter[0];
-        jsonString += RestockSettings.GetJsonString (settlement.restockSettings) + k_JsonSplitter[0];
+        jsonString += settlement.perSizeRestockSettings.name + k_JsonSplitter[0];
+        settlement.perSizeRestockSettings.Save ();
 
         for (int i = 0; i < settlement.shops.Length; i++)
         {
@@ -69,15 +72,35 @@ public class Settlement : ScriptableObject
         settlement.name = splitJsonString[0];
         settlement.notes = splitJsonString[1];
         settlement.size = (Size)Wrapper<int>.CreateFromJsonString (splitJsonString[2]);
-        settlement.restockSettings = RestockSettings.CreateFromJsonString (splitJsonString[3]);
+        settlement.perSizeRestockSettings = PerSizeRestockSettings.Load (splitJsonString[3]);
 
         settlement.shops = new Shop[splitJsonString.Length - 4];
         for (int i = 0; i < settlement.shops.Length; i++)
         {
-            settlement.shops[i] = Shop.CreateFromJsonString (splitJsonString[i + 4], settlement);
+            settlement.shops[i] = Shop.CreateFromJsonString (splitJsonString[i + 4]);
         }
 
         return settlement;
+    }
+
+    public void AddShop (string shopName, string shopNotes, Shop.Size shopSize)
+    {
+        Shop[] newShops = new Shop[shops.Length + 1];
+
+        for (int i = 0; i < shops.Length; i++)
+        {
+            newShops[i] = shops[i];
+        }
+
+        newShops[shops.Length] = Shop.Create (shopName, shopNotes, shopSize);
+    }
+
+    public void Restock (int daysSinceLastVisit)
+    {
+        for (int i = 0; i < shops.Length; i++)
+        {
+            shops[i].Restock (daysSinceLastVisit);
+        }
     }
 }
 
