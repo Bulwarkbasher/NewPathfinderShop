@@ -2,9 +2,9 @@
 using System.IO;
 using UnityEngine;
 
-// TODO NEXT: implement this on SpecificWeaponCollection, WeaponQualityCollection and WeaponCollection
-// TODO AFTER THAT: make defaults for each other those and put them on DefaultResourceHolder
-// TODO: sanitize inputs for file names by disallowing #
+// TODO: everything that implements this has a default - make sure defaults can't be saved to but have overloaded Load function
+// TODO: Create functions that duplicate the an existing ISaveable - change normal Create functions to CreateBlank (Duplicate functions instead?)
+// TODO: make sure all Create functions call a Save function
 public interface ISaveable
 {
     string GetFolderPath ();
@@ -13,6 +13,25 @@ public interface ISaveable
 
 public static class SaveableExtensions
 {
+    public enum NameCheckResult
+    {
+        Good, Bad, IsDefault,
+    }
+
+    public static NameCheckResult CheckName (this ISaveable saveable, string name)
+    {
+        if (name.StartsWith ("Default"))
+            return NameCheckResult.IsDefault;
+        
+        if(name.Contains ("#"))
+            return NameCheckResult.Bad;
+
+        if(name.IndexOfAny (Path.GetInvalidFileNameChars ()) >= 0)
+            return NameCheckResult.Bad;
+        
+        return NameCheckResult.Good;
+    }
+
     public static void WriteJsonStringToFile(this ISaveable saveable, string name, string jsonString)
     {
         if (!Directory.Exists(saveable.GetFolderPath ()))

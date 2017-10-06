@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// TODO: change description to use name instead
 public class Item : ScriptableObject
 {
     public enum Rarity
@@ -20,7 +21,6 @@ public class Item : ScriptableObject
 
     public string description;
     public int cost;
-    public int weight;
     public Rarity rarity;
     public int ulimateEquipmentPage;
 

@@ -36,6 +36,26 @@ public class PerSizeAvailability : ScriptableObject, ISaveable
         }
     }
 
+    public static PerSizeAvailability Create (string name, Availability stall, Availability boutique, Availability outlet, Availability emporium)
+    {
+        PerSizeAvailability newPerSizeAvailability = CreateInstance<PerSizeAvailability> ();
+
+        if (newPerSizeAvailability.CheckName(name) == SaveableExtensions.NameCheckResult.Bad)
+            throw new UnityException("Settings name invalid, contains invalid characters.");
+        if (newPerSizeAvailability.CheckName(name) == SaveableExtensions.NameCheckResult.IsDefault)
+            throw new UnityException("Settings name invalid, name cannot start with Default");
+
+        newPerSizeAvailability.name = name;
+        newPerSizeAvailability.m_StallAvailability = stall;
+        newPerSizeAvailability.m_BoutiqueAvailability = boutique;
+        newPerSizeAvailability.m_OutletAvailability = outlet;
+        newPerSizeAvailability.m_EmporiumAvailability = emporium;
+
+        newPerSizeAvailability.Save ();
+
+        return newPerSizeAvailability;
+    }
+
     public void Save ()
     {
         string jsonString = "";

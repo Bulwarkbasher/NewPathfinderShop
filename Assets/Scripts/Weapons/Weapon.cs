@@ -93,12 +93,30 @@ public class Weapon : Item
     public MaterialConstraints materialConstraints;
     public SpecialConstraints specialConstraints;
 
+    public static Weapon Create (string description, int cost, Rarity rarity, int page,
+        WeaponType type, Handedness handedness, DamageType damageType, Special special,
+        AttackConstraints attackConstraints, MaterialConstraints materialConstraints,
+        SpecialConstraints specialConstraints)
+    {
+        Weapon newWeapon = CreateInstance<Weapon> ();
+        newWeapon.description = description;
+        newWeapon.cost = cost;
+        newWeapon.rarity = rarity;
+        newWeapon.ulimateEquipmentPage = page;
+        newWeapon.weaponType = type;
+        newWeapon.handedness = handedness;
+        newWeapon.damageType = damageType;
+        newWeapon.special = special;
+        newWeapon.attackConstraints = attackConstraints;
+        newWeapon.materialConstraints = materialConstraints;
+        newWeapon.specialConstraints = specialConstraints;
+        return newWeapon;
+    }
 
     public static string GetJsonString (Weapon weapon)
     {
         return JsonUtility.ToJson(weapon);
     }
-
 
     public new static Weapon CreateFromJsonString (string jsonString)
     {

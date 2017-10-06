@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.IO;
+﻿using UnityEngine;
 using System;
 
 [CreateAssetMenu]
@@ -10,10 +7,7 @@ public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon>
     public WeaponCollection availableWeapons;
     public WeaponQualityCollection availableWeaponQualities;
     
-    private static readonly string[] k_JsonSplitter =
-    {
-        "###SpecWeapCollSplitter###",
-    };
+    private static readonly string[] k_JsonSplitter = { "###SpecWeapCollSplitter###", };
 
     public static SpecificWeaponCollection Create (Availability stockAvailability, WeaponCollection availableWeapons, WeaponQualityCollection availableWeaponQualities)
     {
@@ -36,8 +30,10 @@ public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon>
         string jsonString = "";
 
         jsonString += Availability.GetJsonString(specificWeaponCollection.stockAvailability) + k_JsonSplitter[0];
-        jsonString += WeaponCollection.GetJsonString(specificWeaponCollection.availableWeapons) + k_JsonSplitter[0];
-        jsonString += WeaponQualityCollection.GetJsonString(specificWeaponCollection.availableWeaponQualities) + k_JsonSplitter[0];
+        jsonString += specificWeaponCollection.availableWeapons.name + k_JsonSplitter[0];
+        jsonString += specificWeaponCollection.availableWeaponQualities.name + k_JsonSplitter[0];
+        specificWeaponCollection.availableWeapons.Save ();
+        specificWeaponCollection.availableWeaponQualities.Save ();
 
         for(int i = 0; i < specificWeaponCollection.specificItems.Length; i++)
         {
@@ -53,8 +49,9 @@ public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon>
         SpecificWeaponCollection specificWeaponCollection = CreateInstance<SpecificWeaponCollection>();
 
         specificWeaponCollection.stockAvailability = Availability.CreateFromJsonString(splitJsonString[0]);
-        specificWeaponCollection.availableWeapons = WeaponCollection.CreateFromJsonString(splitJsonString[1]);
-        specificWeaponCollection.availableWeaponQualities = WeaponQualityCollection.CreateFromJsonString(splitJsonString[2]);
+        specificWeaponCollection.availableWeapons = WeaponCollection.Load (splitJsonString[1]);
+        specificWeaponCollection.availableWeaponQualities = WeaponQualityCollection.Load (splitJsonString[2]);
+        
 
         specificWeaponCollection.specificItems = new SpecificWeapon[splitJsonString.Length - 3];
         for (int i = 0; i < specificWeaponCollection.specificItems.Length; i++)

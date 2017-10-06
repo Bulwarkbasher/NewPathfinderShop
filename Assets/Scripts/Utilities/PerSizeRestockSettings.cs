@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
@@ -52,6 +50,30 @@ public class PerSizeRestockSettings : ScriptableObject, ISaveable
                     throw new ArgumentOutOfRangeException ("size", size, "Unknown Settlement Size.");
             }
         }
+    }
+
+    public static PerSizeRestockSettings Create (string name, RestockSettings thorpe, RestockSettings hamlet, RestockSettings village, RestockSettings smallTown, RestockSettings largeTown, RestockSettings smallCity, RestockSettings largeCity, RestockSettings metropolis)
+    {
+        PerSizeRestockSettings newPerSizeRestockSettings = CreateInstance<PerSizeRestockSettings> ();
+
+        if (newPerSizeRestockSettings.CheckName(name) == SaveableExtensions.NameCheckResult.Bad)
+            throw new UnityException("Settings name invalid, contains invalid characters.");
+        if (newPerSizeRestockSettings.CheckName(name) == SaveableExtensions.NameCheckResult.IsDefault)
+            throw new UnityException("Settings name invalid, name cannot start with Default");
+
+        newPerSizeRestockSettings.name = name;
+        newPerSizeRestockSettings.m_ThorpeRestockSettings = thorpe;
+        newPerSizeRestockSettings.m_HamletRestockSettings = hamlet;
+        newPerSizeRestockSettings.m_VillageRestockSettings = village;
+        newPerSizeRestockSettings.m_SmallTownRestockSettings = smallTown;
+        newPerSizeRestockSettings.m_LargeTownRestockSettings = largeTown;
+        newPerSizeRestockSettings.m_SmallCityRestockSettings = smallCity;
+        newPerSizeRestockSettings.m_LargeCityRestockSettings = largeCity;
+        newPerSizeRestockSettings.m_MetropolisRestockSettings = metropolis;
+
+        newPerSizeRestockSettings.Save ();
+
+        return newPerSizeRestockSettings;
     }
 
     public void Save ()

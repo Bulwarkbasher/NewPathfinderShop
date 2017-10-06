@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 
-// TODO: need something like this for non default settings - needs arrays of each setting so they can be applied anywhere
-// Should load them from JSON on demand rather than keep references to them
 public class DefaultResourceHolder : MonoBehaviour
 {
     public static DefaultResourceHolder Instance
@@ -12,12 +10,27 @@ public class DefaultResourceHolder : MonoBehaviour
 
     static DefaultResourceHolder s_Instance;
 
+    [Header("Settings")]
     [SerializeField]
     protected PerSizeRestockSettings m_DefaultPerSizeRestockSettings;
     [SerializeField]
     protected PerStockTypePerSizeAvailability m_DefaultPerStockTypePerSizeAvailability;
     [SerializeField]
     protected PerSizeRestockFrequencyModifiers m_DefaultPerSizeRestockFrequencyModifiers;
+
+    [Header ("Items")]
+    [SerializeField]
+    protected ArmourCollection m_DefaultArmourCollection;
+    [SerializeField]
+    protected SpellCollection m_DefaultSpellCollection;
+    [SerializeField]
+    protected WeaponCollection m_DefaultWeaponCollection;
+
+    [Header ("Qualities")]
+    [SerializeField]
+    protected ArmourQualityCollection m_DefaultArmourQualityCollection;
+    [SerializeField]
+    protected WeaponQualityCollection m_DefaultWeaponQualityCollection;
 
     public static PerSizeRestockSettings DefaultPerSizeRestockSettings
     {

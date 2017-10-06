@@ -1,21 +1,63 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class WeaponCollection : ScriptableObject
+public class WeaponCollection : ScriptableObject, ISaveable
 {
+    public string GetFolderPath() { return Application.persistentDataPath + "/WeaponCollections"; }
+    private static readonly string[] k_JsonSplitter = { "###WeaponCollSplitter###", };
+
     public Weapon[] weapons = new Weapon[0];
 
-
-    private static readonly string[] k_JsonSplitter =
+    public static WeaponCollection Create (string name)
     {
-        "###WeaponCollSplitter###",
-    };
+        WeaponCollection newWeaponCollection = CreateInstance<WeaponCollection>();
 
+        if (newWeaponCollection.CheckName(name) == SaveableExtensions.NameCheckResult.Bad)
+            throw new UnityException("Weapon Collection name invalid, contains invalid characters.");
+        if (newWeaponCollection.CheckName(name) == SaveableExtensions.NameCheckResult.IsDefault)
+            throw new UnityException("Weapon Collection name invalid, name cannot start with Default");
 
-    public Weapon PickWeapon (ref int budget)
+        newWeaponCollection.name = name;
+        newWeaponCollection.weapons = new Weapon[0];
+
+        newWeaponCollection.Save ();
+
+        return newWeaponCollection;
+    }
+
+    public static WeaponCollection Duplicate (string duplicatesName, WeaponCollection original)
+    {
+        WeaponCollection duplicate = original.MemberwiseClone() as WeaponCollection;
+        duplicate.name = duplicatesName;
+        duplicate.Save();
+
+        duplicate = Load(duplicatesName);
+        return duplicate;
+    }
+
+    public void AddWeapon (Weapon newWeapon)
+    {
+        Weapon[] newWeapons = new Weapon[weapons.Length + 1];
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            newWeapons[i] = weapons[i];
+        }
+        newWeapons[weapons.Length] = newWeapon;
+    }
+
+    public void RemoveWeaponAt (int index)
+    {
+        Weapon[] newWeapons = new Weapon[weapons.Length - 1];
+        for (int i = 0; i < newWeapons.Length; i++)
+        {
+            int oldWeaponIndex = i < index ? i : i + 1;
+            newWeapons[i] = weapons[oldWeaponIndex];
+        }
+    }
+
+    public Weapon PickWeapon(ref int budget)
     {
         if (weapons.Length == 0)
             return null;
@@ -36,8 +78,44 @@ public class WeaponCollection : ScriptableObject
         return chosenWeapon;
     }
 
+    public void Save ()
+    {
+        string jsonString = "";
 
-    public static string GetJsonString (WeaponCollection weaponCollection)
+        jsonString += name + k_JsonSplitter[0];
+
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            jsonString += Weapon.GetJsonString(weapons[i]) + k_JsonSplitter[0];
+        }
+
+        this.WriteJsonStringToFile (name, jsonString);
+    }
+
+    public static WeaponCollection Load (string name)
+    {
+        WeaponCollection weaponCollection = CreateInstance<WeaponCollection>();
+
+        string[] splitJsonString = weaponCollection.GetSplitJsonStringsFromFile (name, k_JsonSplitter);
+
+        weaponCollection.name = splitJsonString[0];
+
+        weaponCollection.weapons = new Weapon[splitJsonString.Length - 1];
+        for (int i = 0; i < weaponCollection.weapons.Length; i++)
+        {
+            weaponCollection.weapons[i] = Weapon.CreateFromJsonString(splitJsonString[i + 1]);
+        }
+
+        return weaponCollection;
+    }
+
+    public static string[] GetSettingsNames ()
+    {
+        WeaponCollection dummy = CreateInstance<WeaponCollection> ();
+        return dummy.GetFileNames ();
+    }
+
+    /*public static string GetJsonString (WeaponCollection weaponCollection)
     {
         string jsonString = "";
 
@@ -52,9 +130,10 @@ public class WeaponCollection : ScriptableObject
 
     public static WeaponCollection CreateFromJsonString (string jsonString)
     {
+        WeaponCollection weaponCollection = CreateInstance<WeaponCollection>();
+        
         string[] splitJsonString = jsonString.Split(k_JsonSplitter, System.StringSplitOptions.RemoveEmptyEntries);
 
-        WeaponCollection weaponCollection = CreateInstance<WeaponCollection>();
         weaponCollection.weapons = new Weapon[splitJsonString.Length];
         for(int i = 0; i < splitJsonString.Length; i++)
         {
@@ -62,5 +141,5 @@ public class WeaponCollection : ScriptableObject
         }
 
         return weaponCollection;
-    }
+    }*/
 }

@@ -3,16 +3,39 @@ using System.Linq;
 using System.Collections.Generic;
 
 [CreateAssetMenu]
-public class WeaponQualityCollection : ScriptableObject
+public class WeaponQualityCollection : ScriptableObject, ISaveable
 {
     public WeaponQuality[] qualities = new WeaponQuality[0];
 
+    public string GetFolderPath() { return Application.persistentDataPath + "/WeaponQualityCollections"; }
+    private static readonly string[] k_JsonSplitter = { "###WeaponQualCollSplitter###", };
 
-    private static readonly string[] k_JsonSplitter =
+    public static WeaponQualityCollection Create (string name)
     {
-        "###WeaponQualCollSplitter###",
-    };
+        WeaponQualityCollection weaponQualityCollection = CreateInstance<WeaponQualityCollection>();
 
+        if (weaponQualityCollection.CheckName(name) == SaveableExtensions.NameCheckResult.Bad)
+            throw new UnityException("Weapon Quality Collection name invalid, contains invalid characters.");
+        if (weaponQualityCollection.CheckName(name) == SaveableExtensions.NameCheckResult.IsDefault)
+            throw new UnityException("Weapon Quality Collection name invalid, name cannot start with Default");
+
+        weaponQualityCollection.name = name;
+        weaponQualityCollection.qualities = new WeaponQuality[0];
+
+        weaponQualityCollection.Save();
+
+        return weaponQualityCollection;
+    }
+
+    public static WeaponQualityCollection Duplicate (string duplicatesName, WeaponQualityCollection original)
+    {
+        WeaponQualityCollection duplicate = original.MemberwiseClone () as WeaponQualityCollection;
+        duplicate.name = duplicatesName;
+        duplicate.Save ();
+
+        duplicate = Load (duplicatesName);
+        return duplicate;
+    }
 
     public WeaponQuality PickWeaponQuality (Weapon weaponToAddTo, int budget, WeaponQuality[] bonusEquivalentQualities, bool allowMaterials, bool allowBonuses, bool allowAbilities)
     {
@@ -64,7 +87,7 @@ public class WeaponQualityCollection : ScriptableObject
     }
 
 
-    public static string GetJsonString (WeaponQualityCollection weaponQualityCollection)
+    /*public static string GetJsonString (WeaponQualityCollection weaponQualityCollection)
     {
         string jsonString = "";
         for (int i = 0; i < weaponQualityCollection.qualities.Length; i++)
@@ -86,5 +109,40 @@ public class WeaponQualityCollection : ScriptableObject
             weaponQualityCollection.qualities[i] = WeaponQuality.CreateFromJsonString(splitJsonString[i]);
         }
         return weaponQualityCollection;
+    }*/
+
+    public void Save ()
+    {
+        string jsonString = "";
+
+        jsonString += name + k_JsonSplitter[0];
+
+        for (int i = 0; i < qualities.Length; i++)
+        {
+            jsonString += WeaponQuality.GetJsonString(qualities[i]) + k_JsonSplitter[0];
+        }
+        this.WriteJsonStringToFile (name, jsonString);
+    }
+
+    public static WeaponQualityCollection Load (string name)
+    {
+        WeaponQualityCollection weaponQualityCollection = CreateInstance<WeaponQualityCollection> ();
+
+        string[] splitJsonString = weaponQualityCollection.GetSplitJsonStringsFromFile (name, k_JsonSplitter);
+
+        weaponQualityCollection.name = splitJsonString[0];
+
+        weaponQualityCollection.qualities = new WeaponQuality[splitJsonString.Length - 1];
+        for (int i = 0; i < weaponQualityCollection.qualities.Length; i++)
+        {
+            weaponQualityCollection.qualities[i] = WeaponQuality.CreateFromJsonString (splitJsonString[i + 1]);
+        }
+        return weaponQualityCollection;
+    }
+
+    public static string[] GetSettingsNames ()
+    {
+        WeaponQualityCollection dummy = CreateInstance<WeaponQualityCollection> ();
+        return dummy.GetFileNames ();
     }
 }

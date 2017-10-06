@@ -18,6 +18,12 @@ public class Campaign : ScriptableObject, ISaveable
     public static Campaign Create (string name, bool usesAutomaticBonusProgressionRules)
     {
         Campaign campaign = CreateInstance<Campaign> ();
+
+        if(campaign.CheckName (name) == SaveableExtensions.NameCheckResult.Bad)
+            throw new UnityException("Campaign name invalid, contains invalid characters.");
+        if(campaign.CheckName (name) == SaveableExtensions.NameCheckResult.IsDefault)
+            throw new UnityException("Campaign name invalid, name cannot start with Default");
+        
         campaign.name = name;
         campaign.m_UsesAutomaticBonusProgressionRules = usesAutomaticBonusProgressionRules;
         return campaign;

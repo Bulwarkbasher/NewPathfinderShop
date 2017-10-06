@@ -36,6 +36,26 @@ public class PerSizeRestockFrequencyModifiers : ScriptableObject, ISaveable
         }
     }
 
+    public static PerSizeRestockFrequencyModifiers Create (string name, float stall, float boutique, float outlet, float emporium)
+    {
+        PerSizeRestockFrequencyModifiers newPerSizeRestockFrequencyModifiers = CreateInstance<PerSizeRestockFrequencyModifiers> ();
+
+        if (newPerSizeRestockFrequencyModifiers.CheckName(name) == SaveableExtensions.NameCheckResult.Bad)
+            throw new UnityException("Settings name invalid, contains invalid characters.");
+        if (newPerSizeRestockFrequencyModifiers.CheckName(name) == SaveableExtensions.NameCheckResult.IsDefault)
+            throw new UnityException("Settings name invalid, name cannot start with Default");
+
+        newPerSizeRestockFrequencyModifiers.name = name;
+        newPerSizeRestockFrequencyModifiers.m_StallFrequencyModifier = stall;
+        newPerSizeRestockFrequencyModifiers.m_BoutiqueFrequencyModifier = boutique;
+        newPerSizeRestockFrequencyModifiers.m_OutletFrequencyModifier = outlet;
+        newPerSizeRestockFrequencyModifiers.m_EmporiumFrequencyModifier = emporium;
+
+        newPerSizeRestockFrequencyModifiers.Save ();
+
+        return newPerSizeRestockFrequencyModifiers;
+    }
+
     public void Save ()
     {
         string jsonString = "";

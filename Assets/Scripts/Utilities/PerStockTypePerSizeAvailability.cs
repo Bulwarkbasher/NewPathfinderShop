@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
@@ -56,6 +54,31 @@ public class PerStockTypePerSizeAvailability : ScriptableObject, ISaveable
                     throw new ArgumentOutOfRangeException ("type", type, "Unknown Shop Stock Type.");
             }
         }
+    }
+
+    public static PerStockTypePerSizeAvailability Create(string name, PerSizeAvailability armour, PerSizeAvailability potion, PerSizeAvailability ring, PerSizeAvailability rod, PerSizeAvailability scroll, PerSizeAvailability staff, PerSizeAvailability wand, PerSizeAvailability weapon, PerSizeAvailability wondrous)
+    {
+        PerStockTypePerSizeAvailability newPerStockTypePerSizeAvailability = CreateInstance<PerStockTypePerSizeAvailability> ();
+
+        if (newPerStockTypePerSizeAvailability.CheckName(name) == SaveableExtensions.NameCheckResult.Bad)
+            throw new UnityException("Settings name invalid, contains invalid characters.");
+        if (newPerStockTypePerSizeAvailability.CheckName(name) == SaveableExtensions.NameCheckResult.IsDefault)
+            throw new UnityException("Settings name invalid, name cannot start with Default");
+
+        newPerStockTypePerSizeAvailability.name = name;
+        newPerStockTypePerSizeAvailability.m_ArmourPerSizeAvailability = armour;
+        newPerStockTypePerSizeAvailability.m_PotionPerSizeAvailability = potion;
+        newPerStockTypePerSizeAvailability.m_RingPerSizeAvailability = ring;
+        newPerStockTypePerSizeAvailability.m_RodPerSizeAvailability = rod;
+        newPerStockTypePerSizeAvailability.m_ScrollPerSizeAvailability = scroll;
+        newPerStockTypePerSizeAvailability.m_StaffPerSizeAvailability = staff;
+        newPerStockTypePerSizeAvailability.m_WandPerSizeAvailability = wand;
+        newPerStockTypePerSizeAvailability.m_WeaponPerSizeAvailability = weapon;
+        newPerStockTypePerSizeAvailability.m_WondrousPerSizeAvailability = wondrous;
+
+        newPerStockTypePerSizeAvailability.Save ();
+
+        return newPerStockTypePerSizeAvailability;
     }
 
     public void Save ()
