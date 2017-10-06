@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics.SymbolStore;
+using UnityEngine;
 
 public class DefaultResourceHolder : MonoBehaviour
 {
@@ -45,6 +46,31 @@ public class DefaultResourceHolder : MonoBehaviour
     public static PerSizeRestockFrequencyModifiers DefaultPerSizeRestockFrequencyModifiers
     {
         get { return Instance.m_DefaultPerSizeRestockFrequencyModifiers; }
+    }
+
+    public static ArmourCollection DefaultArmourCollection
+    {
+        get { return Instance.m_DefaultArmourCollection; }
+    }
+
+    public static SpellCollection DefaultSpellCollection
+    {
+        get { return Instance.m_DefaultSpellCollection; }
+    }
+
+    public static WeaponCollection DefaultWeaponCollection
+    {
+        get { return Instance.m_DefaultWeaponCollection; }
+    }
+
+    public static ArmourQualityCollection DefaultArmourQualityCollection
+    {
+        get { return Instance.m_DefaultArmourQualityCollection; }
+    }
+
+    public static WeaponQualityCollection DefaultWeaponQualityCollection
+    {
+        get { return Instance.m_DefaultWeaponQualityCollection; }
     }
 
     void Awake ()

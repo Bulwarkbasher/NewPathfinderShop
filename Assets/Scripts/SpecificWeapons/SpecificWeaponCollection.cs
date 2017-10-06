@@ -25,6 +25,23 @@ public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon>
         return SpecificWeapon.CreateRandom(powerLevel, budget, availableWeapons, availableWeaponQualities);
     }
 
+    // TODO NEXT: do this for all Collections that can be added to a shop
+    public static void AddToShop(Shop shop, Availability stockAvailability, WeaponCollection availableWeapons, WeaponQualityCollection availableWeaponQualities)
+    {
+        shop.stockTypes |= Shop.StockType.Weapon;
+
+        if (stockAvailability == null)
+            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Weapon][shop.size];
+
+        if (availableWeapons == null)
+            availableWeapons = DefaultResourceHolder.DefaultWeaponCollection;
+
+        if (availableWeaponQualities == null)
+            availableWeaponQualities = DefaultResourceHolder.DefaultWeaponQualityCollection;
+
+        shop.specificWeaponCollection = Create(stockAvailability, availableWeapons, availableWeaponQualities);
+    }
+
     public static string GetJsonString(SpecificWeaponCollection specificWeaponCollection)
     {
         string jsonString = "";
@@ -32,8 +49,8 @@ public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon>
         jsonString += Availability.GetJsonString(specificWeaponCollection.stockAvailability) + k_JsonSplitter[0];
         jsonString += specificWeaponCollection.availableWeapons.name + k_JsonSplitter[0];
         jsonString += specificWeaponCollection.availableWeaponQualities.name + k_JsonSplitter[0];
-        specificWeaponCollection.availableWeapons.Save ();
-        specificWeaponCollection.availableWeaponQualities.Save ();
+        WeaponCollection.Save(specificWeaponCollection.availableWeapons);
+        WeaponQualityCollection.Save (specificWeaponCollection.availableWeaponQualities);
 
         for(int i = 0; i < specificWeaponCollection.specificItems.Length; i++)
         {

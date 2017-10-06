@@ -53,7 +53,7 @@ public class Settlement : ScriptableObject
         jsonString += settlement.notes + k_JsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)settlement.size) + k_JsonSplitter[0];
         jsonString += settlement.perSizeRestockSettings.name + k_JsonSplitter[0];
-        settlement.perSizeRestockSettings.Save ();
+        PerSizeRestockSettings.Save(settlement.perSizeRestockSettings);
 
         for (int i = 0; i < settlement.shops.Length; i++)
         {
