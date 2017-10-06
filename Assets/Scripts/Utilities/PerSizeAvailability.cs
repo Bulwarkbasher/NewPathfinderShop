@@ -2,11 +2,8 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class PerSizeAvailability : ScriptableObject, ISaveable
+public class PerSizeAvailability : Saveable<PerSizeAvailability>
 {
-    public string GetFolderPath() { return Application.persistentDataPath + "/PerSizeRestockSettings"; }
-    protected static readonly string[] k_JsonSplitter = { "###PerSizeAvailabilitySplitter###", };
-
     [SerializeField]
     protected Availability m_StallAvailability;
     [SerializeField]
@@ -40,9 +37,9 @@ public class PerSizeAvailability : ScriptableObject, ISaveable
     {
         PerSizeAvailability newPerSizeAvailability = CreateInstance<PerSizeAvailability> ();
 
-        if (newPerSizeAvailability.CheckName(name) == SaveableExtensions.NameCheckResult.Bad)
+        if (CheckName(name) == NameCheckResult.Bad)
             throw new UnityException("Settings name invalid, contains invalid characters.");
-        if (newPerSizeAvailability.CheckName(name) == SaveableExtensions.NameCheckResult.IsDefault)
+        if (CheckName(name) == NameCheckResult.IsDefault)
             throw new UnityException("Settings name invalid, name cannot start with Default");
 
         newPerSizeAvailability.name = name;
@@ -51,43 +48,30 @@ public class PerSizeAvailability : ScriptableObject, ISaveable
         newPerSizeAvailability.m_OutletAvailability = outlet;
         newPerSizeAvailability.m_EmporiumAvailability = emporium;
 
-        newPerSizeAvailability.Save ();
+        Save (newPerSizeAvailability);
 
         return newPerSizeAvailability;
     }
 
-    public void Save ()
+    protected override string GetJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
-        jsonString += name + k_JsonSplitter[0];
-        jsonString += Availability.GetJsonString(m_StallAvailability) + k_JsonSplitter[0];
-        jsonString += Availability.GetJsonString(m_BoutiqueAvailability) + k_JsonSplitter[0];
-        jsonString += Availability.GetJsonString(m_OutletAvailability) + k_JsonSplitter[0];
-        jsonString += Availability.GetJsonString(m_EmporiumAvailability) + k_JsonSplitter[0];
+        jsonString += name + jsonSplitter[0];
+        jsonString += Availability.GetJsonString(m_StallAvailability) + jsonSplitter[0];
+        jsonString += Availability.GetJsonString(m_BoutiqueAvailability) + jsonSplitter[0];
+        jsonString += Availability.GetJsonString(m_OutletAvailability) + jsonSplitter[0];
+        jsonString += Availability.GetJsonString(m_EmporiumAvailability) + jsonSplitter[0];
 
-        this.WriteJsonStringToFile (name, jsonString);
+        return jsonString;
     }
 
-    public static PerSizeAvailability Load (string name)
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        PerSizeAvailability perSizeAvailability = CreateInstance<PerSizeAvailability> ();
-
-        string[] splitJsonString = perSizeAvailability.GetSplitJsonStringsFromFile (name, k_JsonSplitter);
-
-        perSizeAvailability.name = splitJsonString[0];
-        perSizeAvailability.m_StallAvailability = Availability.CreateFromJsonString(splitJsonString[1]);
-        perSizeAvailability.m_BoutiqueAvailability = Availability.CreateFromJsonString(splitJsonString[2]);
-        perSizeAvailability.m_OutletAvailability = Availability.CreateFromJsonString(splitJsonString[3]);
-        perSizeAvailability.m_EmporiumAvailability = Availability.CreateFromJsonString(splitJsonString[4]);
-
-        return perSizeAvailability;
-    }
-
-    // Shouldn't be used as the ones loaded are dependent on PerStockTypePerSizeAvailability.
-    public static string[] GetSettingsNames ()
-    {
-        PerSizeAvailability dummy = CreateInstance<PerSizeAvailability> ();
-        return dummy.GetFileNames ();
+        name = splitJsonString[0];
+        m_StallAvailability = Availability.CreateFromJsonString(splitJsonString[1]);
+        m_BoutiqueAvailability = Availability.CreateFromJsonString(splitJsonString[2]);
+        m_OutletAvailability = Availability.CreateFromJsonString(splitJsonString[3]);
+        m_EmporiumAvailability = Availability.CreateFromJsonString(splitJsonString[4]);
     }
 }

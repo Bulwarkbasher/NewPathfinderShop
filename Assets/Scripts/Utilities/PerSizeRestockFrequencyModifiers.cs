@@ -2,11 +2,8 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class PerSizeRestockFrequencyModifiers : ScriptableObject, ISaveable
+public class PerSizeRestockFrequencyModifiers : Saveable<PerSizeRestockFrequencyModifiers>
 {
-    public string GetFolderPath() { return Application.persistentDataPath + "/PerSizeRestockFrequencyModifiers"; }
-    protected readonly static string[] k_JsonSplitter = { "###PerSizeRestockFrequencyModifiersSplitter###", };
-
     [SerializeField]
     protected float m_StallFrequencyModifier;
     [SerializeField]
@@ -40,9 +37,9 @@ public class PerSizeRestockFrequencyModifiers : ScriptableObject, ISaveable
     {
         PerSizeRestockFrequencyModifiers newPerSizeRestockFrequencyModifiers = CreateInstance<PerSizeRestockFrequencyModifiers> ();
 
-        if (newPerSizeRestockFrequencyModifiers.CheckName(name) == SaveableExtensions.NameCheckResult.Bad)
+        if (CheckName(name) == NameCheckResult.Bad)
             throw new UnityException("Settings name invalid, contains invalid characters.");
-        if (newPerSizeRestockFrequencyModifiers.CheckName(name) == SaveableExtensions.NameCheckResult.IsDefault)
+        if (CheckName(name) == NameCheckResult.IsDefault)
             throw new UnityException("Settings name invalid, name cannot start with Default");
 
         newPerSizeRestockFrequencyModifiers.name = name;
@@ -51,42 +48,30 @@ public class PerSizeRestockFrequencyModifiers : ScriptableObject, ISaveable
         newPerSizeRestockFrequencyModifiers.m_OutletFrequencyModifier = outlet;
         newPerSizeRestockFrequencyModifiers.m_EmporiumFrequencyModifier = emporium;
 
-        newPerSizeRestockFrequencyModifiers.Save ();
+        Save (newPerSizeRestockFrequencyModifiers);
 
         return newPerSizeRestockFrequencyModifiers;
     }
 
-    public void Save ()
+    protected override string GetJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
-        jsonString += name + k_JsonSplitter[0];
-        jsonString += Wrapper<float>.GetJsonString(m_StallFrequencyModifier) + k_JsonSplitter[0];
-        jsonString += Wrapper<float>.GetJsonString(m_BoutiqueFrequencyModifier) + k_JsonSplitter[0];
-        jsonString += Wrapper<float>.GetJsonString(m_OutletFrequencyModifier) + k_JsonSplitter[0];
-        jsonString += Wrapper<float>.GetJsonString(m_EmporiumFrequencyModifier) + k_JsonSplitter[0];
+        jsonString += name + jsonSplitter[0];
+        jsonString += Wrapper<float>.GetJsonString(m_StallFrequencyModifier) + jsonSplitter[0];
+        jsonString += Wrapper<float>.GetJsonString(m_BoutiqueFrequencyModifier) + jsonSplitter[0];
+        jsonString += Wrapper<float>.GetJsonString(m_OutletFrequencyModifier) + jsonSplitter[0];
+        jsonString += Wrapper<float>.GetJsonString(m_EmporiumFrequencyModifier) + jsonSplitter[0];
 
-        this.WriteJsonStringToFile (name, jsonString);
+        return jsonString;
     }
 
-    public static PerSizeRestockFrequencyModifiers Load (string name)
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        PerSizeRestockFrequencyModifiers perSizeRestockFrequencyModifiers = CreateInstance<PerSizeRestockFrequencyModifiers> ();
-
-        string[] splitJsonString = perSizeRestockFrequencyModifiers.GetSplitJsonStringsFromFile (name, k_JsonSplitter);
-
-        perSizeRestockFrequencyModifiers.name = splitJsonString[0];
-        perSizeRestockFrequencyModifiers.m_StallFrequencyModifier = Wrapper<float>.CreateFromJsonString(splitJsonString[1]);
-        perSizeRestockFrequencyModifiers.m_BoutiqueFrequencyModifier = Wrapper<float>.CreateFromJsonString(splitJsonString[2]);
-        perSizeRestockFrequencyModifiers.m_OutletFrequencyModifier = Wrapper<float>.CreateFromJsonString(splitJsonString[3]);
-        perSizeRestockFrequencyModifiers.m_EmporiumFrequencyModifier = Wrapper<float>.CreateFromJsonString(splitJsonString[4]);
-
-        return perSizeRestockFrequencyModifiers;
-    }
-
-    public static string[] GetSettingsNames ()
-    {
-        PerSizeRestockFrequencyModifiers dummy = CreateInstance<PerSizeRestockFrequencyModifiers> ();
-        return dummy.GetFileNames ();
+        name = splitJsonString[0];
+        m_StallFrequencyModifier = Wrapper<float>.CreateFromJsonString(splitJsonString[1]);
+        m_BoutiqueFrequencyModifier = Wrapper<float>.CreateFromJsonString(splitJsonString[2]);
+        m_OutletFrequencyModifier = Wrapper<float>.CreateFromJsonString(splitJsonString[3]);
+        m_EmporiumFrequencyModifier = Wrapper<float>.CreateFromJsonString(splitJsonString[4]);
     }
 }

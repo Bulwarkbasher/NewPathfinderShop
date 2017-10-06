@@ -2,11 +2,8 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class PerSizeRestockSettings : ScriptableObject, ISaveable
+public class PerSizeRestockSettings : Saveable<PerSizeRestockSettings>
 {
-    public string GetFolderPath() { return Application.persistentDataPath + "/PerSizeRestockSettings"; }
-    protected readonly static string[] k_JsonSplitter = { "###PerSizeRestockSplitter###", };
-
     [SerializeField]
     protected RestockSettings m_ThorpeRestockSettings;
     [SerializeField]
@@ -56,9 +53,9 @@ public class PerSizeRestockSettings : ScriptableObject, ISaveable
     {
         PerSizeRestockSettings newPerSizeRestockSettings = CreateInstance<PerSizeRestockSettings> ();
 
-        if (newPerSizeRestockSettings.CheckName(name) == SaveableExtensions.NameCheckResult.Bad)
+        if (CheckName(name) == NameCheckResult.Bad)
             throw new UnityException("Settings name invalid, contains invalid characters.");
-        if (newPerSizeRestockSettings.CheckName(name) == SaveableExtensions.NameCheckResult.IsDefault)
+        if (CheckName(name) == NameCheckResult.IsDefault)
             throw new UnityException("Settings name invalid, name cannot start with Default");
 
         newPerSizeRestockSettings.name = name;
@@ -71,50 +68,38 @@ public class PerSizeRestockSettings : ScriptableObject, ISaveable
         newPerSizeRestockSettings.m_LargeCityRestockSettings = largeCity;
         newPerSizeRestockSettings.m_MetropolisRestockSettings = metropolis;
 
-        newPerSizeRestockSettings.Save ();
+        Save (newPerSizeRestockSettings);
 
         return newPerSizeRestockSettings;
     }
 
-    public void Save ()
+    protected override string GetJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
-        jsonString += name + k_JsonSplitter[0];
-        jsonString += RestockSettings.GetJsonString(m_ThorpeRestockSettings) + k_JsonSplitter[0];
-        jsonString += RestockSettings.GetJsonString(m_HamletRestockSettings) + k_JsonSplitter[0];
-        jsonString += RestockSettings.GetJsonString(m_VillageRestockSettings) + k_JsonSplitter[0];
-        jsonString += RestockSettings.GetJsonString(m_SmallTownRestockSettings) + k_JsonSplitter[0];
-        jsonString += RestockSettings.GetJsonString(m_LargeTownRestockSettings) + k_JsonSplitter[0];
-        jsonString += RestockSettings.GetJsonString(m_SmallCityRestockSettings) + k_JsonSplitter[0];
-        jsonString += RestockSettings.GetJsonString(m_LargeCityRestockSettings) + k_JsonSplitter[0];
-        jsonString += RestockSettings.GetJsonString(m_MetropolisRestockSettings) + k_JsonSplitter[0];
+        jsonString += name + jsonSplitter[0];
+        jsonString += RestockSettings.GetJsonString(m_ThorpeRestockSettings) + jsonSplitter[0];
+        jsonString += RestockSettings.GetJsonString(m_HamletRestockSettings) + jsonSplitter[0];
+        jsonString += RestockSettings.GetJsonString(m_VillageRestockSettings) + jsonSplitter[0];
+        jsonString += RestockSettings.GetJsonString(m_SmallTownRestockSettings) + jsonSplitter[0];
+        jsonString += RestockSettings.GetJsonString(m_LargeTownRestockSettings) + jsonSplitter[0];
+        jsonString += RestockSettings.GetJsonString(m_SmallCityRestockSettings) + jsonSplitter[0];
+        jsonString += RestockSettings.GetJsonString(m_LargeCityRestockSettings) + jsonSplitter[0];
+        jsonString += RestockSettings.GetJsonString(m_MetropolisRestockSettings) + jsonSplitter[0];
 
-        this.WriteJsonStringToFile (name, jsonString);
+        return jsonString;
     }
 
-    public static PerSizeRestockSettings Load (string name)
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        PerSizeRestockSettings perSizeRestockSettings = CreateInstance<PerSizeRestockSettings> ();
-
-        string[] splitJsonString = perSizeRestockSettings.GetSplitJsonStringsFromFile (name, k_JsonSplitter);
-
-        perSizeRestockSettings.name = splitJsonString[0];
-        perSizeRestockSettings.m_ThorpeRestockSettings = RestockSettings.CreateFromJsonString (splitJsonString[1]);
-        perSizeRestockSettings.m_HamletRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[2]);
-        perSizeRestockSettings.m_VillageRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[3]);
-        perSizeRestockSettings.m_SmallTownRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[4]);
-        perSizeRestockSettings.m_LargeTownRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[5]);
-        perSizeRestockSettings.m_SmallCityRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[6]);
-        perSizeRestockSettings.m_LargeCityRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[7]);
-        perSizeRestockSettings.m_MetropolisRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[8]);
-
-        return perSizeRestockSettings;
-    }
-
-    public static string[] GetSettingsNames ()
-    {
-        PerSizeRestockSettings dummy = CreateInstance<PerSizeRestockSettings> ();
-        return dummy.GetFileNames ();
+        name = splitJsonString[0];
+        m_ThorpeRestockSettings = RestockSettings.CreateFromJsonString (splitJsonString[1]);
+        m_HamletRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[2]);
+        m_VillageRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[3]);
+        m_SmallTownRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[4]);
+        m_LargeTownRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[5]);
+        m_SmallCityRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[6]);
+        m_LargeCityRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[7]);
+        m_MetropolisRestockSettings = RestockSettings.CreateFromJsonString(splitJsonString[8]);
     }
 }

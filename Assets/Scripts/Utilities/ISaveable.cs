@@ -2,9 +2,6 @@
 using System.IO;
 using UnityEngine;
 
-// TODO: everything that implements this has a default - make sure defaults can't be saved to but have overloaded Load function
-// TODO: Create functions that duplicate the an existing ISaveable - change normal Create functions to CreateBlank (Duplicate functions instead?)
-// TODO: make sure all Create functions call a Save function
 public interface ISaveable
 {
     string GetFolderPath ();
