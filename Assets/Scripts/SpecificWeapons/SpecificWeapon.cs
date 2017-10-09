@@ -161,23 +161,22 @@ public class SpecificWeapon : SpecificItem
         cost += WeaponQuality.BonusToCost((Quality.BonusEquivalent)bonus);
     }
 
-
     public override string ToString()
     {
         m_Description = "";
 
         if(enhancementBonus)
-            m_Description += enhancementBonus.description + " ";
+            m_Description += Quality.BonusEquivalentNames[(int)enhancementBonus.bonusEquivalent] + " ";
         
         for (int i = 0; i < specialAbilities.Length; i++)
         {
-            m_Description += specialAbilities[i].description + " ";
+            m_Description += specialAbilities[i].name + " ";
         }
 
         if (specialMaterial)
-            m_Description += specialMaterial.description + " ";
+            m_Description += specialMaterial.name + " ";
 
-        m_Description += weapon.description;
+        m_Description += weapon.name;
 
         return m_Description;
     }

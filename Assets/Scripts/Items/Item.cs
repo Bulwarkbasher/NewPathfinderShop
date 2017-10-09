@@ -2,6 +2,8 @@
 using System.Collections;
 
 // TODO: change description to use name instead
+// TODO URGENT: since removing description in favour of m_Name, name is no longer serialized by json
+// TODO: update which objects inherit from Item, should be more
 public class Item : ScriptableObject
 {
     public enum Rarity
@@ -18,10 +20,11 @@ public class Item : ScriptableObject
         Mythical,
     }
 
-    public string description;
     public int cost;
     public Rarity rarity;
     public int ulimateEquipmentPage;
+
+    static readonly string[] k_JsonSplitter = { "###ItemSplitter###" };
 
     public static Item PickItem (Item[] items)
     {
@@ -50,13 +53,27 @@ public class Item : ScriptableObject
 
     public static string GetJsonString (Item item)
     {
-        return JsonUtility.ToJson(item);
+        string jsonString = "";
+
+        jsonString += item.name + k_JsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString (item.cost) + k_JsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString ((int)item.rarity) + k_JsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString (item.ulimateEquipmentPage) + k_JsonSplitter[0];
+
+        return jsonString;
     }
 
     public static Item CreateFromJsonString (string jsonString)
     {
+        string[] splitJsonString = jsonString.Split(k_JsonSplitter, System.StringSplitOptions.RemoveEmptyEntries);
+
         Item item = CreateInstance<Item>();
-        JsonUtility.FromJsonOverwrite(jsonString, item);
+
+        item.name = splitJsonString[0];
+        item.cost = Wrapper<int>.CreateFromJsonString (splitJsonString[1]);
+        item.rarity = (Rarity)Wrapper<int>.CreateFromJsonString (splitJsonString[2]);
+        item.ulimateEquipmentPage = Wrapper<int>.CreateFromJsonString (splitJsonString[3]);
+
         return item;
     }
 }

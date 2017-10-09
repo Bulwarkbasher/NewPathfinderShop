@@ -5,7 +5,8 @@ using UnityEditor;
 
 public class ItemCostColumn : DoublePropertyColumn
 {
-    public ItemCostColumn() : base ("Cost", 60f, "description", "cost")
+    public ItemCostColumn()
+        : base("Cost", 60f, "m_Name", "cost")
     { }
 
 

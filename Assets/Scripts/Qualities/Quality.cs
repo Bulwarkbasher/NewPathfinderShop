@@ -44,7 +44,7 @@ public class Quality : Item
         return newQuality;
     }
 
-
+    // TODO: change these to use Item.GetJsonString etc
     public static string GetJsonString(Quality quality)
     {
         return JsonUtility.ToJson(quality);

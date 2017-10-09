@@ -2,6 +2,7 @@
 using System.IO;
 using UnityEngine;
 
+// TODO: base class of this to have json splitter and abstract json get/set functions?
 public abstract class Saveable<TChild> : ScriptableObject
     where TChild : Saveable<TChild>
 {

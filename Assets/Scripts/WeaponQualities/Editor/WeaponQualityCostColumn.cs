@@ -8,7 +8,7 @@ public class WeaponQualityCostColumn : DoublePropertyColumn
     protected SerializedProperty[] bonusEquivProps;
 
 
-    public WeaponQualityCostColumn () : base ("Cost", 60f, "description", "cost")
+    public WeaponQualityCostColumn () : base ("Cost", 60f, "m_Name", "cost")
     { }
 
 

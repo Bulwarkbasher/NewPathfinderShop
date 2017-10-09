@@ -9,7 +9,8 @@ public class FlagsPropertyColumn<TFlags> : DoublePropertyColumn
     private StringBuilder stringBuilder = new StringBuilder();
 
 
-    public FlagsPropertyColumn (string name, float width, string flagsPropName) : base (name, width, "description", flagsPropName)
+    public FlagsPropertyColumn(string name, float width, string flagsPropName)
+        : base(name, width, "m_Name", flagsPropName)
     {
         Type genericType = typeof(TFlags);
 

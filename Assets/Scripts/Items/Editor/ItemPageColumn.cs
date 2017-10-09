@@ -6,7 +6,7 @@ using System;
 
 public class ItemPageColumn : DoublePropertyColumn
 {
-    public ItemPageColumn () : base ("UE Page", 60f, "description", "ulimateEquipmentPage")
+    public ItemPageColumn () : base ("UE Page", 60f, "m_Name", "ulimateEquipmentPage")
     { }
 
 

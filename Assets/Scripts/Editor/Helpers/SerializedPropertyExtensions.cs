@@ -1,5 +1,8 @@
+using System;
 using UnityEngine;
 using UnityEditor;
+using Object = UnityEngine.Object;
+
 
 public static class SerializedPropertyExtensions
 {
@@ -58,5 +61,89 @@ public static class SerializedPropertyExtensions
         }
 
         throw new UnityException("Element " + elementToRemove.name + "was not found in property " + arrayProperty.name);
+    }
+
+    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset)
+        where TElement : ScriptableObject
+    {
+        TElement newElement = ScriptableObject.CreateInstance<TElement>();
+        AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
+        newElement.name = "New Element";
+        arrayProp.AddToObjectArray(newElement);
+    }
+
+    public static void AddObjectAsSubAsset<TElement> (this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset)
+        where TElement : ScriptableObject
+    {
+        TElement newElement = ScriptableObject.CreateInstance<TElement>();
+        if(hideSubAsset)
+            newElement.hideFlags = HideFlags.HideInHierarchy;
+        AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
+        newElement.name = "New Element";
+        arrayProp.AddToObjectArray(newElement);
+    }
+
+    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, string name)
+        where TElement : ScriptableObject
+    {
+        TElement newElement = ScriptableObject.CreateInstance<TElement>();
+        if (hideSubAsset)
+            newElement.hideFlags = HideFlags.HideInHierarchy;
+        AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
+        newElement.name = name;
+        arrayProp.AddToObjectArray(newElement);
+    }
+
+    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, string name, Action<TElement> initMethod)
+        where TElement : ScriptableObject
+    {
+        TElement newElement = ScriptableObject.CreateInstance<TElement>();
+        if (hideSubAsset)
+            newElement.hideFlags = HideFlags.HideInHierarchy;
+        AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
+        newElement.name = name;
+        initMethod (newElement);
+        arrayProp.AddToObjectArray(newElement);
+    }
+
+    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, Action<TElement> initMethod)
+        where TElement : ScriptableObject
+    {
+        TElement newElement = ScriptableObject.CreateInstance<TElement>();
+        if (hideSubAsset)
+            newElement.hideFlags = HideFlags.HideInHierarchy;
+        AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
+        newElement.name = "New Element";
+        initMethod(newElement);
+        arrayProp.AddToObjectArray(newElement);
+    }
+
+    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, string name, Action<TElement> initMethod)
+        where TElement : ScriptableObject
+    {
+        TElement newElement = ScriptableObject.CreateInstance<TElement>();
+        AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
+        newElement.name = name;
+        initMethod(newElement);
+        arrayProp.AddToObjectArray(newElement);
+    }
+
+    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, string name)
+        where TElement : ScriptableObject
+    {
+        TElement newElement = ScriptableObject.CreateInstance<TElement>();
+        AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
+        newElement.name = name;
+        arrayProp.AddToObjectArray(newElement);
+    }
+
+    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, Action<TElement> initMethod)
+        where TElement : ScriptableObject
+    {
+        TElement newElement = ScriptableObject.CreateInstance<TElement>();
+        AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
+        newElement.name = "New Element";
+        initMethod(newElement);
+        arrayProp.AddToObjectArray(newElement);
     }
 }

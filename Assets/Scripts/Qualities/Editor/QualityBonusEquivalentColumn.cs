@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class QualityBonusEquivalentColumn : DoublePropertyColumn
 {
-    public QualityBonusEquivalentColumn () : base ("Equivalent Bonus", 110f, "description", "bonusEquivalent")
+    public QualityBonusEquivalentColumn () : base ("Equivalent Bonus", 110f, "m_Name", "bonusEquivalent")
     { }
 
 

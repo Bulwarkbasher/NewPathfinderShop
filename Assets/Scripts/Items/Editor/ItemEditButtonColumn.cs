@@ -6,7 +6,7 @@ using System;
 
 public class ItemEditButtonColumn : SinglePropertyColumn
 {
-    public ItemEditButtonColumn () : base ("Edit", 45f, "description")
+    public ItemEditButtonColumn () : base ("Edit", 45f, "m_Name")
     { }
 
 

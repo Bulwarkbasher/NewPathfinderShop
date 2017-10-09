@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// TODO: not happy with the way constraints work, redo?
 public class WeaponQuality : Quality
 {
     // Weapons this is applied to must have at least one of these

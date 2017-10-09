@@ -6,7 +6,8 @@ using System;
 
 public class ItemDescriptionColumn : SinglePropertyColumn
 {
-    public ItemDescriptionColumn () : base ("Description", 120f, "description")
+    public ItemDescriptionColumn()
+        : base("Name", 120f, "m_Name")
     { }
 
 

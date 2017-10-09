@@ -6,7 +6,8 @@ using System;
 
 public class EnumColumn<TEnum> : DoublePropertyColumn
 {
-    public EnumColumn (string name, float width, string enumPropName) : base(name, width, "description", enumPropName)
+    public EnumColumn(string name, float width, string enumPropName)
+        : base(name, width, "m_Name", enumPropName)
     {
         if (!typeof(TEnum).IsEnum)
             throw new UnityException("The type used to create this EnumColumn is not an enum.");

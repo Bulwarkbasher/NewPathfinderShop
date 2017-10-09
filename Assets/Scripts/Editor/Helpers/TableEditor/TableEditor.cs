@@ -142,11 +142,7 @@ public class TableEditor<TElement>
     {
         if (GUILayout.Button("Add"))
         {
-            TElement newElement = ScriptableObject.CreateInstance<TElement>();
-            newElement.hideFlags = HideFlags.HideInHierarchy;
-            AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
-            newElement.name = "New Element";
-            arrayProp.AddToObjectArray(newElement);
+            arrayProp.AddObjectAsSubAsset<TElement> (collectionAsset, true);
         }
     }
 }
