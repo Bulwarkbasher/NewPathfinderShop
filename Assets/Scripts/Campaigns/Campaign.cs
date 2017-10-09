@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
-public class Campaign : ScriptableObject, ISaveable
+public class Campaign : Saveable<Campaign>
 {
     public static Campaign Current
     {
@@ -12,69 +9,83 @@ public class Campaign : ScriptableObject, ISaveable
     }
 
     protected static Campaign current;
-    public string GetFolderPath() { return Application.persistentDataPath + "/Campaigns"; }
-    protected readonly static string[] k_JsonSplitter = { "###CampaignSplitter###", };
-
-    public static Campaign Create (string name, bool usesAutomaticBonusProgressionRules)
+    
+    public static Campaign Create (string name, bool usesAutomaticBonusProgressionRules, bool useMinimumCasterLevel, RarityWeighting rarityWeighting)
     {
         Campaign campaign = CreateInstance<Campaign> ();
 
-        if(campaign.CheckName (name) == SaveableExtensions.NameCheckResult.Bad)
+        if(CheckName (name) == NameCheckResult.Bad)
             throw new UnityException("Campaign name invalid, contains invalid characters.");
-        if(campaign.CheckName (name) == SaveableExtensions.NameCheckResult.IsDefault)
+        if(CheckName (name) == NameCheckResult.IsDefault)
             throw new UnityException("Campaign name invalid, name cannot start with Default");
         
         campaign.name = name;
         campaign.m_UsesAutomaticBonusProgressionRules = usesAutomaticBonusProgressionRules;
+        campaign.m_UsesMinimumCasterLevelForSpellContainerItems = useMinimumCasterLevel;
+        campaign.m_RarityWeighting = rarityWeighting;
+
+        Save(campaign);
+
         return campaign;
     }
 
-    public static string[] GetCampaignNames ()
+    public static Campaign Create (string name, bool usesAutomaticBonusProgressionRules, bool useMinimumCasterLevel)
     {
-        Campaign dummy = CreateInstance<Campaign> ();
-        return dummy.GetFileNames ();
+        return Create (name, usesAutomaticBonusProgressionRules, useMinimumCasterLevel, DefaultResourceHolder.DefaultRarityWeighting);
     }
 
-    public static void Load (string campaignName)
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        Campaign campaign = CreateInstance<Campaign> ();
+        name = splitJsonString[0];
+        m_UsesAutomaticBonusProgressionRules = Wrapper<bool>.CreateFromJsonString (splitJsonString[1]);
+        m_UsesMinimumCasterLevelForSpellContainerItems = Wrapper<bool>.CreateFromJsonString (splitJsonString[2]);
+        m_RarityWeighting = RarityWeighting.Load (splitJsonString[3]);
 
-        string[] splitJsonString = campaign.GetSplitJsonStringsFromFile (campaignName, k_JsonSplitter);
-        campaign.name = splitJsonString[0];
-
-        campaign.m_UsesAutomaticBonusProgressionRules = Wrapper<bool>.CreateFromJsonString (splitJsonString[1]);
-
-        campaign.settlements = new Settlement[splitJsonString.Length - 2];
-        for (int i = 0; i < campaign.settlements.Length; i++)
+        settlements = new Settlement[splitJsonString.Length - 4];
+        for (int i = 0; i < settlements.Length; i++)
         {
-            campaign.settlements[i] = Settlement.CreateFromJsonString(splitJsonString[i + 2]);
+            settlements[i] = Settlement.CreateFromJsonString(splitJsonString[i + 4]);
         }
         
-        current = campaign;
+        current = this;
     }
 
-    public static void Save()
+    protected override string GetJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
-        jsonString += Current.name + k_JsonSplitter[0];
+        jsonString += name + jsonSplitter[0];
+        jsonString += Wrapper<bool>.GetJsonString(m_UsesAutomaticBonusProgressionRules) + jsonSplitter[0];
+        jsonString += Wrapper<bool>.GetJsonString (m_UsesMinimumCasterLevelForSpellContainerItems) + jsonString[0];
+        jsonString += m_RarityWeighting.name + jsonString[0];
+        RarityWeighting.Save(m_RarityWeighting);
 
-        jsonString += Wrapper<bool>.GetJsonString(Current.m_UsesAutomaticBonusProgressionRules) + k_JsonSplitter[0];
-
-        for (int i = 0; i < Current.settlements.Length; i++)
+        for (int i = 0; i < settlements.Length; i++)
         {
-            jsonString += Settlement.GetJsonString(Current.settlements[i]) + k_JsonSplitter[0];
+            jsonString += Settlement.GetJsonString(settlements[i]) + jsonSplitter[0];
         }
 
-        Current.WriteJsonStringToFile (Current.name, jsonString);
+        return jsonString;
     }
-
-    public Settlement[] settlements = new Settlement[0];
 
     public static bool UsesAutomaticBonusProgressionRules
     {
         get { return Current.m_UsesAutomaticBonusProgressionRules; }
     }
 
-    private bool m_UsesAutomaticBonusProgressionRules;
+    public static bool UsesMinimumCasterLevelForSpellContainerItems
+    {
+        get { return Current.m_UsesMinimumCasterLevelForSpellContainerItems; }
+    }
+
+    public static RarityWeighting RarityWeighting
+    {
+        get { return Current.m_RarityWeighting; }
+    }
+
+    public Settlement[] settlements = new Settlement[0];
+
+    bool m_UsesAutomaticBonusProgressionRules;
+    bool m_UsesMinimumCasterLevelForSpellContainerItems;
+    RarityWeighting m_RarityWeighting;
 }

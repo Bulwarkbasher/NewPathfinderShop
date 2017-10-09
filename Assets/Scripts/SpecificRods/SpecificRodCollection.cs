@@ -14,6 +14,16 @@ public class SpecificRodCollection : SpecificItemCollection<SpecificRod>
         return SpecificRod.CreateRandom();
     }
 
+    public static void AddToShop(Shop shop, Availability stockAvailability)
+    {
+        shop.stockTypes |= Shop.StockType.Rod;
+
+        if (stockAvailability == null)
+            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Rod][shop.size];
+
+        shop.specificRodCollection = Create (stockAvailability);
+    }
+
     public static string GetJsonString(SpecificRodCollection specificRodCollection)
     {
         return "";

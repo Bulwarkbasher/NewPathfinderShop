@@ -2,7 +2,6 @@
 using System.IO;
 using UnityEngine;
 
-// TODO URGENT: inherit from this instead of implementing ISaveable
 public abstract class Saveable<TChild> : ScriptableObject
     where TChild : Saveable<TChild>
 {

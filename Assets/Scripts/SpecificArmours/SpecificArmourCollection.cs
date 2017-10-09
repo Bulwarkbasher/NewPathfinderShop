@@ -14,6 +14,22 @@ public class SpecificArmourCollection : SpecificItemCollection<SpecificArmour>
         return SpecificArmour.CreateRandom ();
     }
 
+    public static void AddToShop(Shop shop, Availability stockAvailability, ArmourCollection availableArmours, ArmourQualityCollection availableArmourQualities)
+    {
+        shop.stockTypes |= Shop.StockType.Armour;
+
+        if (stockAvailability == null)
+            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Armour][shop.size];
+
+        if (availableArmours == null)
+            availableArmours = DefaultResourceHolder.DefaultArmourCollection;
+
+        if (availableArmourQualities == null)
+            availableArmourQualities = DefaultResourceHolder.DefaultArmourQualityCollection;
+
+        shop.specificArmourCollection = Create(stockAvailability, availableArmours, availableArmourQualities);
+    }
+
     public static string GetJsonString(SpecificArmourCollection specificArmourCollection)
     {
         return "";

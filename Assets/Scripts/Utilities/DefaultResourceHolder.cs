@@ -18,6 +18,8 @@ public class DefaultResourceHolder : MonoBehaviour
     protected PerStockTypePerSizeAvailability m_DefaultPerStockTypePerSizeAvailability;
     [SerializeField]
     protected PerSizeRestockFrequencyModifiers m_DefaultPerSizeRestockFrequencyModifiers;
+    [SerializeField]
+    protected RarityWeighting m_DefaultRarityWeighting;
 
     [Header ("Items")]
     [SerializeField]
@@ -46,6 +48,11 @@ public class DefaultResourceHolder : MonoBehaviour
     public static PerSizeRestockFrequencyModifiers DefaultPerSizeRestockFrequencyModifiers
     {
         get { return Instance.m_DefaultPerSizeRestockFrequencyModifiers; }
+    }
+
+    public static RarityWeighting DefaultRarityWeighting
+    {
+        get { return Instance.m_DefaultRarityWeighting; }
     }
 
     public static ArmourCollection DefaultArmourCollection

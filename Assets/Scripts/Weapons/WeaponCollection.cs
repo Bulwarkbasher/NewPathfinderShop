@@ -43,7 +43,7 @@ public class WeaponCollection : Saveable<WeaponCollection>
             newWeapons[i] = weapons[oldWeaponIndex];
         }
     }
-
+    // TODO: involve rarity
     public Weapon PickWeapon(ref int budget)
     {
         if (weapons.Length == 0)

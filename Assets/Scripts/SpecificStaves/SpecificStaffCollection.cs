@@ -14,6 +14,16 @@ public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff>
         return SpecificStaff.CreateRandom();
     }
 
+    public static void AddToShop(Shop shop, Availability stockAvailability)
+    {
+        shop.stockTypes |= Shop.StockType.Staff;
+
+        if (stockAvailability == null)
+            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Staff][shop.size];
+
+        shop.specificStaffCollection = Create(stockAvailability);
+    }
+
     public static string GetJsonString(SpecificStaffCollection specificStaffCollection)
     {
         return "";

@@ -19,13 +19,23 @@ public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon>
 
         return newSpecificWeaponCollection;
     }
+
+    public static SpecificWeaponCollection Create (Shop.Size size)
+    {
+        SpecificWeaponCollection newSpecificWeaponCollection = CreateInstance<SpecificWeaponCollection>();
+        newSpecificWeaponCollection.stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Weapon][size];
+        newSpecificWeaponCollection.availableWeapons = DefaultResourceHolder.DefaultWeaponCollection;
+        newSpecificWeaponCollection.availableWeaponQualities = DefaultResourceHolder.DefaultWeaponQualityCollection;
+        newSpecificWeaponCollection.BuyStock();
+
+        return newSpecificWeaponCollection;
+    }
     
     protected override SpecificWeapon GetRandomSpecificItem (SpecificItem.PowerLevel powerLevel, int budget)
     {
         return SpecificWeapon.CreateRandom(powerLevel, budget, availableWeapons, availableWeaponQualities);
     }
 
-    // TODO NEXT: do this for all Collections that can be added to a shop
     public static void AddToShop(Shop shop, Availability stockAvailability, WeaponCollection availableWeapons, WeaponQualityCollection availableWeaponQualities)
     {
         shop.stockTypes |= Shop.StockType.Weapon;

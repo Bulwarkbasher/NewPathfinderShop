@@ -14,6 +14,16 @@ public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrou
         return SpecificWondrous.CreateRandom();
     }
 
+    public static void AddToShop(Shop shop, Availability stockAvailability)
+    {
+        shop.stockTypes |= Shop.StockType.Wand;
+
+        if (stockAvailability == null)
+            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Wand][shop.size];
+
+        shop.specificWondrousCollection = Create(stockAvailability);
+    }
+
     public static string GetJsonString (SpecificWondrousCollection specificWondrousCollection)
     {
         return "";

@@ -18,35 +18,10 @@ public class Item : ScriptableObject
         Mythical,
     }
 
-
     public string description;
     public int cost;
     public Rarity rarity;
     public int ulimateEquipmentPage;
-
-
-    private const int k_RarityEnumValueCount = 10;
-    private readonly Keyframe defaultCurveFirstKey = new Keyframe(0f, 1f, -1.5708f, -1.5708f);
-    private readonly Keyframe defaultCurveLastKey = new Keyframe(1f, 0f, -0.6f, -0.6f);
-    
-
-    public float RarityToWeight (AnimationCurve weightingCurve)
-    {
-        float time = ((float)((int)rarity)) / k_RarityEnumValueCount;
-        return weightingCurve.Evaluate(time);
-    }
-
-    // TODO: to draw curve at runtime use int values for rarity and draw a line renderer between each value
-    public float RarityToWeight ()
-    {
-        AnimationCurve defaultWeightCurve = new AnimationCurve
-        (
-            defaultCurveFirstKey,
-            defaultCurveLastKey
-        );
-        return RarityToWeight(defaultWeightCurve);
-    }
-
 
     public static Item PickItem (Item[] items)
     {
@@ -54,7 +29,7 @@ public class Item : ScriptableObject
 
         for (int i = 0; i < items.Length; i++)
         {
-            weightSum += items[i].RarityToWeight();
+            weightSum += Campaign.RarityWeighting.RarityToWeight(items[i].rarity);
         }
 
         float randomWeightSum = Random.Range(0f, weightSum);
@@ -62,7 +37,7 @@ public class Item : ScriptableObject
 
         for (int i = 0; i < items.Length; i++)
         {
-            weightCounter -= items[i].RarityToWeight();
+            weightCounter -= Campaign.RarityWeighting.RarityToWeight(items[i].rarity);
 
             if (weightCounter <= 0f)
             {
@@ -73,12 +48,10 @@ public class Item : ScriptableObject
         return null;
     }
 
-
     public static string GetJsonString (Item item)
     {
         return JsonUtility.ToJson(item);
     }
-
 
     public static Item CreateFromJsonString (string jsonString)
     {
