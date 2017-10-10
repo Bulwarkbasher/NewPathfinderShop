@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-// TODO: change description to use name instead
-// TODO URGENT: since removing description in favour of m_Name, name is no longer serialized by json
 // TODO: update which objects inherit from Item, should be more
 public class Item : ScriptableObject
 {

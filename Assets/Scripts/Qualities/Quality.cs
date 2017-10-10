@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 
 public class Quality : Item
@@ -34,6 +35,7 @@ public class Quality : Item
     public QualityType qualityType;
     public BonusEquivalent bonusEquivalent;
 
+    static readonly string[] k_JsonSplitter = { "###QualitySplitter###", };
 
     public static Quality CreateQuality (int cost, bool isStaticBonus, BonusEquivalent bonusEquivalent, int ultimateEquipmentPage)
     {
@@ -44,17 +46,30 @@ public class Quality : Item
         return newQuality;
     }
 
-    // TODO: change these to use Item.GetJsonString etc
     public static string GetJsonString(Quality quality)
     {
-        return JsonUtility.ToJson(quality);
+        string jsonString = Item.GetJsonString (quality);
+
+        jsonString += Wrapper<int>.GetJsonString((int)quality.qualityType) + k_JsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)quality.bonusEquivalent) + k_JsonSplitter[0];
+        
+        return jsonString;
     }
 
 
     public new static Quality CreateFromJsonString(string jsonString)
     {
+        string[] splitJsonString = jsonString.Split(k_JsonSplitter, StringSplitOptions.RemoveEmptyEntries);
+        Item qualityBase = Item.CreateFromJsonString(splitJsonString[0]);
         Quality quality = CreateInstance<Quality>();
-        JsonUtility.FromJsonOverwrite(jsonString, quality);
+
+        quality.name = qualityBase.name;
+        quality.cost = qualityBase.cost;
+        quality.rarity = qualityBase.rarity;
+        quality.ulimateEquipmentPage = qualityBase.ulimateEquipmentPage;
+        quality.qualityType = (QualityType)Wrapper<int>.CreateFromJsonString (splitJsonString[1]);
+        quality.bonusEquivalent = (BonusEquivalent)Wrapper<int>.CreateFromJsonString(splitJsonString[2]);
+
         return quality;
     }
 }

@@ -34,40 +34,6 @@ public class Campaign : Saveable<Campaign>
         return Create (name, usesAutomaticBonusProgressionRules, useMinimumCasterLevel, DefaultResourceHolder.DefaultRarityWeighting);
     }
 
-    protected override void SetupFromSplitJsonString(string[] splitJsonString)
-    {
-        name = splitJsonString[0];
-        m_UsesAutomaticBonusProgressionRules = Wrapper<bool>.CreateFromJsonString (splitJsonString[1]);
-        m_UsesMinimumCasterLevelForSpellContainerItems = Wrapper<bool>.CreateFromJsonString (splitJsonString[2]);
-        m_RarityWeighting = RarityWeighting.Load (splitJsonString[3]);
-
-        settlements = new Settlement[splitJsonString.Length - 4];
-        for (int i = 0; i < settlements.Length; i++)
-        {
-            settlements[i] = Settlement.CreateFromJsonString(splitJsonString[i + 4]);
-        }
-        
-        current = this;
-    }
-
-    protected override string GetJsonString(string[] jsonSplitter)
-    {
-        string jsonString = "";
-
-        jsonString += name + jsonSplitter[0];
-        jsonString += Wrapper<bool>.GetJsonString(m_UsesAutomaticBonusProgressionRules) + jsonSplitter[0];
-        jsonString += Wrapper<bool>.GetJsonString (m_UsesMinimumCasterLevelForSpellContainerItems) + jsonString[0];
-        jsonString += m_RarityWeighting.name + jsonString[0];
-        RarityWeighting.Save(m_RarityWeighting);
-
-        for (int i = 0; i < settlements.Length; i++)
-        {
-            jsonString += Settlement.GetJsonString(settlements[i]) + jsonSplitter[0];
-        }
-
-        return jsonString;
-    }
-
     public static bool UsesAutomaticBonusProgressionRules
     {
         get { return Current.m_UsesAutomaticBonusProgressionRules; }
@@ -88,4 +54,46 @@ public class Campaign : Saveable<Campaign>
     bool m_UsesAutomaticBonusProgressionRules;
     bool m_UsesMinimumCasterLevelForSpellContainerItems;
     RarityWeighting m_RarityWeighting;
+
+    public void PassTime (int daysPassed)
+    {
+        for (int i = 0; i < settlements.Length; i++)
+        {
+            settlements[i].PassTime (daysPassed);
+        }
+    }
+
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
+    {
+        name = splitJsonString[0];
+        m_UsesAutomaticBonusProgressionRules = Wrapper<bool>.CreateFromJsonString(splitJsonString[1]);
+        m_UsesMinimumCasterLevelForSpellContainerItems = Wrapper<bool>.CreateFromJsonString(splitJsonString[2]);
+        m_RarityWeighting = RarityWeighting.Load(splitJsonString[3]);
+
+        settlements = new Settlement[splitJsonString.Length - 4];
+        for (int i = 0; i < settlements.Length; i++)
+        {
+            settlements[i] = Settlement.CreateFromJsonString(splitJsonString[i + 4]);
+        }
+
+        current = this;
+    }
+
+    protected override string GetJsonString(string[] jsonSplitter)
+    {
+        string jsonString = "";
+
+        jsonString += name + jsonSplitter[0];
+        jsonString += Wrapper<bool>.GetJsonString(m_UsesAutomaticBonusProgressionRules) + jsonSplitter[0];
+        jsonString += Wrapper<bool>.GetJsonString(m_UsesMinimumCasterLevelForSpellContainerItems) + jsonString[0];
+        jsonString += m_RarityWeighting.name + jsonString[0];
+        RarityWeighting.Save(m_RarityWeighting);
+
+        for (int i = 0; i < settlements.Length; i++)
+        {
+            jsonString += Settlement.GetJsonString(settlements[i]) + jsonSplitter[0];
+        }
+
+        return jsonString;
+    }
 }

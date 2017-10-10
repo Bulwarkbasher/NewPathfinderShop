@@ -40,6 +40,11 @@ public class Availability
         return RandomMinorTotalBudget() + RandomMediumTotalBudget() + RandomMajorTotalBudget();
     }
 
+    public int MaxTotalBudget ()
+    {
+        return budget.minor.max + budget.medium.max + budget.major.max;
+    }
+
 
     public static string GetJsonString (Availability availability)
     {

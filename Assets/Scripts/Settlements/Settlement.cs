@@ -95,11 +95,11 @@ public class Settlement : ScriptableObject
         newShops[shops.Length] = Shop.Create (shopName, shopNotes, shopSize);
     }
 
-    public void Restock (int daysSinceLastVisit)
+    public void PassTime (int daysPassed)
     {
         for (int i = 0; i < shops.Length; i++)
         {
-            shops[i].Restock (daysSinceLastVisit);
+            shops[i].PassTime (daysPassed);
         }
     }
 }

@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 
-// TODO: shops should remember when they last restocked and count from then
 // TODO: have a running gold total for shops based on what they're thoeretical stock total should be
+// TODO: have an additional setting for the amount of additional money shops have based on size?
 public class Shop : ScriptableObject
 {
     public enum Size
@@ -42,6 +40,7 @@ public class Shop : ScriptableObject
     public Size size;
     public StockType stockTypes;
     public float restockFrequencyModifier;
+    public int daysSinceLastRestock;
 
     public SpecificArmourCollection specificArmourCollection;
     public SpecificPotionCollection specificPotionCollection;
@@ -52,7 +51,6 @@ public class Shop : ScriptableObject
     public SpecificWandCollection specificWandCollection;
     public SpecificWeaponCollection specificWeaponCollection;
     public SpecificWondrousCollection specificWondrousCollection;
-
 
     public static Shop Create (string name, string notes, Size shopSize, float restockFrequencyModifier)
     {
@@ -96,42 +94,73 @@ public class Shop : ScriptableObject
         return null;
     }
 
-    public void Restock(int daysSinceLastVisit)
+    public void PassTime (int daysPassed)
     {
-        int restockCount = 0;
-        int dayCounter = daysSinceLastVisit;
-
+        int totalDaysSinceLastRestock = daysPassed + daysSinceLastRestock;
         RestockSettings restockSettings = GetLocation ().RestockSettings;
 
-        dayCounter -= Mathf.FloorToInt(restockSettings.days.Random() * restockFrequencyModifier);
-
-        while (dayCounter > 0)
+        int daysUntilRestock = Mathf.FloorToInt(restockSettings.days.Random() * restockFrequencyModifier);
+        while (totalDaysSinceLastRestock - daysUntilRestock > 0)
         {
-            restockCount++;
-            dayCounter -= Mathf.FloorToInt(restockSettings.days.Random() * restockFrequencyModifier);
+            Restock (restockSettings);
+            totalDaysSinceLastRestock -= daysUntilRestock;
+            daysUntilRestock = Mathf.FloorToInt(restockSettings.days.Random() * restockFrequencyModifier);
         }
 
-        for (int i = 0; i < restockCount; i++)
-        {
-            if ((stockTypes | StockType.Armour) == stockTypes)
-                specificArmourCollection.Restock(restockSettings);
-            if ((stockTypes | StockType.Potion) == stockTypes)
-                specificPotionCollection.Restock(restockSettings);
-            if ((stockTypes | StockType.Ring) == stockTypes)
-                specificRingCollection.Restock (restockSettings);
-            if ((stockTypes | StockType.Rod) == stockTypes)
-                specificRodCollection.Restock(restockSettings);
-            if ((stockTypes | StockType.Scroll) == stockTypes)
-                specificScrollCollection.Restock(restockSettings);
-            if ((stockTypes | StockType.Staff) == stockTypes)
-                specificStaffCollection.Restock(restockSettings);
-            if ((stockTypes | StockType.Wand) == stockTypes)
-                specificWandCollection.Restock(restockSettings);
-            if ((stockTypes | StockType.Weapon) == stockTypes)
-                specificWeaponCollection.Restock(restockSettings);
-            if ((stockTypes | StockType.Wondrous) == stockTypes)
-                specificWondrousCollection.Restock(restockSettings);
-        }        
+        daysSinceLastRestock = totalDaysSinceLastRestock;
+        // TODO: calculate ready money here based on total value of stock compared to the total value of allowed stock
+    }
+
+    protected void Restock(RestockSettings restockSettings)
+    {
+        if ((stockTypes | StockType.Armour) == stockTypes)
+            specificArmourCollection.Restock(restockSettings);
+        if ((stockTypes | StockType.Potion) == stockTypes)
+            specificPotionCollection.Restock(restockSettings);
+        if ((stockTypes | StockType.Ring) == stockTypes)
+            specificRingCollection.Restock(restockSettings);
+        if ((stockTypes | StockType.Rod) == stockTypes)
+            specificRodCollection.Restock(restockSettings);
+        if ((stockTypes | StockType.Scroll) == stockTypes)
+            specificScrollCollection.Restock(restockSettings);
+        if ((stockTypes | StockType.Staff) == stockTypes)
+            specificStaffCollection.Restock(restockSettings);
+        if ((stockTypes | StockType.Wand) == stockTypes)
+            specificWandCollection.Restock(restockSettings);
+        if ((stockTypes | StockType.Weapon) == stockTypes)
+            specificWeaponCollection.Restock(restockSettings);
+        if ((stockTypes | StockType.Wondrous) == stockTypes)
+            specificWondrousCollection.Restock(restockSettings);       
+    }
+
+    protected int GetTotalStockValue ()
+    {
+        int totalStockValue = 0;
+        totalStockValue += specificArmourCollection.GetTotalCost ();
+        totalStockValue += specificPotionCollection.GetTotalCost();
+        totalStockValue += specificRingCollection.GetTotalCost();
+        totalStockValue += specificRodCollection.GetTotalCost();
+        totalStockValue += specificScrollCollection.GetTotalCost();
+        totalStockValue += specificStaffCollection.GetTotalCost();
+        totalStockValue += specificWandCollection.GetTotalCost();
+        totalStockValue += specificWeaponCollection.GetTotalCost();
+        totalStockValue += specificWondrousCollection.GetTotalCost();
+        return totalStockValue;
+    }
+
+    protected int GetMaxPossibleStockValue ()
+    {
+        int maxStockValue = 0;
+        maxStockValue += specificArmourCollection.stockAvailability.MaxTotalBudget ();
+        maxStockValue += specificPotionCollection.stockAvailability.MaxTotalBudget ();
+        maxStockValue += specificRingCollection.stockAvailability.MaxTotalBudget ();
+        maxStockValue += specificRodCollection.stockAvailability.MaxTotalBudget ();
+        maxStockValue += specificScrollCollection.stockAvailability.MaxTotalBudget ();
+        maxStockValue += specificStaffCollection.stockAvailability.MaxTotalBudget ();
+        maxStockValue += specificWandCollection.stockAvailability.MaxTotalBudget ();
+        maxStockValue += specificWeaponCollection.stockAvailability.MaxTotalBudget ();
+        maxStockValue += specificWondrousCollection.stockAvailability.MaxTotalBudget();
+        return maxStockValue;
     }
 
     public static string GetJsonString (Shop shop)
@@ -143,6 +172,7 @@ public class Shop : ScriptableObject
         jsonString += Wrapper<int>.GetJsonString((int)shop.size) + k_JsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)shop.stockTypes) + k_JsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString (shop.restockFrequencyModifier) + k_JsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString (shop.daysSinceLastRestock) + k_JsonSplitter[0];
 
         jsonString += SpecificArmourCollection.GetJsonString(shop.specificArmourCollection) + k_JsonSplitter[0];
         jsonString += SpecificPotionCollection.GetJsonString(shop.specificPotionCollection) + k_JsonSplitter[0];
@@ -168,16 +198,17 @@ public class Shop : ScriptableObject
         shop.size = (Size)Wrapper<int>.CreateFromJsonString (splitJsonString[2]);
         shop.stockTypes = (StockType)Wrapper<int>.CreateFromJsonString (splitJsonString[3]);
         shop.restockFrequencyModifier = Wrapper<float>.CreateFromJsonString (splitJsonString[4]);
+        shop.daysSinceLastRestock = Wrapper<int>.CreateFromJsonString (splitJsonString[5]);
 
-        shop.specificArmourCollection = SpecificArmourCollection.CreateFromJsonString(splitJsonString[5]);
-        shop.specificPotionCollection = SpecificPotionCollection.CreateFromJsonString(splitJsonString[6]);
-        shop.specificRingCollection = SpecificRingCollection.CreateFromJsonString (splitJsonString[7]);
-        shop.specificRodCollection = SpecificRodCollection.CreateFromJsonString (splitJsonString[8]);
-        shop.specificScrollCollection = SpecificScrollCollection.CreateFromJsonString (splitJsonString[9]);
-        shop.specificStaffCollection = SpecificStaffCollection.CreateFromJsonString (splitJsonString[10]);
-        shop.specificWandCollection = SpecificWandCollection.CreateFromJsonString (splitJsonString[11]);
-        shop.specificWeaponCollection = SpecificWeaponCollection.CreateFromJsonString(splitJsonString[12]);
-        shop.specificWondrousCollection = SpecificWondrousCollection.CreateFromJsonString (splitJsonString[13]);
+        shop.specificArmourCollection = SpecificArmourCollection.CreateFromJsonString(splitJsonString[6]);
+        shop.specificPotionCollection = SpecificPotionCollection.CreateFromJsonString(splitJsonString[7]);
+        shop.specificRingCollection = SpecificRingCollection.CreateFromJsonString (splitJsonString[8]);
+        shop.specificRodCollection = SpecificRodCollection.CreateFromJsonString (splitJsonString[9]);
+        shop.specificScrollCollection = SpecificScrollCollection.CreateFromJsonString (splitJsonString[10]);
+        shop.specificStaffCollection = SpecificStaffCollection.CreateFromJsonString (splitJsonString[11]);
+        shop.specificWandCollection = SpecificWandCollection.CreateFromJsonString (splitJsonString[12]);
+        shop.specificWeaponCollection = SpecificWeaponCollection.CreateFromJsonString(splitJsonString[13]);
+        shop.specificWondrousCollection = SpecificWondrousCollection.CreateFromJsonString (splitJsonString[14]);
 
         return shop;
     }

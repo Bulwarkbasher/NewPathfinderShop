@@ -93,6 +93,8 @@ public class Weapon : Item
     public MaterialConstraints materialConstraints;
     public SpecialConstraints specialConstraints;
 
+    static readonly string[] k_JsonSplitter = { "###WeaponSplitter###", };
+
     public static Weapon Create (string name, int cost, Rarity rarity, int page,
         WeaponType type, Handedness handedness, DamageType damageType, Special special,
         AttackConstraints attackConstraints, MaterialConstraints materialConstraints,
@@ -113,16 +115,39 @@ public class Weapon : Item
         return newWeapon;
     }
 
-    // TODO: change these to use Item.GetJsonString etc
     public static string GetJsonString (Weapon weapon)
     {
-        return JsonUtility.ToJson(weapon);
+        string jsonString = Item.GetJsonString (weapon);
+
+        jsonString += Wrapper<int>.GetJsonString((int)weapon.weaponType) + k_JsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)weapon.handedness) + k_JsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)weapon.damageType) + k_JsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)weapon.special) + k_JsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)weapon.attackConstraints) + k_JsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)weapon.materialConstraints) + k_JsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)weapon.specialConstraints) + k_JsonSplitter[0];
+
+        return jsonString;
     }
 
     public new static Weapon CreateFromJsonString (string jsonString)
     {
+        string[] splitJsonString = jsonString.Split(k_JsonSplitter, StringSplitOptions.RemoveEmptyEntries);
+        Item weaponBase = Item.CreateFromJsonString (splitJsonString[0]);
         Weapon weapon = CreateInstance<Weapon>();
-        JsonUtility.FromJsonOverwrite(jsonString, weapon);
+
+        weapon.name = weaponBase.name;
+        weapon.cost = weaponBase.cost;
+        weapon.rarity = weaponBase.rarity;
+        weapon.ulimateEquipmentPage = weaponBase.ulimateEquipmentPage;
+        weapon.weaponType = (WeaponType)Wrapper<int>.CreateFromJsonString (splitJsonString[1]);
+        weapon.handedness = (Handedness)Wrapper<int>.CreateFromJsonString (splitJsonString[2]);
+        weapon.damageType = (DamageType)Wrapper<int>.CreateFromJsonString (splitJsonString[3]);
+        weapon.special = (Special)Wrapper<int>.CreateFromJsonString (splitJsonString[4]);
+        weapon.attackConstraints = (AttackConstraints)Wrapper<int>.CreateFromJsonString (splitJsonString[5]);
+        weapon.materialConstraints = (MaterialConstraints)Wrapper<int>.CreateFromJsonString (splitJsonString[6]);
+        weapon.specialConstraints = (SpecialConstraints)Wrapper<int>.CreateFromJsonString(splitJsonString[7]);
+
         return weapon;
     }
 }
