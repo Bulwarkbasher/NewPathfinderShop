@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+// TODO: shops should remember when they last restocked and count from then
+// TODO: have a running gold total for shops based on what they're thoeretical stock total should be
 public class Shop : ScriptableObject
 {
     public enum Size
