@@ -3,44 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-[Serializable]
-public class StratRanges
+public class StratRanges : Jsonable<StratRanges>
 {
     public Range minor;
     public Range medium;
     public Range major;
 
-
-    private static readonly string[] k_JsonSplitter =
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
-        "###StratRangesSplitter###",
-    };
+        string jsonString = "";
 
+        jsonString += Range.GetJsonString(minor) + jsonSplitter[0];
+        jsonString += Range.GetJsonString(medium) + jsonSplitter[0];
+        jsonString += Range.GetJsonString(major) + jsonSplitter[0];
 
-    public static string GetJsonString (StratRanges stratRanges)
-    {
-        string minorJson = Range.GetJsonString(stratRanges.minor);
-        string mediumJson = Range.GetJsonString(stratRanges.medium);
-        string majorJson = Range.GetJsonString(stratRanges.major);
-
-        return minorJson + k_JsonSplitter[0] + mediumJson + k_JsonSplitter[0] + majorJson;
+        return jsonString;
     }
 
 
-    public static StratRanges CreateFromJsonString (string jsonString)
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        string[] splitJsonString = jsonString.Split(k_JsonSplitter, System.StringSplitOptions.RemoveEmptyEntries);
-
-        string minorString = splitJsonString[0];
-        string mediumString = splitJsonString[1];
-        string majorString = splitJsonString[2];
-
-        StratRanges stratRanges = new StratRanges();
-
-        stratRanges.minor = Range.CreateFromJsonString(minorString);
-        stratRanges.medium = Range.CreateFromJsonString(mediumString);
-        stratRanges.major = Range.CreateFromJsonString(majorString);
-
-        return stratRanges;
+        minor = Range.CreateFromJsonString(splitJsonString[0]);
+        medium = Range.CreateFromJsonString(splitJsonString[1]);
+        major = Range.CreateFromJsonString(splitJsonString[2]);
     }
 }

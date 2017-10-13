@@ -50,7 +50,7 @@ public class RarityWeighting : Saveable<RarityWeighting>
         m_WeightingCurve = new AnimationCurve(keyframes);
     }
 
-    protected override string GetJsonString (string[] jsonSplitter)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 

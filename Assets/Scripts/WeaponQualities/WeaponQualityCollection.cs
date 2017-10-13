@@ -70,10 +70,10 @@ public class WeaponQualityCollection : Saveable<WeaponQualityCollection>
         }
         availableQualities = constrainedWeaponQualityList.ToArray();
 
-        return Item.PickItem(availableQualities) as WeaponQuality;
+        return WeaponQuality.PickItem(availableQualities) as WeaponQuality;
     }
 
-    protected override string GetJsonString(string[] jsonSplitter)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 

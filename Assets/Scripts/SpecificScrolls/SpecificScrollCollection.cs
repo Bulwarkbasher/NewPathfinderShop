@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll>
+public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll, SpecificScrollCollection>
 {
     public static SpecificScrollCollection Create (Availability stockAvailability, SpellCollection spellCollection)
     {
         return CreateInstance<SpecificScrollCollection> ();
     }
 
-    protected override SpecificScroll GetRandomSpecificItem (SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificScroll GetRandomSpecificItem(SpecificScroll.PowerLevel powerLevel, int budget)
     {
         return SpecificScroll.CreateRandom ();
     }
@@ -27,13 +27,13 @@ public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll>
         shop.specificScrollCollection = Create(stockAvailability, availableSpells);
     }
 
-    public static string GetJsonString(SpecificScrollCollection specificScrollCollection)
+    protected override void SetupFromSplitJsonString (string[] splitJsonString)
     {
-        return "";
+        throw new System.NotImplementedException ();
     }
 
-    public static SpecificScrollCollection CreateFromJsonString(string jsonString)
+    protected override string ConvertToJsonString (string[] jsonSplitter)
     {
-        return CreateInstance<SpecificScrollCollection>();
+        throw new System.NotImplementedException ();
     }
 }

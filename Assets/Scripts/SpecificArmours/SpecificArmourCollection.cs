@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecificArmourCollection : SpecificItemCollection<SpecificArmour>
+public class SpecificArmourCollection : SpecificItemCollection<SpecificArmour, SpecificArmourCollection>
 {
     public static SpecificArmourCollection Create(Availability stockAvailability, ArmourCollection availableArmours, ArmourQualityCollection availableArmourQualities)
     {
         return CreateInstance<SpecificArmourCollection>();
     }
 
-    protected override SpecificArmour GetRandomSpecificItem (SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificArmour GetRandomSpecificItem (SpecificArmour.PowerLevel powerLevel, int budget)
     {
         return SpecificArmour.CreateRandom ();
     }
@@ -30,13 +30,13 @@ public class SpecificArmourCollection : SpecificItemCollection<SpecificArmour>
         shop.specificArmourCollection = Create(stockAvailability, availableArmours, availableArmourQualities);
     }
 
-    public static string GetJsonString(SpecificArmourCollection specificArmourCollection)
+    protected override void SetupFromSplitJsonString (string[] splitJsonString)
     {
-        return "";
+        throw new System.NotImplementedException ();
     }
 
-    public static SpecificArmourCollection CreateFromJsonString(string jsonString)
+    protected override string ConvertToJsonString (string[] jsonSplitter)
     {
-        return CreateInstance<SpecificArmourCollection>();
+        throw new System.NotImplementedException ();
     }
 }

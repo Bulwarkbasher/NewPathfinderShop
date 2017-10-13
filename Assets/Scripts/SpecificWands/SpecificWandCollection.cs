@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecificWandCollection : SpecificItemCollection<SpecificWand>
+public class SpecificWandCollection : SpecificItemCollection<SpecificWand, SpecificWandCollection>
 {
     public static SpecificWandCollection Create(Availability stockAvailability, SpellCollection availableSpells)
     {
         return CreateInstance<SpecificWandCollection>();
     }
 
-    protected override SpecificWand GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificWand GetRandomSpecificItem(SpecificWand.PowerLevel powerLevel, int budget)
     {
         return SpecificWand.CreateRandom();
     }
@@ -27,13 +27,13 @@ public class SpecificWandCollection : SpecificItemCollection<SpecificWand>
         shop.specificWandCollection = Create(stockAvailability, availableSpells);
     }
 
-    public static string GetJsonString(SpecificWandCollection specificWandCollection)
+    protected override void SetupFromSplitJsonString (string[] splitJsonString)
     {
-        return "";
+        throw new System.NotImplementedException ();
     }
 
-    public static SpecificWandCollection CreateFromJsonString(string jsonString)
+    protected override string ConvertToJsonString (string[] jsonSplitter)
     {
-        return CreateInstance<SpecificWandCollection>();
+        throw new System.NotImplementedException ();
     }
 }

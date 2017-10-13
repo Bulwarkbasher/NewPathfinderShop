@@ -62,7 +62,7 @@ public class SpellCollection : Saveable<SpellCollection>
         return chosenWeapon;
     }*/
 
-    protected override string GetJsonString(string[] jsonSplitter)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 
-public class Spell : ScriptableObject
+public class Spell : Jsonable<Spell>
 {
     public enum Book
     {
@@ -76,8 +76,6 @@ public class Spell : ScriptableObject
     public Book book;
     public int page;
     public int materialCost;
-
-    static readonly string[] k_JsonSplitter = { "###SpellSplitter###" };
 
     public static Spell Create (string name, Dictionary<Container, Allowance> allowances, Dictionary<Container, Item.Rarity> rarities,
         Dictionary<Creator, int> creatorLevels, Book book, int page, int materialCost)
@@ -174,63 +172,57 @@ public class Spell : ScriptableObject
         return null;
     }
 
-    public static string GetJsonString(Spell spell)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
-        jsonString += spell.name + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)spell.allowances[Container.Potion]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)spell.allowances[Container.Scroll]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)spell.allowances[Container.Wand]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)spell.rarities[Container.Potion]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)spell.rarities[Container.Scroll]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)spell.rarities[Container.Wand]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.creatorLevels[Creator.Alc]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.creatorLevels[Creator.Brd]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.creatorLevels[Creator.ClrOcl]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.creatorLevels[Creator.Drd]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.creatorLevels[Creator.Inq]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.creatorLevels[Creator.Mag]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.creatorLevels[Creator.Pal]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.creatorLevels[Creator.Rgr]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.creatorLevels[Creator.SorWiz]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.creatorLevels[Creator.Sum]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.creatorLevels[Creator.Wit]) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)spell.book) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.page) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(spell.materialCost) + k_JsonSplitter[0];
+        jsonString += name + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)allowances[Container.Potion]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)allowances[Container.Scroll]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)allowances[Container.Wand]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)rarities[Container.Potion]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)rarities[Container.Scroll]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)rarities[Container.Wand]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Alc]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Brd]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.ClrOcl]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Drd]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Inq]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Mag]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Pal]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Rgr]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.SorWiz]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Sum]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Wit]) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)book) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(page) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(materialCost) + jsonSplitter[0];
 
         return jsonString;
     }
 
-    public static Spell CreateFromJsonString(string jsonString)
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        string[] splitJsonString = jsonString.Split(k_JsonSplitter, StringSplitOptions.RemoveEmptyEntries);
-
-        Spell spell = CreateInstance<Spell>();
-
-        spell.name = splitJsonString[0];
-        spell.allowances[Container.Potion] = (Allowance)Wrapper<int>.CreateFromJsonString (splitJsonString[1]);
-        spell.allowances[Container.Scroll] = (Allowance)Wrapper<int>.CreateFromJsonString(splitJsonString[2]);
-        spell.allowances[Container.Wand] = (Allowance)Wrapper<int>.CreateFromJsonString(splitJsonString[3]);
-        spell.rarities[Container.Potion] = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[4]);
-        spell.rarities[Container.Scroll] = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[5]);
-        spell.rarities[Container.Wand] = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[6]);
-        spell.creatorLevels[Creator.Alc] = Wrapper<int>.CreateFromJsonString (splitJsonString[7]);
-        spell.creatorLevels[Creator.Brd] = Wrapper<int>.CreateFromJsonString (splitJsonString[8]);
-        spell.creatorLevels[Creator.ClrOcl] = Wrapper<int>.CreateFromJsonString (splitJsonString[9]);
-        spell.creatorLevels[Creator.Drd] = Wrapper<int>.CreateFromJsonString (splitJsonString[10]);
-        spell.creatorLevels[Creator.Inq] = Wrapper<int>.CreateFromJsonString (splitJsonString[11]);
-        spell.creatorLevels[Creator.Mag] = Wrapper<int>.CreateFromJsonString (splitJsonString[12]);
-        spell.creatorLevels[Creator.Pal] = Wrapper<int>.CreateFromJsonString (splitJsonString[13]);
-        spell.creatorLevels[Creator.Rgr] = Wrapper<int>.CreateFromJsonString (splitJsonString[14]);
-        spell.creatorLevels[Creator.SorWiz] = Wrapper<int>.CreateFromJsonString (splitJsonString[15]);
-        spell.creatorLevels[Creator.Sum] = Wrapper<int>.CreateFromJsonString (splitJsonString[16]);
-        spell.creatorLevels[Creator.Wit] = Wrapper<int>.CreateFromJsonString(splitJsonString[17]);
-        spell.book = (Book)Wrapper<int>.CreateFromJsonString (splitJsonString[18]);
-        spell.page = Wrapper<int>.CreateFromJsonString (splitJsonString[19]);
-        spell.materialCost = Wrapper<int>.CreateFromJsonString (splitJsonString[20]);
-        
-        return spell;
+        name = splitJsonString[0];
+        allowances[Container.Potion] = (Allowance)Wrapper<int>.CreateFromJsonString (splitJsonString[1]);
+        allowances[Container.Scroll] = (Allowance)Wrapper<int>.CreateFromJsonString(splitJsonString[2]);
+        allowances[Container.Wand] = (Allowance)Wrapper<int>.CreateFromJsonString(splitJsonString[3]);
+        rarities[Container.Potion] = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[4]);
+        rarities[Container.Scroll] = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[5]);
+        rarities[Container.Wand] = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[6]);
+        creatorLevels[Creator.Alc] = Wrapper<int>.CreateFromJsonString (splitJsonString[7]);
+        creatorLevels[Creator.Brd] = Wrapper<int>.CreateFromJsonString (splitJsonString[8]);
+        creatorLevels[Creator.ClrOcl] = Wrapper<int>.CreateFromJsonString (splitJsonString[9]);
+        creatorLevels[Creator.Drd] = Wrapper<int>.CreateFromJsonString (splitJsonString[10]);
+        creatorLevels[Creator.Inq] = Wrapper<int>.CreateFromJsonString (splitJsonString[11]);
+        creatorLevels[Creator.Mag] = Wrapper<int>.CreateFromJsonString (splitJsonString[12]);
+        creatorLevels[Creator.Pal] = Wrapper<int>.CreateFromJsonString (splitJsonString[13]);
+        creatorLevels[Creator.Rgr] = Wrapper<int>.CreateFromJsonString (splitJsonString[14]);
+        creatorLevels[Creator.SorWiz] = Wrapper<int>.CreateFromJsonString (splitJsonString[15]);
+        creatorLevels[Creator.Sum] = Wrapper<int>.CreateFromJsonString (splitJsonString[16]);
+        creatorLevels[Creator.Wit] = Wrapper<int>.CreateFromJsonString(splitJsonString[17]);
+        book = (Book)Wrapper<int>.CreateFromJsonString (splitJsonString[18]);
+        page = Wrapper<int>.CreateFromJsonString (splitJsonString[19]);
+        materialCost = Wrapper<int>.CreateFromJsonString (splitJsonString[20]);
     }
 }

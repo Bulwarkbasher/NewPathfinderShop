@@ -59,13 +59,13 @@ public class WeaponCollection : Saveable<WeaponCollection>
         
         Weapon[] affordableWeapons = affordableWeaponList.ToArray();
 
-        Weapon chosenWeapon = Item.PickItem(affordableWeapons) as Weapon;
+        Weapon chosenWeapon = Weapon.PickItem(affordableWeapons);
         budget -= chosenWeapon.cost;
 
         return chosenWeapon;
     }
 
-    protected override string GetJsonString(string[] jsonSplitter)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 
-public abstract class SpecificItemCollection<TSpecificItem> : ScriptableObject
-    where TSpecificItem : SpecificItem
+public abstract class SpecificItemCollection<TSpecificItem, TChild> : Jsonable<TChild>
+    where TSpecificItem : SpecificItem<TSpecificItem>
+    where TChild : Jsonable<TChild>
 {
     public Availability stockAvailability;
     public TSpecificItem[] specificItems = new TSpecificItem[0];
@@ -16,7 +17,7 @@ public abstract class SpecificItemCollection<TSpecificItem> : ScriptableObject
         return total;
     }
 
-    public int GetTotalCost(SpecificItem.PowerLevel powerLevel)
+    public int GetTotalCost(SpecificItem<TSpecificItem>.PowerLevel powerLevel)
     {
         int total = 0;
         for (int i = 0; i < specificItems.Length; i++)
@@ -32,7 +33,7 @@ public abstract class SpecificItemCollection<TSpecificItem> : ScriptableObject
         return specificItems.Length;
     }
 
-    public int GetTotalCount(SpecificItem.PowerLevel powerLevel)
+    public int GetTotalCount(SpecificItem<TSpecificItem>.PowerLevel powerLevel)
     {
         int total = 0;
         for (int i = 0; i < specificItems.Length; i++)
@@ -54,7 +55,7 @@ public abstract class SpecificItemCollection<TSpecificItem> : ScriptableObject
         specificItems = newSpecificItems;
     }
 
-    public void AddRandom(SpecificItem.PowerLevel powerLevel, int budget)
+    public void AddRandom(SpecificItem<TSpecificItem>.PowerLevel powerLevel, int budget)
     {
         TSpecificItem[] newSpecificWeapons = new TSpecificItem[specificItems.Length + 1];
         for (int i = 0; i < specificItems.Length; i++)
@@ -83,7 +84,7 @@ public abstract class SpecificItemCollection<TSpecificItem> : ScriptableObject
         specificItems[index] = specificItem;
     }
 
-    public void ReplaceWithRandom (int index, SpecificItem.PowerLevel powerLevel, int budget)
+    public void ReplaceWithRandom(int index, SpecificItem<TSpecificItem>.PowerLevel powerLevel, int budget)
     {
         specificItems[index] = GetRandomSpecificItem (powerLevel, budget);
     }
@@ -127,12 +128,12 @@ public abstract class SpecificItemCollection<TSpecificItem> : ScriptableObject
 
     protected void BuyStock()
     {
-        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Minor, stockAvailability.stock.minor, stockAvailability.budget.minor, stockAvailability.budgetVariation);
-        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Medium, stockAvailability.stock.medium, stockAvailability.budget.medium, stockAvailability.budgetVariation);
-        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Major, stockAvailability.stock.major, stockAvailability.budget.major, stockAvailability.budgetVariation);
+        BuyStockAtPowerLevel(SpecificItem<TSpecificItem>.PowerLevel.Minor, stockAvailability.stock.minor, stockAvailability.budget.minor, stockAvailability.budgetVariation);
+        BuyStockAtPowerLevel(SpecificItem<TSpecificItem>.PowerLevel.Medium, stockAvailability.stock.medium, stockAvailability.budget.medium, stockAvailability.budgetVariation);
+        BuyStockAtPowerLevel(SpecificItem<TSpecificItem>.PowerLevel.Major, stockAvailability.stock.major, stockAvailability.budget.major, stockAvailability.budgetVariation);
     }
 
-    protected void BuyStockAtPowerLevel(SpecificItem.PowerLevel powerLevel, Range stockRange, Range budgetRange, float budgetVariation)
+    protected void BuyStockAtPowerLevel(SpecificItem<TSpecificItem>.PowerLevel powerLevel, Range stockRange, Range budgetRange, float budgetVariation)
     {
         int desiredCount = stockRange.Random();
         int currentCount = GetTotalCount(powerLevel);
@@ -159,5 +160,5 @@ public abstract class SpecificItemCollection<TSpecificItem> : ScriptableObject
         }
     }
 
-    protected abstract TSpecificItem GetRandomSpecificItem (SpecificItem.PowerLevel powerLevel, int budget);
+    protected abstract TSpecificItem GetRandomSpecificItem(SpecificItem<TSpecificItem>.PowerLevel powerLevel, int budget);
 }

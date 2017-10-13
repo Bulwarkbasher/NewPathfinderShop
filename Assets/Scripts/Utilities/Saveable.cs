@@ -3,7 +3,8 @@ using System.IO;
 using UnityEngine;
 
 // TODO: base class of this to have json splitter and abstract json get/set functions?
-public abstract class Saveable<TChild> : ScriptableObject
+// NOTE: all front end saving should just call SaveableHolder.Save
+public abstract class Saveable<TChild> : Jsonable<TChild>
     where TChild : Saveable<TChild>
 {
     public enum NameCheckResult
@@ -54,15 +55,10 @@ public abstract class Saveable<TChild> : ScriptableObject
         return new string[0];
     }
 
-    protected static string[] GetJsonSplitter()
-    {
-        string[] jsonSplitter = { "###" + typeof(TChild) + "Splitter###" };
-        return jsonSplitter;
-    }
-
     public static TChild Load (string name)
     {
-        TChild childSaveable = CreateInstance<TChild> ();
+        if (SaveableHolder.IsLoaded (name))
+            return SaveableHolder.GetSaveable<TChild> (name);
 
         string fileLocation = Application.persistentDataPath + "/" + typeof(TChild).Name + "/" + name + ".dat";
 
@@ -75,17 +71,16 @@ public abstract class Saveable<TChild> : ScriptableObject
             jsonString = sr.ReadToEnd();
         }
 
-        string[] splitJsonString = jsonString.Split(GetJsonSplitter (), StringSplitOptions.RemoveEmptyEntries);
+        TChild childSaveable = CreateFromJsonString (jsonString);
 
-        childSaveable.SetupFromSplitJsonString (splitJsonString);
+        SaveableHolder.AddSaveable (childSaveable);
 
         return childSaveable;
     }
 
     public static void Save (TChild childSaveable)
     {
-        string[] jsonSplitter = GetJsonSplitter ();
-        string jsonString = childSaveable.GetJsonString (jsonSplitter);
+        string jsonString = GetJsonString (childSaveable);
 
         string folderPath = Application.persistentDataPath + "/" + typeof(TChild).Name;
         if (!Directory.Exists(folderPath))
@@ -96,8 +91,4 @@ public abstract class Saveable<TChild> : ScriptableObject
         string filePath = folderPath + "/" + childSaveable.name + ".dat";
         File.WriteAllText(filePath, jsonString);
     }
-
-    protected abstract void SetupFromSplitJsonString (string[] splitJsonString);
-
-    protected abstract string GetJsonString (string[] jsonSplitter);
 }

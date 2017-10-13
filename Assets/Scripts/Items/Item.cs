@@ -2,29 +2,14 @@
 using System.Collections;
 
 // TODO: update which objects inherit from Item, should be more
-public class Item : ScriptableObject
+public abstract class Item<TChild> : Jsonable<TChild>
+    where TChild : Item<TChild>
 {
-    public enum Rarity
-    {
-        Mundane,
-        VeryCommon,
-        Common,
-        Uncommon,
-        Unusual,
-        Occasional,
-        Rare,
-        VeryRare,
-        Exceptional,
-        Mythical,
-    }
-
     public int cost;
-    public Rarity rarity;
+    public Item.Rarity rarity;
     public int ulimateEquipmentPage;
 
-    static readonly string[] k_JsonSplitter = { "###ItemSplitter###" };
-
-    public static Item PickItem (Item[] items)
+    public static TChild PickItem (TChild[] items)
     {
         float weightSum = 0f;
 
@@ -48,30 +33,22 @@ public class Item : ScriptableObject
 
         return null;
     }
+}
 
-    public static string GetJsonString (Item item)
+
+public class Item
+{
+    public enum Rarity
     {
-        string jsonString = "";
-
-        jsonString += item.name + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString (item.cost) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString ((int)item.rarity) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString (item.ulimateEquipmentPage) + k_JsonSplitter[0];
-
-        return jsonString;
-    }
-
-    public static Item CreateFromJsonString (string jsonString)
-    {
-        string[] splitJsonString = jsonString.Split(k_JsonSplitter, System.StringSplitOptions.RemoveEmptyEntries);
-
-        Item item = CreateInstance<Item>();
-
-        item.name = splitJsonString[0];
-        item.cost = Wrapper<int>.CreateFromJsonString (splitJsonString[1]);
-        item.rarity = (Rarity)Wrapper<int>.CreateFromJsonString (splitJsonString[2]);
-        item.ulimateEquipmentPage = Wrapper<int>.CreateFromJsonString (splitJsonString[3]);
-
-        return item;
+        Mundane,
+        VeryCommon,
+        Common,
+        Uncommon,
+        Unusual,
+        Occasional,
+        Rare,
+        VeryRare,
+        Exceptional,
+        Mythical,
     }
 }

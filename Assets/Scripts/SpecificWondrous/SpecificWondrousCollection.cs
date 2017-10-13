@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrous>
+public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrous, SpecificWondrousCollection>
 {
     public static SpecificWondrousCollection Create(Availability stockAvailability)
     {
         return CreateInstance<SpecificWondrousCollection>();
     }
 
-    protected override SpecificWondrous GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificWondrous GetRandomSpecificItem(SpecificWondrous.PowerLevel powerLevel, int budget)
     {
         return SpecificWondrous.CreateRandom();
     }
@@ -24,13 +24,13 @@ public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrou
         shop.specificWondrousCollection = Create(stockAvailability);
     }
 
-    public static string GetJsonString (SpecificWondrousCollection specificWondrousCollection)
+    protected override void SetupFromSplitJsonString (string[] splitJsonString)
     {
-        return "";
+        throw new System.NotImplementedException ();
     }
 
-    public static SpecificWondrousCollection CreateFromJsonString (string jsonString)
+    protected override string ConvertToJsonString (string[] jsonSplitter)
     {
-        return CreateInstance<SpecificWondrousCollection> ();
+        throw new System.NotImplementedException ();
     }
 }

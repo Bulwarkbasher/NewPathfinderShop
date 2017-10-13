@@ -73,7 +73,7 @@ public class PerSizeRestockSettings : Saveable<PerSizeRestockSettings>
         return newPerSizeRestockSettings;
     }
 
-    protected override string GetJsonString(string[] jsonSplitter)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 

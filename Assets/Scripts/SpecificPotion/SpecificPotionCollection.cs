@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion>
+public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion, SpecificPotionCollection>
 {
     public static SpecificPotionCollection Create(Availability stockAvailability, SpellCollection availableSpells)
     {
         return CreateInstance<SpecificPotionCollection>();
     }
 
-    protected override SpecificPotion GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificPotion GetRandomSpecificItem(SpecificPotion.PowerLevel powerLevel, int budget)
     {
         return SpecificPotion.CreateRandom();
     }
@@ -27,13 +27,13 @@ public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion>
         shop.specificPotionCollection = Create(stockAvailability, availableSpells);
     }
 
-    public static string GetJsonString(SpecificPotionCollection specificPotionCollection)
+    protected override void SetupFromSplitJsonString (string[] splitJsonString)
     {
-        return "";
+        throw new System.NotImplementedException ();
     }
 
-    public static SpecificPotionCollection CreateFromJsonString(string jsonString)
+    protected override string ConvertToJsonString (string[] jsonSplitter)
     {
-        return CreateInstance<SpecificPotionCollection>();
+        throw new System.NotImplementedException ();
     }
 }

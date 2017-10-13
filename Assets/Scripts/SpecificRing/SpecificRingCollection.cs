@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecificRingCollection : SpecificItemCollection<SpecificRing>
+public class SpecificRingCollection : SpecificItemCollection<SpecificRing, SpecificRingCollection>
 {
     public static SpecificRingCollection Create(Availability stockAvailability)
     {
         return CreateInstance<SpecificRingCollection>();
     }
 
-    protected override SpecificRing GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificRing GetRandomSpecificItem(SpecificRing.PowerLevel powerLevel, int budget)
     {
         return SpecificRing.CreateRandom();
     }
@@ -24,13 +24,13 @@ public class SpecificRingCollection : SpecificItemCollection<SpecificRing>
         shop.specificRingCollection = Create(stockAvailability);
     }
 
-    public static string GetJsonString(SpecificRingCollection specificRingCollection)
+    protected override void SetupFromSplitJsonString (string[] splitJsonString)
     {
-        return "";
+        throw new System.NotImplementedException ();
     }
 
-    public static SpecificRingCollection CreateFromJsonString(string jsonString)
+    protected override string ConvertToJsonString (string[] jsonSplitter)
     {
-        return CreateInstance<SpecificRingCollection>();
+        throw new System.NotImplementedException ();
     }
 }

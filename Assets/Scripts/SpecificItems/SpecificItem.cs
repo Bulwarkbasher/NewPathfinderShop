@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecificItem : ScriptableObject
+public abstract class SpecificItem<TChild> : Jsonable<TChild>
+    where TChild : Jsonable<TChild>
 {
     public enum PowerLevel
     {

@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Quality : Item
+public class Quality : Item<Quality>
 {
     public enum BonusEquivalent
     {
@@ -35,8 +35,6 @@ public class Quality : Item
     public QualityType qualityType;
     public BonusEquivalent bonusEquivalent;
 
-    static readonly string[] k_JsonSplitter = { "###QualitySplitter###", };
-
     public static Quality CreateQuality (int cost, bool isStaticBonus, BonusEquivalent bonusEquivalent, int ultimateEquipmentPage)
     {
         Quality newQuality = CreateInstance<Quality>();
@@ -46,30 +44,28 @@ public class Quality : Item
         return newQuality;
     }
 
-    public static string GetJsonString(Quality quality)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
-        string jsonString = Item.GetJsonString (quality);
+        string jsonString = "";
 
-        jsonString += Wrapper<int>.GetJsonString((int)quality.qualityType) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)quality.bonusEquivalent) + k_JsonSplitter[0];
+        jsonString += name + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(cost) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)rarity) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(ulimateEquipmentPage) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)qualityType) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)bonusEquivalent) + jsonSplitter[0];
         
         return jsonString;
     }
 
 
-    public new static Quality CreateFromJsonString(string jsonString)
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        string[] splitJsonString = jsonString.Split(k_JsonSplitter, StringSplitOptions.RemoveEmptyEntries);
-        Item qualityBase = Item.CreateFromJsonString(splitJsonString[0]);
-        Quality quality = CreateInstance<Quality>();
-
-        quality.name = qualityBase.name;
-        quality.cost = qualityBase.cost;
-        quality.rarity = qualityBase.rarity;
-        quality.ulimateEquipmentPage = qualityBase.ulimateEquipmentPage;
-        quality.qualityType = (QualityType)Wrapper<int>.CreateFromJsonString (splitJsonString[1]);
-        quality.bonusEquivalent = (BonusEquivalent)Wrapper<int>.CreateFromJsonString(splitJsonString[2]);
-
-        return quality;
+        name = splitJsonString[0];
+        cost = Wrapper<int>.CreateFromJsonString(splitJsonString[1]);
+        rarity = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[2]);
+        ulimateEquipmentPage = Wrapper<int>.CreateFromJsonString(splitJsonString[3]);
+        qualityType = (QualityType)Wrapper<int>.CreateFromJsonString (splitJsonString[4]);
+        bonusEquivalent = (BonusEquivalent)Wrapper<int>.CreateFromJsonString(splitJsonString[5]);
     }
 }

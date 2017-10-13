@@ -78,7 +78,7 @@ public class PerStockTypePerSizeAvailability : Saveable<PerStockTypePerSizeAvail
         return newPerStockTypePerSizeAvailability;
     }
 
-    protected override string GetJsonString(string[] jsonSplitter)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 

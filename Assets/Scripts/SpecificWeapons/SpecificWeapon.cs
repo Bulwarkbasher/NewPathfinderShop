@@ -3,22 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SpecificWeapon : SpecificItem
+public class SpecificWeapon : SpecificItem<SpecificWeapon>
 {
     public Weapon weapon;
     public WeaponQuality enhancementBonus;
     public WeaponQuality specialMaterial;
     public WeaponQuality[] specialAbilities;
 
-
     private string m_Description;
-
-
-    private static readonly string[] k_JsonSplitter = 
-    {
-        "###SpecWeapSplitter###",
-    };
-
     
     public static SpecificWeapon CreateRandom (PowerLevel powerLevel, int budget, WeaponCollection availableWeapons, WeaponQualityCollection availableQualities)
     {
@@ -84,36 +76,31 @@ public class SpecificWeapon : SpecificItem
 
         return newSpecificWeapon;
     }
-
-
+    
     public void SwapWeapon (Weapon newWeapon)
     {
         weapon = newWeapon;
         CalculateCost();
     }
-
-
+    
     public void SwapEnhancement (WeaponQuality newEnhancement)
     {
         enhancementBonus = newEnhancement;
         CalculateCost();
     }
-
-
+    
     public void SwapSpecialMaterial (WeaponQuality newMaterial)
     {
         specialMaterial = newMaterial;
         CalculateCost();
     }
-
-
+    
     public void SwapSpecialAbility (int oldAbilityIndex, WeaponQuality newSpecialAbility)
     {
         specialAbilities[oldAbilityIndex] = newSpecialAbility;
         CalculateCost();
     }
-
-
+    
     public void AddSpecialAbility (WeaponQuality newSpecialAbility)
     {
         WeaponQuality[] newSpecialAbilities = new WeaponQuality[specialAbilities.Length + 1];
@@ -125,7 +112,6 @@ public class SpecificWeapon : SpecificItem
         specialAbilities = newSpecialAbilities;
         CalculateCost();
     }
-
 
     public void RemoveSpecialAbility (int removeAt)
     {
@@ -141,8 +127,7 @@ public class SpecificWeapon : SpecificItem
         specialAbilities = newSpecialAbilities;
         CalculateCost();
     }
-
-
+    
     private void CalculateCost ()
     {
         cost = 0;
@@ -180,58 +165,35 @@ public class SpecificWeapon : SpecificItem
 
         return m_Description;
     }
-
-
-    public static string GetJsonString (SpecificWeapon specificWeapon)
+    
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
-        string weaponString = Weapon.GetJsonString(specificWeapon.weapon);
-        string enhancementBonusString = WeaponQuality.GetJsonString(specificWeapon.enhancementBonus);
-        string specialMaterialString = WeaponQuality.GetJsonString(specificWeapon.specialMaterial);
-        
-        string[] specialAbilityStrings = new string[specificWeapon.specialAbilities.Length];
-        for(int i = 0; i < specialAbilityStrings.Length; i++)
+        string jsonString = "";
+
+        jsonString += Weapon.GetJsonString (weapon) + jsonSplitter[0];
+        jsonString += WeaponQuality.GetJsonString (enhancementBonus) + jsonSplitter[0];
+        jsonString += WeaponQuality.GetJsonString(specialMaterial) + jsonSplitter[0];
+
+        for (int i = 0; i < specialAbilities.Length; i++)
         {
-            specialAbilityStrings[i] = WeaponQuality.GetJsonString(specificWeapon.specialAbilities[i]);
+            jsonString += WeaponQuality.GetJsonString(specialAbilities[i]) + jsonSplitter[0];
         }
 
-        string specificWeaponString = weaponString + k_JsonSplitter[0] + enhancementBonusString + k_JsonSplitter[0] + specialMaterialString + k_JsonSplitter[0];
-
-        for(int i = 0; i < specialAbilityStrings.Length; i++)
-        {
-            specificWeaponString += k_JsonSplitter[0] + specialAbilityStrings[i];
-        }
-
-        return specificWeaponString;
+        return jsonString;
     }
-
-
-    public static SpecificWeapon CreateFromJsonString (string jsonString)
+    
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        string[] splitJsonString = jsonString.Split(k_JsonSplitter, System.StringSplitOptions.RemoveEmptyEntries);
+        weapon = Weapon.CreateFromJsonString (splitJsonString[0]);
+        enhancementBonus = WeaponQuality.CreateFromJsonString (splitJsonString[1]);
+        specialMaterial = WeaponQuality.CreateFromJsonString (splitJsonString[2]);
 
-        string weaponString = splitJsonString[0];
-        string enhancementBonusString = splitJsonString[1];
-        string specialMaterialString = splitJsonString[2];
-
-        string[] specialAbilityStrings = new string[splitJsonString.Length - 3];
-        for(int i = 0; i < specialAbilityStrings.Length; i++)
+        specialAbilities = new WeaponQuality[splitJsonString.Length - 3];
+        for (int i = 0; i < specialAbilities.Length; i++)
         {
-            specialAbilityStrings[i] = splitJsonString[i + 3];
+            specialAbilities[i] = WeaponQuality.CreateFromJsonString (splitJsonString[i + 3]);
         }
 
-        SpecificWeapon specificWeapon = CreateInstance<SpecificWeapon>();
-        specificWeapon.weapon = Weapon.CreateFromJsonString(weaponString);
-        specificWeapon.enhancementBonus = WeaponQuality.CreateFromJsonString(enhancementBonusString);
-        specificWeapon.specialMaterial = WeaponQuality.CreateFromJsonString(specialMaterialString);
-
-        specificWeapon.specialAbilities = new WeaponQuality[specialAbilityStrings.Length];
-        for(int i = 0; i < specificWeapon.specialAbilities.Length; i++)
-        {
-            specificWeapon.specialAbilities[i] = WeaponQuality.CreateFromJsonString(specialAbilityStrings[i]);
-        }
-
-        specificWeapon.CalculateCost();
-
-        return specificWeapon;
+        CalculateCost ();
     }
 }

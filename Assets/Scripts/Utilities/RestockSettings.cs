@@ -1,41 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 
-[Serializable]
-public class RestockSettings
+public class RestockSettings : Jsonable<RestockSettings>
 {
     public Range days;
     public Range percent;
 
-
-    static readonly string[] k_JsonSplitter =
-    {
-        "###RestoSettSplitter###",
-    };
-
-
-    public static string GetJsonString(RestockSettings restockSettings)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
-        jsonString += Range.GetJsonString (restockSettings.days) + k_JsonSplitter[0];
-        jsonString += Range.GetJsonString(restockSettings.percent) + k_JsonSplitter[0];
+        jsonString += Range.GetJsonString(days) + jsonSplitter[0];
+        jsonString += Range.GetJsonString(percent) + jsonSplitter[0];
 
         return jsonString;
     }
-
-
-    public static RestockSettings CreateFromJsonString(string jsonString)
+    
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        string[] splitJsonString = jsonString.Split(k_JsonSplitter, StringSplitOptions.RemoveEmptyEntries);
-        
-        RestockSettings restockSettings = new RestockSettings ();
-
-        restockSettings.days = Range.CreateFromJsonString (splitJsonString[0]);
-        restockSettings.percent = Range.CreateFromJsonString (splitJsonString[1]);
-
-        return restockSettings;
+        days = Range.CreateFromJsonString (splitJsonString[0]);
+        percent = Range.CreateFromJsonString (splitJsonString[1]);
     }
 }

@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System;
 
-// TODO: have a running gold total for shops based on what they're thoeretical stock total should be
-// TODO: have an additional setting for the amount of additional money shops have based on size?
-public class Shop : ScriptableObject
+// TODO: search for all places value types are stored instead of references.
+public class Shop : Jsonable<Shop>
 {
     public enum Size
     {
@@ -30,17 +29,13 @@ public class Shop : ScriptableObject
     // TODO: some of the for Default Availabilities values cannot be set by ranges from the book.
     // TODO: ranges aren't specified for things like weapons where it can potentially go up to +10 and lead to very bad ranges
     
-
-    private static readonly string[] k_JsonSplitter =
-    {
-        "###ShopSplitter###",
-    };
-
     public string notes;
     public Size size;
     public StockType stockTypes;
-    public float restockFrequencyModifier;
+    public PerSizeRestockFrequencyModifiers perSizeRestockFrequencyModifiers;
     public int daysSinceLastRestock;
+    public PerSizeReadyCash perSizeReadyCash;
+    public int totalCash;
 
     public SpecificArmourCollection specificArmourCollection;
     public SpecificPotionCollection specificPotionCollection;
@@ -52,13 +47,24 @@ public class Shop : ScriptableObject
     public SpecificWeaponCollection specificWeaponCollection;
     public SpecificWondrousCollection specificWondrousCollection;
 
-    public static Shop Create (string name, string notes, Size shopSize, float restockFrequencyModifier)
+    public float RestockFrequencyModifier
+    {
+        get { return perSizeRestockFrequencyModifiers[size]; }
+    }
+
+    public int ReadyCash
+    {
+        get { return perSizeReadyCash[size]; }
+    }
+
+    public static Shop Create(string name, string notes, Size shopSize, PerSizeRestockFrequencyModifiers restockFrequencyModifiers, PerSizeReadyCash readyCash)
     {
         Shop newShop = CreateInstance<Shop>();
         newShop.name = name;
         newShop.notes = notes;
         newShop.size = shopSize;
-        newShop.restockFrequencyModifier = restockFrequencyModifier;
+        newShop.perSizeRestockFrequencyModifiers = restockFrequencyModifiers;
+        newShop.perSizeReadyCash = readyCash;
         newShop.specificWeaponCollection = CreateInstance<SpecificWeaponCollection> ();
         newShop.specificArmourCollection = CreateInstance<SpecificArmourCollection>();
         newShop.specificScrollCollection = CreateInstance<SpecificScrollCollection>();
@@ -72,8 +78,9 @@ public class Shop : ScriptableObject
 
     public static Shop Create (string name, string notes, Size shopSize)
     {
-        float restockFrequencyModifier = DefaultResourceHolder.DefaultPerSizeRestockFrequencyModifiers[shopSize];
-        return Create (name, notes, shopSize, restockFrequencyModifier);
+        PerSizeRestockFrequencyModifiers restockFrequencyModifier = DefaultResourceHolder.DefaultPerSizeRestockFrequencyModifiers;
+        PerSizeReadyCash readyCash = DefaultResourceHolder.DefaultPerSizeReadyCash;
+        return Create (name, notes, shopSize, restockFrequencyModifier, readyCash);
     }
 
     public Settlement GetLocation ()
@@ -94,21 +101,32 @@ public class Shop : ScriptableObject
         return null;
     }
 
+    public void AddToTotalCash (int additionalCash)
+    {
+        totalCash += additionalCash;
+    }
+
+    public void SubtractFromTotalCash (int removedCash)
+    {
+        totalCash -= removedCash;
+    }
+
     public void PassTime (int daysPassed)
     {
         int totalDaysSinceLastRestock = daysPassed + daysSinceLastRestock;
         RestockSettings restockSettings = GetLocation ().RestockSettings;
 
-        int daysUntilRestock = Mathf.FloorToInt(restockSettings.days.Random() * restockFrequencyModifier);
+        int daysUntilRestock = Mathf.FloorToInt(restockSettings.days.Random() * RestockFrequencyModifier);
         while (totalDaysSinceLastRestock - daysUntilRestock > 0)
         {
             Restock (restockSettings);
             totalDaysSinceLastRestock -= daysUntilRestock;
-            daysUntilRestock = Mathf.FloorToInt(restockSettings.days.Random() * restockFrequencyModifier);
+            daysUntilRestock = Mathf.FloorToInt(restockSettings.days.Random() * RestockFrequencyModifier);
         }
 
         daysSinceLastRestock = totalDaysSinceLastRestock;
-        // TODO: calculate ready money here based on total value of stock compared to the total value of allowed stock
+
+        totalCash = GetMaxPossibleStockValue () - GetTotalStockValue () + ReadyCash;
     }
 
     protected void Restock(RestockSettings restockSettings)
@@ -163,53 +181,51 @@ public class Shop : ScriptableObject
         return maxStockValue;
     }
 
-    public static string GetJsonString (Shop shop)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
-        jsonString += shop.name + k_JsonSplitter[0];
-        jsonString += shop.notes + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)shop.size) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)shop.stockTypes) + k_JsonSplitter[0];
-        jsonString += Wrapper<float>.GetJsonString (shop.restockFrequencyModifier) + k_JsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString (shop.daysSinceLastRestock) + k_JsonSplitter[0];
+        jsonString += name + jsonSplitter[0];
+        jsonString += notes + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)size) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)stockTypes) + jsonSplitter[0];
+        jsonString += perSizeRestockFrequencyModifiers.name + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(daysSinceLastRestock) + jsonSplitter[0];
+        jsonString += perSizeReadyCash.name + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(totalCash) + jsonSplitter[0];
 
-        jsonString += SpecificArmourCollection.GetJsonString(shop.specificArmourCollection) + k_JsonSplitter[0];
-        jsonString += SpecificPotionCollection.GetJsonString(shop.specificPotionCollection) + k_JsonSplitter[0];
-        jsonString += SpecificRingCollection.GetJsonString (shop.specificRingCollection) + k_JsonSplitter[0];
-        jsonString += SpecificRodCollection.GetJsonString(shop.specificRodCollection) + k_JsonSplitter[0];
-        jsonString += SpecificScrollCollection.GetJsonString(shop.specificScrollCollection) + k_JsonSplitter[0];
-        jsonString += SpecificStaffCollection.GetJsonString(shop.specificStaffCollection) + k_JsonSplitter[0];
-        jsonString += SpecificWandCollection.GetJsonString(shop.specificWandCollection) + k_JsonSplitter[0];
-        jsonString += SpecificWeaponCollection.GetJsonString(shop.specificWeaponCollection) + k_JsonSplitter[0];
-        jsonString += SpecificWondrousCollection.GetJsonString(shop.specificWondrousCollection) + k_JsonSplitter[0];
+        jsonString += SpecificArmourCollection.GetJsonString(specificArmourCollection) + jsonSplitter[0];
+        jsonString += SpecificPotionCollection.GetJsonString(specificPotionCollection) + jsonSplitter[0];
+        jsonString += SpecificRingCollection.GetJsonString(specificRingCollection) + jsonSplitter[0];
+        jsonString += SpecificRodCollection.GetJsonString(specificRodCollection) + jsonSplitter[0];
+        jsonString += SpecificScrollCollection.GetJsonString(specificScrollCollection) + jsonSplitter[0];
+        jsonString += SpecificStaffCollection.GetJsonString(specificStaffCollection) + jsonSplitter[0];
+        jsonString += SpecificWandCollection.GetJsonString(specificWandCollection) + jsonSplitter[0];
+        jsonString += SpecificWeaponCollection.GetJsonString(specificWeaponCollection) + jsonSplitter[0];
+        jsonString += SpecificWondrousCollection.GetJsonString(specificWondrousCollection) + jsonSplitter[0];
         
         return jsonString;
     }
 
-    public static Shop CreateFromJsonString (string jsonString)
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        string[] splitJsonString = jsonString.Split (k_JsonSplitter, StringSplitOptions.RemoveEmptyEntries);
+        name = splitJsonString[0];
+        notes = splitJsonString[1];
+        size = (Size)Wrapper<int>.CreateFromJsonString (splitJsonString[2]);
+        stockTypes = (StockType)Wrapper<int>.CreateFromJsonString (splitJsonString[3]);
+        perSizeRestockFrequencyModifiers = PerSizeRestockFrequencyModifiers.Load (splitJsonString[4]);
+        daysSinceLastRestock = Wrapper<int>.CreateFromJsonString (splitJsonString[5]);
+        perSizeReadyCash = PerSizeReadyCash.Load (splitJsonString[6]);
+        totalCash = Wrapper<int>.CreateFromJsonString (splitJsonString[7]);
 
-        Shop shop = CreateInstance<Shop> ();
-
-        shop.name = splitJsonString[0];
-        shop.notes = splitJsonString[1];
-        shop.size = (Size)Wrapper<int>.CreateFromJsonString (splitJsonString[2]);
-        shop.stockTypes = (StockType)Wrapper<int>.CreateFromJsonString (splitJsonString[3]);
-        shop.restockFrequencyModifier = Wrapper<float>.CreateFromJsonString (splitJsonString[4]);
-        shop.daysSinceLastRestock = Wrapper<int>.CreateFromJsonString (splitJsonString[5]);
-
-        shop.specificArmourCollection = SpecificArmourCollection.CreateFromJsonString(splitJsonString[6]);
-        shop.specificPotionCollection = SpecificPotionCollection.CreateFromJsonString(splitJsonString[7]);
-        shop.specificRingCollection = SpecificRingCollection.CreateFromJsonString (splitJsonString[8]);
-        shop.specificRodCollection = SpecificRodCollection.CreateFromJsonString (splitJsonString[9]);
-        shop.specificScrollCollection = SpecificScrollCollection.CreateFromJsonString (splitJsonString[10]);
-        shop.specificStaffCollection = SpecificStaffCollection.CreateFromJsonString (splitJsonString[11]);
-        shop.specificWandCollection = SpecificWandCollection.CreateFromJsonString (splitJsonString[12]);
-        shop.specificWeaponCollection = SpecificWeaponCollection.CreateFromJsonString(splitJsonString[13]);
-        shop.specificWondrousCollection = SpecificWondrousCollection.CreateFromJsonString (splitJsonString[14]);
-
-        return shop;
+        specificArmourCollection = SpecificArmourCollection.CreateFromJsonString(splitJsonString[8]);
+        specificPotionCollection = SpecificPotionCollection.CreateFromJsonString(splitJsonString[9]);
+        specificRingCollection = SpecificRingCollection.CreateFromJsonString (splitJsonString[10]);
+        specificRodCollection = SpecificRodCollection.CreateFromJsonString (splitJsonString[11]);
+        specificScrollCollection = SpecificScrollCollection.CreateFromJsonString (splitJsonString[12]);
+        specificStaffCollection = SpecificStaffCollection.CreateFromJsonString (splitJsonString[13]);
+        specificWandCollection = SpecificWandCollection.CreateFromJsonString (splitJsonString[14]);
+        specificWeaponCollection = SpecificWeaponCollection.CreateFromJsonString(splitJsonString[15]);
+        specificWondrousCollection = SpecificWondrousCollection.CreateFromJsonString (splitJsonString[16]);
     }
 }

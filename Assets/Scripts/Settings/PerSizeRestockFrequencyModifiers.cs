@@ -53,7 +53,7 @@ public class PerSizeRestockFrequencyModifiers : Saveable<PerSizeRestockFrequency
         return newPerSizeRestockFrequencyModifiers;
     }
 
-    protected override string GetJsonString(string[] jsonSplitter)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 

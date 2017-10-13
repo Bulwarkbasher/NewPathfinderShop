@@ -53,7 +53,7 @@ public class PerSizeAvailability : Saveable<PerSizeAvailability>
         return newPerSizeAvailability;
     }
 
-    protected override string GetJsonString(string[] jsonSplitter)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 

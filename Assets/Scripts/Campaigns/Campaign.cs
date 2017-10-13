@@ -79,7 +79,7 @@ public class Campaign : Saveable<Campaign>
         current = this;
     }
 
-    protected override string GetJsonString(string[] jsonSplitter)
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 

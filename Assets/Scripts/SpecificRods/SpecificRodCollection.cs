@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecificRodCollection : SpecificItemCollection<SpecificRod>
+public class SpecificRodCollection : SpecificItemCollection<SpecificRod, SpecificRodCollection>
 {
     public static SpecificRodCollection Create(Availability stockAvailability)
     {
         return CreateInstance<SpecificRodCollection>();
     }
 
-    protected override SpecificRod GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificRod GetRandomSpecificItem(SpecificRod.PowerLevel powerLevel, int budget)
     {
         return SpecificRod.CreateRandom();
     }
@@ -24,13 +24,13 @@ public class SpecificRodCollection : SpecificItemCollection<SpecificRod>
         shop.specificRodCollection = Create (stockAvailability);
     }
 
-    public static string GetJsonString(SpecificRodCollection specificRodCollection)
+    protected override void SetupFromSplitJsonString (string[] splitJsonString)
     {
-        return "";
+        throw new System.NotImplementedException ();
     }
 
-    public static SpecificRodCollection CreateFromJsonString(string jsonString)
+    protected override string ConvertToJsonString (string[] jsonSplitter)
     {
-        return CreateInstance<SpecificRodCollection>();
+        throw new System.NotImplementedException ();
     }
 }

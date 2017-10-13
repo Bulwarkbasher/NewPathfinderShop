@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff>
+public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, SpecificStaffCollection>
 {
     public static SpecificStaffCollection Create(Availability stockAvailability)
     {
         return CreateInstance<SpecificStaffCollection>();
     }
 
-    protected override SpecificStaff GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificStaff GetRandomSpecificItem(SpecificStaff.PowerLevel powerLevel, int budget)
     {
         return SpecificStaff.CreateRandom();
     }
@@ -24,13 +24,13 @@ public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff>
         shop.specificStaffCollection = Create(stockAvailability);
     }
 
-    public static string GetJsonString(SpecificStaffCollection specificStaffCollection)
+    protected override void SetupFromSplitJsonString (string[] splitJsonString)
     {
-        return "";
+        throw new System.NotImplementedException ();
     }
 
-    public static SpecificStaffCollection CreateFromJsonString(string jsonString)
+    protected override string ConvertToJsonString (string[] jsonSplitter)
     {
-        return CreateInstance<SpecificStaffCollection>();
+        throw new System.NotImplementedException ();
     }
 }
