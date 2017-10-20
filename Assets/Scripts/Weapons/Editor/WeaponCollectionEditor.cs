@@ -6,42 +6,31 @@ using UnityEditor;
 [CustomEditor(typeof(WeaponCollection))]
 public class WeaponCollectionEditor : Editor
 {
-    private WeaponCollection weaponCollection;
-    private SerializedProperty weaponsProp;
-    private TableEditor<Weapon> weaponsTable;
-
+    WeaponCollection m_WeaponCollection;
+    SerializedProperty m_ItemsProp;
+    SerializedProperty m_WeaponQualityCollectionProp;
 
     private void OnEnable ()
     {
-        weaponsProp = serializedObject.FindProperty("weapons");
+        m_ItemsProp = serializedObject.FindProperty("items");
+        m_WeaponQualityCollectionProp = serializedObject.FindProperty ("potentialWeaponQualities");
 
-        weaponCollection = (WeaponCollection)target;
-
-        Column[] columns =
-        {
-            new ItemEditButtonColumn(),
-            new ItemDescriptionColumn(),
-            new ItemCostColumn (),
-            new FlagsPropertyColumn<Weapon.WeaponType>("Type", 90f, "weaponType"),
-            new FlagsPropertyColumn<Weapon.Handedness>("Handedness", 100f, "handedness"),
-            new FlagsPropertyColumn<Weapon.DamageType>("Damage Type", 100f, "damageType"),
-            new FlagsPropertyColumn<Weapon.Special>("Special", 200f, "special"),
-            //new FlagsPropertyColumn<Weapon.AttackConstraints>("Attack Constraints", 200f, "attackConstraints"),
-            //new FlagsPropertyColumn<Weapon.MaterialConstraints>("Material Constraints", 200f, "materialConstraints"),
-            //new FlagsPropertyColumn<Weapon.SpecialConstraints>("Special Constraints", 200f, "specialConstraints"),
-            new ItemRarityColumn(),
-            new ItemPageColumn(),
-            new RemoveRowColumn<Weapon>(),
-        };
-
-        weaponsTable = new TableEditor<Weapon>(columns);
+        m_WeaponCollection = (WeaponCollection)target;
     }
-
 
     public override void OnInspectorGUI()
     {
-        weaponsTable.OnGUI(weaponsProp);
+        EditorGUILayout.PropertyField (m_WeaponQualityCollectionProp);
 
-        weaponsTable.AddElementButtonGUI(weaponsProp, weaponCollection);
+        for (int i = 0; i < m_ItemsProp.arraySize; i++)
+        {
+            SerializedProperty elementProp = m_ItemsProp.GetArrayElementAtIndex(i);
+            EditorGUILayout.PropertyField(elementProp);
+        }
+
+        if (GUILayout.Button("Add"))
+        {
+            m_ItemsProp.AddObjectAsSubAsset<WeaponQuality>(m_WeaponCollection, true);
+        }
     }
 }
