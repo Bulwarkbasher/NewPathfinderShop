@@ -15,7 +15,7 @@ public class QualityBonusEquivalentColumn : DoublePropertyColumn
         }
         else
         {
-            EditorGUI.LabelField(position, Quality.BonusEquivalentNames[secondProp.enumValueIndex]);
+            EditorGUI.LabelField(position, Quality.GetBonusEquivalentName((Quality.BonusEquivalent)secondProp.enumValueIndex));
         }
     }
 }

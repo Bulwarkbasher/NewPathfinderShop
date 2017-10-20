@@ -73,7 +73,7 @@ public class PerStockTypePerSizeAvailability : Saveable<PerStockTypePerSizeAvail
         newPerStockTypePerSizeAvailability.m_WeaponPerSizeAvailability = weapon;
         newPerStockTypePerSizeAvailability.m_WondrousPerSizeAvailability = wondrous;
 
-        Save(newPerStockTypePerSizeAvailability);
+        SaveableHolder.AddSaveable(newPerStockTypePerSizeAvailability);
 
         return newPerStockTypePerSizeAvailability;
     }
@@ -92,16 +92,6 @@ public class PerStockTypePerSizeAvailability : Saveable<PerStockTypePerSizeAvail
         jsonString += m_WandPerSizeAvailability.name + jsonSplitter[0];
         jsonString += m_WeaponPerSizeAvailability.name + jsonSplitter[0];
         jsonString += m_WondrousPerSizeAvailability.name + jsonSplitter[0];
-
-        PerSizeAvailability.Save(m_ArmourPerSizeAvailability);
-        PerSizeAvailability.Save(m_PotionPerSizeAvailability);
-        PerSizeAvailability.Save(m_RingPerSizeAvailability);
-        PerSizeAvailability.Save(m_RodPerSizeAvailability);
-        PerSizeAvailability.Save(m_ScrollPerSizeAvailability);
-        PerSizeAvailability.Save(m_StaffPerSizeAvailability);
-        PerSizeAvailability.Save(m_WandPerSizeAvailability);
-        PerSizeAvailability.Save(m_WeaponPerSizeAvailability);
-        PerSizeAvailability.Save(m_WondrousPerSizeAvailability);
 
         return jsonString;
     }

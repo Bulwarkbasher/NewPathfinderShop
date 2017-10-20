@@ -27,7 +27,7 @@ public abstract class Jsonable<TChild> : ScriptableObject
         return childJsonable.ConvertToJsonString(jsonSplitter);
     }
 
-    protected abstract void SetupFromSplitJsonString(string[] splitJsonString);
-
     protected abstract string ConvertToJsonString(string[] jsonSplitter);
+
+    protected abstract void SetupFromSplitJsonString(string[] splitJsonString);
 }

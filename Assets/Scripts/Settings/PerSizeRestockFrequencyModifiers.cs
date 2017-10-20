@@ -48,7 +48,7 @@ public class PerSizeRestockFrequencyModifiers : Saveable<PerSizeRestockFrequency
         newPerSizeRestockFrequencyModifiers.m_OutletFrequencyModifier = outlet;
         newPerSizeRestockFrequencyModifiers.m_EmporiumFrequencyModifier = emporium;
 
-        Save (newPerSizeRestockFrequencyModifiers);
+        SaveableHolder.AddSaveable(newPerSizeRestockFrequencyModifiers);
 
         return newPerSizeRestockFrequencyModifiers;
     }

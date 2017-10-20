@@ -151,7 +151,7 @@ public class SpecificWeapon : SpecificItem<SpecificWeapon>
         m_Description = "";
 
         if(enhancementBonus)
-            m_Description += Quality.BonusEquivalentNames[(int)enhancementBonus.bonusEquivalent] + " ";
+            m_Description += Quality.GetBonusEquivalentName(enhancementBonus.bonusEquivalent) + " ";
         
         for (int i = 0; i < specialAbilities.Length; i++)
         {

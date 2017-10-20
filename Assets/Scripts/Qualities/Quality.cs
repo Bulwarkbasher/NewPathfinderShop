@@ -1,8 +1,15 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
 
-public class Quality : Item<Quality>
+public abstract class Quality<TChild> : Item<TChild>
+    where TChild : Quality<TChild>
+{
+    public Quality.QualityType qualityType;
+    public Quality.BonusEquivalent bonusEquivalent;
+}
+
+
+public class Quality
 {
     public enum BonusEquivalent
     {
@@ -28,44 +35,35 @@ public class Quality : Item<Quality>
     }
 
 
-    public static readonly string[] BonusEquivalentNames = { "N/A", "+1", "+2", "+3", "+4", "+5", "+6", "+7", "+8", "+9", "+10" };
-    public static Quality blankQuality;
-
-
-    public QualityType qualityType;
-    public BonusEquivalent bonusEquivalent;
-
-    public static Quality CreateQuality (int cost, bool isStaticBonus, BonusEquivalent bonusEquivalent, int ultimateEquipmentPage)
+    public static string GetBonusEquivalentName(BonusEquivalent bonusEquivalent)
     {
-        Quality newQuality = CreateInstance<Quality>();
-        newQuality.cost = cost;
-        newQuality.bonusEquivalent = bonusEquivalent;
-        newQuality.ulimateEquipmentPage = ultimateEquipmentPage;
-        return newQuality;
+        switch (bonusEquivalent)
+        {
+            case BonusEquivalent.NA:
+                return "N/A";
+            case BonusEquivalent.One:
+                return "+1";
+            case BonusEquivalent.Two:
+                return "+2";
+            case BonusEquivalent.Three:
+                return "+3";
+            case BonusEquivalent.Four:
+                return "+4";
+            case BonusEquivalent.Five:
+                return "+5";
+            case BonusEquivalent.Six:
+                return "+6";
+            case BonusEquivalent.Seven:
+                return "+7";
+            case BonusEquivalent.Eight:
+                return "+8";
+            case BonusEquivalent.Nine:
+                return "+9";
+            case BonusEquivalent.Ten:
+                return "+10";
+            default:
+                throw new ArgumentOutOfRangeException("bonusEquivalent", bonusEquivalent, null);
+        }
     }
 
-    protected override string ConvertToJsonString(string[] jsonSplitter)
-    {
-        string jsonString = "";
-
-        jsonString += name + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(cost) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)rarity) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(ulimateEquipmentPage) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)qualityType) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)bonusEquivalent) + jsonSplitter[0];
-        
-        return jsonString;
-    }
-
-
-    protected override void SetupFromSplitJsonString(string[] splitJsonString)
-    {
-        name = splitJsonString[0];
-        cost = Wrapper<int>.CreateFromJsonString(splitJsonString[1]);
-        rarity = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[2]);
-        ulimateEquipmentPage = Wrapper<int>.CreateFromJsonString(splitJsonString[3]);
-        qualityType = (QualityType)Wrapper<int>.CreateFromJsonString (splitJsonString[4]);
-        bonusEquivalent = (BonusEquivalent)Wrapper<int>.CreateFromJsonString(splitJsonString[5]);
-    }
 }

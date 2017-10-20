@@ -2,7 +2,6 @@
 using System.IO;
 using UnityEngine;
 
-// TODO: base class of this to have json splitter and abstract json get/set functions?
 // NOTE: all front end saving should just call SaveableHolder.Save
 public abstract class Saveable<TChild> : Jsonable<TChild>
     where TChild : Saveable<TChild>

@@ -1,34 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-// TODO: not happy with the way constraints work, redo?
-public class WeaponQuality : Quality
+public class WeaponQuality : Quality<WeaponQuality>
 {
-    // Weapons this is applied to must have at least one of these
-    public Weapon.WeaponType anyOfWeaponType;
-    public Weapon.Handedness anyOfHandedness;
-    public Weapon.DamageType anyOfDamageType;
-    public Weapon.Special anyOfSpecial;
-    public Weapon.AttackConstraints anyOfAttackConstraints;
-    public Weapon.MaterialConstraints anyOfMaterialConstraints;
-    public Weapon.SpecialConstraints anyOfSpecialConstraints;
-
-    //Weapons this is applied to must have all of these
-    public Weapon.WeaponType allOfWeaponType;
-    public Weapon.Handedness allOfHandedness;
-    public Weapon.DamageType allOfDamageType;
-    public Weapon.Special allOfSpecial;
-    public Weapon.AttackConstraints allOfAttackConstraints;
-    public Weapon.MaterialConstraints allOfMaterialConstraints;
-    public Weapon.SpecialConstraints allOfSpecialConstraints;
-
-
-    public static int BonusToCost (BonusEquivalent bonus)
+    public static int BonusToCost (Quality.BonusEquivalent bonus)
     {
         return (int)bonus * (int)bonus * 2000;
     }
-
-
+    
     public int GetCost ()
     {
         if (cost == -1)
@@ -39,13 +18,12 @@ public class WeaponQuality : Quality
         return cost;
     }
 
-
     public int CostToIncrease (WeaponQuality[] oldQualities)
     {
-        if (bonusEquivalent == BonusEquivalent.NA)
+        if (bonusEquivalent == Quality.BonusEquivalent.NA)
             return cost;
 
-        BonusEquivalent oldBonus = BonusEquivalent.NA;
+        Quality.BonusEquivalent oldBonus = Quality.BonusEquivalent.NA;
 
         for (int i = 0; i < oldQualities.Length; i++)
         {
@@ -53,23 +31,34 @@ public class WeaponQuality : Quality
         }
 
         int oldCost = BonusToCost(oldBonus);
-        BonusEquivalent newBonus = (BonusEquivalent)((int)oldBonus + (int)bonusEquivalent);
+        Quality.BonusEquivalent newBonus = (Quality.BonusEquivalent)((int)oldBonus + (int)bonusEquivalent);
         int newCost = BonusToCost(newBonus);
 
         return newCost - oldCost;
     }
-
-
-    public static string GetJsonString(WeaponQuality weaponQuality)
+    
+    protected override string ConvertToJsonString(string[] jsonSplitter)
     {
-        return JsonUtility.ToJson(weaponQuality);
+        string jsonString = "";
+
+        jsonString += name + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(cost) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)rarity) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(ulimateEquipmentPage) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)qualityType) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)bonusEquivalent) + jsonString[0];
+
+        return jsonString;
     }
 
 
-    public new static WeaponQuality CreateFromJsonString(string jsonString)
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        WeaponQuality weaponQuality = CreateInstance<WeaponQuality>();
-        JsonUtility.FromJsonOverwrite(jsonString, weaponQuality);
-        return weaponQuality;
+        name = splitJsonString[0];
+        cost = Wrapper<int>.CreateFromJsonString (splitJsonString[1]);
+        rarity = (Item.Rarity)Wrapper<int>.CreateFromJsonString (splitJsonString[2]);
+        ulimateEquipmentPage = Wrapper<int>.CreateFromJsonString (splitJsonString[3]);
+        qualityType = (Quality.QualityType)Wrapper<int>.CreateFromJsonString (splitJsonString[4]);
+        bonusEquivalent = (Quality.BonusEquivalent)Wrapper<int>.CreateFromJsonString (splitJsonString[5]);
     }
 }

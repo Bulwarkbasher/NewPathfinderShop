@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu]
-public class WeaponCollection : Saveable<WeaponCollection>
-{
-    public Weapon[] weapons = new Weapon[0];
 
-    public static WeaponCollection Create (string name)
+[CreateAssetMenu]
+public class WeaponCollection : ItemCollection<WeaponCollection, Weapon>
+{
+    public WeaponQualityCollection potentialWeaponQualities;
+
+    public static WeaponCollection Create(string name, WeaponQualityCollection potentialWeaponQualities)
     {
         WeaponCollection newWeaponCollection = CreateInstance<WeaponCollection>();
 
@@ -17,44 +18,31 @@ public class WeaponCollection : Saveable<WeaponCollection>
             throw new UnityException("Weapon Collection name invalid, name cannot start with Default");
 
         newWeaponCollection.name = name;
-        newWeaponCollection.weapons = new Weapon[0];
+        newWeaponCollection.items = new Weapon[0];
+        newWeaponCollection.potentialWeaponQualities = potentialWeaponQualities;
 
-        Save(newWeaponCollection);
+        SaveableHolder.AddSaveable(newWeaponCollection);
 
         return newWeaponCollection;
     }
 
-    public void AddWeapon (Weapon newWeapon)
+    public void AddWeapon ()
     {
-        Weapon[] newWeapons = new Weapon[weapons.Length + 1];
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            newWeapons[i] = weapons[i];
-        }
-        newWeapons[weapons.Length] = newWeapon;
-    }
-
-    public void RemoveWeaponAt (int index)
-    {
-        Weapon[] newWeapons = new Weapon[weapons.Length - 1];
-        for (int i = 0; i < newWeapons.Length; i++)
-        {
-            int oldWeaponIndex = i < index ? i : i + 1;
-            newWeapons[i] = weapons[oldWeaponIndex];
-        }
+        Weapon newWeapon = Weapon.CreateBlank (potentialWeaponQualities);
+        AddItem (newWeapon);
     }
     
     public Weapon PickWeapon(ref int budget)
     {
-        if (weapons.Length == 0)
+        if (items.Length == 0)
             return null;
 
         List<Weapon> affordableWeaponList = new List<Weapon>();
 
-        for(int i = 0; i < weapons.Length; i++)
+        for (int i = 0; i < items.Length; i++)
         {
-            if (weapons[i].cost < budget)
-                affordableWeaponList.Add(weapons[i]);
+            if (items[i].cost < budget)
+                affordableWeaponList.Add(items[i]);
         }
         
         Weapon[] affordableWeapons = affordableWeaponList.ToArray();
@@ -70,10 +58,11 @@ public class WeaponCollection : Saveable<WeaponCollection>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
+        jsonString += potentialWeaponQualities.name + jsonSplitter[0];
 
-        for (int i = 0; i < weapons.Length; i++)
+        for (int i = 0; i < items.Length; i++)
         {
-            jsonString += Weapon.GetJsonString(weapons[i]) + jsonSplitter[0];
+            jsonString += Weapon.GetJsonString(items[i]) + jsonSplitter[0];
         }
 
         return jsonString;
@@ -82,11 +71,12 @@ public class WeaponCollection : Saveable<WeaponCollection>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
+        potentialWeaponQualities = WeaponQualityCollection.Load (splitJsonString[1]);
 
-        weapons = new Weapon[splitJsonString.Length - 1];
-        for (int i = 0; i < weapons.Length; i++)
+        items = new Weapon[splitJsonString.Length - 2];
+        for (int i = 0; i < items.Length; i++)
         {
-            weapons[i] = Weapon.CreateFromJsonString(splitJsonString[i + 1]);
+            items[i] = Weapon.CreateFromJsonString(splitJsonString[i + 2]);
         }
     }
 }

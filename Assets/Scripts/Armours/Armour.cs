@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Armour : MonoBehaviour {
+public class Armour : Item<Armour>
+{
+    protected override void SetupFromSplitJsonString (string[] splitJsonString)
+    {
+        throw new System.NotImplementedException ();
+    }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    protected override string ConvertToJsonString (string[] jsonSplitter)
+    {
+        throw new System.NotImplementedException ();
+    }
 }

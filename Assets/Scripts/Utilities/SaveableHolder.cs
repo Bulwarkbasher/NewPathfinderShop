@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.SymbolStore;
 using System.Reflection;
 using UnityEngine;
 
-// TODO: add to the list when things are created instead of calling Save
 public class SaveableHolder : MonoBehaviour
 {
     public static SaveableHolder Instance
@@ -50,9 +47,11 @@ public class SaveableHolder : MonoBehaviour
     public static void AddSaveable<TSaveable> (TSaveable saveable)
         where TSaveable : Saveable<TSaveable>
     {
-        Instance.m_LoadedSaveables.Add (saveable);
+        if(!Instance.m_LoadedSaveables.Contains (saveable))
+            Instance.m_LoadedSaveables.Add (saveable);
     }
 
+    // TODO FRONTEND: this MUST be the only call made when a Save button is pressed.
     public static void Save ()
     {
         for (int i = 0; i < Instance.m_LoadedSaveables.Count; i++)

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 
 // IMPORTANT NOTE: deal with ammunition, firearms and cartridges separately.
@@ -54,49 +53,15 @@ public class Weapon : Item<Weapon>
     }
 
 
-    [Flags]
-    public enum AttackConstraints
-    {
-        Melee = 1 << 0,
-        Ranged = 1 << 1,
-        Thrown = 1 << 2,
-    }
-
-
-    [Flags]
-    public enum MaterialConstraints
-    {
-        MetalAttackingPart = 1 << 0,
-        MostlyMadeFromMetal = 1 << 1,
-        MetalComponent = 1 << 2,
-        WoodenAttackingPart = 1 << 3,
-        MostlyMadeFromWood = 1 << 4,
-        WoodenComponent = 1 << 5,
-    }
-
-
-    [Flags]
-    public enum SpecialConstraints
-    {
-        IsCompositeBow = 1 << 0,
-        IsBow = 1 << 1,
-        IsCrossbow = 1 << 2,
-        UsesAmmo = 1 << 3,
-    }
-
-
     public WeaponType weaponType;
     public Handedness handedness;
     public DamageType damageType;
     public Special special;
-    public AttackConstraints attackConstraints;
-    public MaterialConstraints materialConstraints;
-    public SpecialConstraints specialConstraints;
+    public QualityConstraint[] constraints = new QualityConstraint[0];
 
     public static Weapon Create (string name, int cost, Item.Rarity rarity, int page,
         WeaponType type, Handedness handedness, DamageType damageType, Special special,
-        AttackConstraints attackConstraints, MaterialConstraints materialConstraints,
-        SpecialConstraints specialConstraints)
+        WeaponQualityCollection weaponQualityCollection)
     {
         Weapon newWeapon = CreateInstance<Weapon> ();
         newWeapon.name = name;
@@ -107,10 +72,35 @@ public class Weapon : Item<Weapon>
         newWeapon.handedness = handedness;
         newWeapon.damageType = damageType;
         newWeapon.special = special;
-        newWeapon.attackConstraints = attackConstraints;
-        newWeapon.materialConstraints = materialConstraints;
-        newWeapon.specialConstraints = specialConstraints;
+        newWeapon.SetupQualityConstraints (weaponQualityCollection);
         return newWeapon;
+    }
+
+    public static Weapon CreateBlank (WeaponQualityCollection weaponQualityCollection)
+    {
+        return Create ("NAME", 0, Item.Rarity.Mundane, 999, WeaponType.Simple,
+            Handedness.Light, DamageType.Bludgeoning, 0, weaponQualityCollection);
+    }
+
+    public void SetupQualityConstraints (WeaponQualityCollection weaponQualityCollection)
+    {
+        constraints = new QualityConstraint[weaponQualityCollection.qualities.Length];
+        for (int i = 0; i < constraints.Length; i++)
+        {
+            constraints[i] = new QualityConstraint();
+            constraints[i].name = weaponQualityCollection.qualities[i].name;
+            constraints[i].allowed = true;
+        }
+    }
+
+    public bool CanWeaponUseQuality (WeaponQuality weaponQuality)
+    {
+        for (int i = 0; i < constraints.Length; i++)
+        {
+            if (constraints[i].name == weaponQuality.name)
+                return constraints[i].allowed;
+        }
+        return false;
     }
 
     protected override string ConvertToJsonString(string[] jsonSplitter)
@@ -125,9 +115,11 @@ public class Weapon : Item<Weapon>
         jsonString += Wrapper<int>.GetJsonString((int)handedness) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)damageType) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)special) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)attackConstraints) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)materialConstraints) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)specialConstraints) + jsonSplitter[0];
+
+        for (int i = 0; i < constraints.Length; i++)
+        {
+            jsonString += QualityConstraint.GetJsonString (constraints[i]) + jsonSplitter[0];
+        }
 
         return jsonString;
     }
@@ -142,8 +134,11 @@ public class Weapon : Item<Weapon>
         handedness = (Handedness)Wrapper<int>.CreateFromJsonString (splitJsonString[5]);
         damageType = (DamageType)Wrapper<int>.CreateFromJsonString (splitJsonString[6]);
         special = (Special)Wrapper<int>.CreateFromJsonString (splitJsonString[7]);
-        attackConstraints = (AttackConstraints)Wrapper<int>.CreateFromJsonString (splitJsonString[8]);
-        materialConstraints = (MaterialConstraints)Wrapper<int>.CreateFromJsonString (splitJsonString[9]);
-        specialConstraints = (SpecialConstraints)Wrapper<int>.CreateFromJsonString(splitJsonString[10]);
+
+        constraints = new QualityConstraint[splitJsonString.Length - 8];
+        for (int i = 0; i < constraints.Length; i++)
+        {
+            constraints[i] = QualityConstraint.CreateFromJsonString (splitJsonString[i + 8]);
+        }
     }
 }

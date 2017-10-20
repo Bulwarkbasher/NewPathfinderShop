@@ -48,7 +48,7 @@ public class PerSizeAvailability : Saveable<PerSizeAvailability>
         newPerSizeAvailability.m_OutletAvailability = outlet;
         newPerSizeAvailability.m_EmporiumAvailability = emporium;
 
-        Save (newPerSizeAvailability);
+        SaveableHolder.AddSaveable (newPerSizeAvailability);
 
         return newPerSizeAvailability;
     }

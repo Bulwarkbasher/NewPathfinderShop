@@ -18,7 +18,7 @@ public class SpellCollection : Saveable<SpellCollection>
         newSpellCollection.name = name;
         newSpellCollection.spells = new Spell[0];
 
-        Save (newSpellCollection);
+        SaveableHolder.AddSaveable(newSpellCollection);
 
         return newSpellCollection;
     }

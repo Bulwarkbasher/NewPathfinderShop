@@ -68,7 +68,7 @@ public class PerSizeRestockSettings : Saveable<PerSizeRestockSettings>
         newPerSizeRestockSettings.m_LargeCityRestockSettings = largeCity;
         newPerSizeRestockSettings.m_MetropolisRestockSettings = metropolis;
 
-        Save (newPerSizeRestockSettings);
+        SaveableHolder.AddSaveable(newPerSizeRestockSettings);
 
         return newPerSizeRestockSettings;
     }

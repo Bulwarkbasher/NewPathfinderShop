@@ -48,7 +48,7 @@ public class PerSizeReadyCash : Saveable<PerSizeReadyCash>
         newPerSizeReadyCash.m_OutletReadyCash = outlet;
         newPerSizeReadyCash.m_EmporiumReadyCash = emporium;
 
-        Save (newPerSizeReadyCash);
+        SaveableHolder.AddSaveable(newPerSizeReadyCash);
 
         return newPerSizeReadyCash;
     }

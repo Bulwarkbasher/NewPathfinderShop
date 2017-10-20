@@ -24,7 +24,7 @@ public class Campaign : Saveable<Campaign>
         campaign.m_UsesMinimumCasterLevelForSpellContainerItems = useMinimumCasterLevel;
         campaign.m_RarityWeighting = rarityWeighting;
 
-        Save(campaign);
+        SaveableHolder.AddSaveable (campaign);
 
         return campaign;
     }
@@ -87,7 +87,6 @@ public class Campaign : Saveable<Campaign>
         jsonString += Wrapper<bool>.GetJsonString(m_UsesAutomaticBonusProgressionRules) + jsonSplitter[0];
         jsonString += Wrapper<bool>.GetJsonString(m_UsesMinimumCasterLevelForSpellContainerItems) + jsonString[0];
         jsonString += m_RarityWeighting.name + jsonString[0];
-        RarityWeighting.Save(m_RarityWeighting);
 
         for (int i = 0; i < settlements.Length; i++)
         {

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System;
 
-// TODO: search for all places value types are stored instead of references.
 public class Shop : Jsonable<Shop>
 {
     public enum Size

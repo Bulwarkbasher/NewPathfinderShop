@@ -35,7 +35,7 @@ public class WeaponQualityCostColumn : DoublePropertyColumn
         }
         else
         {
-            EditorGUI.LabelField(position, Quality.BonusEquivalentNames[bonusEquivProp.enumValueIndex]);
+            EditorGUI.LabelField(position, Quality.GetBonusEquivalentName((Quality.BonusEquivalent)bonusEquivProp.enumValueIndex));
             costProp.intValue = -1;
         }
 

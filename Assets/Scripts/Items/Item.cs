@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-// TODO: update which objects inherit from Item, should be more
 public abstract class Item<TChild> : Jsonable<TChild>
     where TChild : Item<TChild>
 {

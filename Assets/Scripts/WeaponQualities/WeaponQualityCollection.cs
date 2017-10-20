@@ -19,7 +19,7 @@ public class WeaponQualityCollection : Saveable<WeaponQualityCollection>
         weaponQualityCollection.name = name;
         weaponQualityCollection.qualities = new WeaponQuality[0];
 
-        Save(weaponQualityCollection);
+        SaveableHolder.AddSaveable(weaponQualityCollection);
 
         return weaponQualityCollection;
     }
@@ -45,32 +45,9 @@ public class WeaponQualityCollection : Saveable<WeaponQualityCollection>
         if (!allowAbilities)
             availableQualities = availableQualities.Where(x => x.qualityType != Quality.QualityType.SpecialAbility).ToArray();
 
-        List<WeaponQuality> constrainedWeaponQualityList = new List<WeaponQuality>();
-        for(int i = 0; i < availableQualities.Length; i++)
-        {
-            WeaponQuality weaponQuality = availableQualities[i];
+        availableQualities = availableQualities.Where (weaponToAddTo.CanWeaponUseQuality).ToArray ();
 
-            if(FlagUtilities.ValueHasAnyFlag((int)weaponQuality.anyOfWeaponType, (int)weaponToAddTo.weaponType) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.anyOfHandedness, (int)weaponToAddTo.handedness) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.anyOfDamageType, (int)weaponToAddTo.damageType) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.anyOfSpecial, (int)weaponToAddTo.special) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.anyOfAttackConstraints, (int)weaponToAddTo.attackConstraints) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.anyOfMaterialConstraints, (int)weaponToAddTo.materialConstraints) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.anyOfSpecialConstraints, (int)weaponToAddTo.specialConstraints) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.allOfWeaponType, (int)weaponToAddTo.weaponType) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.allOfHandedness, (int)weaponToAddTo.handedness) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.allOfDamageType, (int)weaponToAddTo.damageType) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.allOfSpecial, (int)weaponToAddTo.special) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.allOfAttackConstraints, (int)weaponToAddTo.attackConstraints) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.allOfMaterialConstraints, (int)weaponToAddTo.materialConstraints) &&
-            FlagUtilities.ValueHasAnyFlag((int)weaponQuality.allOfSpecialConstraints, (int)weaponToAddTo.specialConstraints))
-            {
-                constrainedWeaponQualityList.Add(weaponQuality);
-            }            
-        }
-        availableQualities = constrainedWeaponQualityList.ToArray();
-
-        return WeaponQuality.PickItem(availableQualities) as WeaponQuality;
+        return WeaponQuality.PickItem(availableQualities);
     }
 
     protected override string ConvertToJsonString(string[] jsonSplitter)

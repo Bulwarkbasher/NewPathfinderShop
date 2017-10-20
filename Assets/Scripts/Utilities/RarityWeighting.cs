@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-// TODO: to draw curve at runtime use int values for rarity and draw a line renderer between each value
+// TODO FRONTEND: to draw curve at runtime use int values for rarity and draw a line renderer between each value
 [CreateAssetMenu]
 public class RarityWeighting : Saveable<RarityWeighting>
 {
@@ -23,7 +23,7 @@ public class RarityWeighting : Saveable<RarityWeighting>
         newRarityWeighting.name = name;
         newRarityWeighting.m_WeightingCurve = weightingCurve;
 
-        Save (newRarityWeighting);
+        SaveableHolder.AddSaveable(newRarityWeighting);
 
         return newRarityWeighting;
     }
