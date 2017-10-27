@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public abstract class ItemCollection<TChild, TItem> : Saveable<TChild>
     where TChild : ItemCollection<TChild, TItem>

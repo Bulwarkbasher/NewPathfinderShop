@@ -146,4 +146,38 @@ public static class SerializedPropertyExtensions
         initMethod(newElement);
         arrayProp.AddToObjectArray(newElement);
     }
+
+    public static void AddObjectAsSubAsset<TElement> (this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, string name, TElement newElement)
+        where TElement : ScriptableObject
+    {
+        if (hideSubAsset)
+            newElement.hideFlags = HideFlags.HideInHierarchy;
+        AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
+        newElement.name = name;
+        arrayProp.AddToObjectArray(newElement);
+    }
+
+    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, TElement newElement)
+        where TElement : ScriptableObject
+    {
+        if (hideSubAsset)
+            newElement.hideFlags = HideFlags.HideInHierarchy;
+        AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
+        arrayProp.AddToObjectArray(newElement);
+    }
+
+    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, string name, TElement newElement)
+        where TElement : ScriptableObject
+    {
+        AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
+        newElement.name = name;
+        arrayProp.AddToObjectArray(newElement);
+    }
+
+    public static void RemoveObjectAsSubAsset (this SerializedProperty arrayProp, int removeAtIndex)
+    {
+        Object objectToDestroy = arrayProp.GetArrayElementAtIndex (removeAtIndex).objectReferenceValue;
+        arrayProp.RemoveFromObjectArrayAt (removeAtIndex);
+        Object.DestroyImmediate (objectToDestroy, true);
+    }
 }

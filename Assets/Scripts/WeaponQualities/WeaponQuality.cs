@@ -3,6 +3,23 @@ using System.Collections;
 
 public class WeaponQuality : Quality<WeaponQuality>
 {
+    public static WeaponQuality Create (string name, int cost, Item.Rarity rarity, int page,
+        Quality.QualityType qualityType, Quality.BonusEquivalent bonusEquivalent)
+    {
+        WeaponQuality newWeaponQuality = CreateInstance<WeaponQuality> ();
+        newWeaponQuality.name = name;
+        newWeaponQuality.rarity = rarity;
+        newWeaponQuality.ulimateEquipmentPage = page;
+        newWeaponQuality.qualityType = qualityType;
+        newWeaponQuality.bonusEquivalent = bonusEquivalent;
+        return newWeaponQuality;
+    }
+
+    public static WeaponQuality CreateBlank ()
+    {
+        return Create ("NAME", 0, Item.Rarity.Mundane, 999, Quality.QualityType.SpecialMaterial, Quality.BonusEquivalent.NA);
+    }
+
     public static int BonusToCost (Quality.BonusEquivalent bonus)
     {
         return (int)bonus * (int)bonus * 2000;
@@ -10,7 +27,7 @@ public class WeaponQuality : Quality<WeaponQuality>
     
     public int GetCost ()
     {
-        if (cost == -1)
+        if (bonusEquivalent != Quality.BonusEquivalent.NA)
         {
             return BonusToCost(bonusEquivalent);
         }

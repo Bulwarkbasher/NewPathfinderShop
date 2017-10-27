@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
+// TODO NEXT: use ItemCollection
 [CreateAssetMenu]
 public class WeaponQualityCollection : Saveable<WeaponQualityCollection>
 {

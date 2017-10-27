@@ -33,6 +33,28 @@ public class Weapon : Item<Weapon>
 
 
     [Flags]
+    public enum WeaponGroup
+    {
+        Axes = 1 << 0,
+        BladesHeavy = 1 << 1,
+        BladesLight = 1 << 2,
+        Bows = 1 << 3,
+        Close = 1 << 4,
+        Crossbows = 1 << 5,
+        Double = 1 << 6,
+        Firearms = 1 << 7,
+        Flails = 1 << 8,
+        Hammers = 1 << 9,
+        Monk = 1 << 10,
+        Natural = 1 << 11,
+        Polearms = 1 << 12,
+        SiegeEngines = 1 << 13,
+        Spears = 1 << 14,
+        Thrown = 1 << 15,
+    }
+
+
+    [Flags]
     public enum Special
     {
         Blocking = 1 << 0,
@@ -56,12 +78,13 @@ public class Weapon : Item<Weapon>
     public WeaponType weaponType;
     public Handedness handedness;
     public DamageType damageType;
+    public WeaponGroup weaponGroup;
     public Special special;
     public QualityConstraint[] constraints = new QualityConstraint[0];
 
     public static Weapon Create (string name, int cost, Item.Rarity rarity, int page,
-        WeaponType type, Handedness handedness, DamageType damageType, Special special,
-        WeaponQualityCollection weaponQualityCollection)
+        WeaponType type, Handedness handedness, DamageType damageType, WeaponGroup weaponGroup,
+        Special special, WeaponQualityCollection weaponQualityCollection)
     {
         Weapon newWeapon = CreateInstance<Weapon> ();
         newWeapon.name = name;
@@ -71,6 +94,7 @@ public class Weapon : Item<Weapon>
         newWeapon.weaponType = type;
         newWeapon.handedness = handedness;
         newWeapon.damageType = damageType;
+        newWeapon.weaponGroup = weaponGroup;
         newWeapon.special = special;
         newWeapon.SetupQualityConstraints (weaponQualityCollection);
         return newWeapon;
@@ -78,8 +102,8 @@ public class Weapon : Item<Weapon>
 
     public static Weapon CreateBlank (WeaponQualityCollection weaponQualityCollection)
     {
-        return Create ("NAME", 0, Item.Rarity.Mundane, 999, WeaponType.Simple,
-            Handedness.Light, DamageType.Bludgeoning, 0, weaponQualityCollection);
+        return Create ("NAME", 0, Item.Rarity.Mundane, 999, WeaponType.Simple,  // TODO: change this to actual ue page
+            Handedness.Light, DamageType.Bludgeoning, WeaponGroup.Hammers, 0, weaponQualityCollection);
     }
 
     public void SetupQualityConstraints (WeaponQualityCollection weaponQualityCollection)
@@ -87,7 +111,7 @@ public class Weapon : Item<Weapon>
         constraints = new QualityConstraint[weaponQualityCollection.qualities.Length];
         for (int i = 0; i < constraints.Length; i++)
         {
-            constraints[i] = new QualityConstraint();
+            constraints[i] = CreateInstance<QualityConstraint>();
             constraints[i].name = weaponQualityCollection.qualities[i].name;
             constraints[i].allowed = true;
         }
@@ -114,6 +138,7 @@ public class Weapon : Item<Weapon>
         jsonString += Wrapper<int>.GetJsonString((int)weaponType) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)handedness) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)damageType) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)weaponGroup) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)special) + jsonSplitter[0];
 
         for (int i = 0; i < constraints.Length; i++)
@@ -133,12 +158,13 @@ public class Weapon : Item<Weapon>
         weaponType = (WeaponType)Wrapper<int>.CreateFromJsonString(splitJsonString[4]);
         handedness = (Handedness)Wrapper<int>.CreateFromJsonString (splitJsonString[5]);
         damageType = (DamageType)Wrapper<int>.CreateFromJsonString (splitJsonString[6]);
-        special = (Special)Wrapper<int>.CreateFromJsonString (splitJsonString[7]);
+        weaponGroup = (WeaponGroup)Wrapper<int>.CreateFromJsonString (splitJsonString[7]);
+        special = (Special)Wrapper<int>.CreateFromJsonString (splitJsonString[8]);
 
-        constraints = new QualityConstraint[splitJsonString.Length - 8];
+        constraints = new QualityConstraint[splitJsonString.Length - 9];
         for (int i = 0; i < constraints.Length; i++)
         {
-            constraints[i] = QualityConstraint.CreateFromJsonString (splitJsonString[i + 8]);
+            constraints[i] = QualityConstraint.CreateFromJsonString (splitJsonString[i + 9]);
         }
     }
 }

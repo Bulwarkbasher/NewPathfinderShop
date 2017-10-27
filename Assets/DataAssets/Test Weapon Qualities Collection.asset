@@ -21,6 +21,24 @@ MonoBehaviour:
   - {fileID: 114228039905198298}
   - {fileID: 114307704326701326}
   - {fileID: 114201634656469190}
+  - {fileID: 114760223229924052}
+  - {fileID: 114008365931782902}
+--- !u!114 &114008365931782902
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
+  m_Name: NAME
+  m_EditorClassIdentifier: 
+  cost: 0
+  rarity: 0
+  ulimateEquipmentPage: 999
+  qualityType: 0
+  bonusEquivalent: 0
 --- !u!114 &114162706075872220
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -32,26 +50,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
   m_Name: New Element
   m_EditorClassIdentifier: 
-  description: Adamantine
   cost: 10000
   rarity: 0
   ulimateEquipmentPage: 0
   qualityType: 0
   bonusEquivalent: 0
-  anyOfWeaponType: 0
-  anyOfHandedness: 0
-  anyOfDamageType: 0
-  anyOfSpecial: 0
-  anyOfAttackConstraints: 0
-  anyOfMaterialConstraints: 0
-  anyOfSpecialConstraints: 0
-  allOfWeaponType: 0
-  allOfHandedness: 0
-  allOfDamageType: 0
-  allOfSpecial: 0
-  allOfAttackConstraints: 0
-  allOfMaterialConstraints: 0
-  allOfSpecialConstraints: 0
 --- !u!114 &114184153502975116
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -63,26 +66,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
   m_Name: New Element
   m_EditorClassIdentifier: 
-  description: Random
   cost: 8000
   rarity: 0
   ulimateEquipmentPage: 0
   qualityType: 2
   bonusEquivalent: 0
-  anyOfWeaponType: 0
-  anyOfHandedness: 0
-  anyOfDamageType: 0
-  anyOfSpecial: 0
-  anyOfAttackConstraints: 0
-  anyOfMaterialConstraints: 0
-  anyOfSpecialConstraints: 0
-  allOfWeaponType: 0
-  allOfHandedness: 0
-  allOfDamageType: 0
-  allOfSpecial: 0
-  allOfAttackConstraints: 0
-  allOfMaterialConstraints: 0
-  allOfSpecialConstraints: 0
 --- !u!114 &114201634656469190
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -94,26 +82,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
   m_Name: New Element
   m_EditorClassIdentifier: 
-  description: Speed
   cost: -1
   rarity: 0
   ulimateEquipmentPage: 0
   qualityType: 2
   bonusEquivalent: 3
-  anyOfWeaponType: 0
-  anyOfHandedness: 0
-  anyOfDamageType: 0
-  anyOfSpecial: 0
-  anyOfAttackConstraints: 0
-  anyOfMaterialConstraints: 0
-  anyOfSpecialConstraints: 0
-  allOfWeaponType: 0
-  allOfHandedness: 0
-  allOfDamageType: 0
-  allOfSpecial: 0
-  allOfAttackConstraints: 0
-  allOfMaterialConstraints: 0
-  allOfSpecialConstraints: 0
 --- !u!114 &114228039905198298
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -125,26 +98,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
   m_Name: New Element
   m_EditorClassIdentifier: 
-  description: Flaming Burst
   cost: -1
   rarity: 0
   ulimateEquipmentPage: 0
   qualityType: 2
   bonusEquivalent: 2
-  anyOfWeaponType: 0
-  anyOfHandedness: 0
-  anyOfDamageType: 0
-  anyOfSpecial: 0
-  anyOfAttackConstraints: 0
-  anyOfMaterialConstraints: 0
-  anyOfSpecialConstraints: 0
-  allOfWeaponType: 0
-  allOfHandedness: 0
-  allOfDamageType: 0
-  allOfSpecial: 0
-  allOfAttackConstraints: 0
-  allOfMaterialConstraints: 0
-  allOfSpecialConstraints: 0
 --- !u!114 &114232369587285624
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -156,26 +114,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
   m_Name: New Element
   m_EditorClassIdentifier: 
-  description: +1
   cost: -1
   rarity: 0
   ulimateEquipmentPage: 0
   qualityType: 1
   bonusEquivalent: 1
-  anyOfWeaponType: 0
-  anyOfHandedness: 0
-  anyOfDamageType: 0
-  anyOfSpecial: 0
-  anyOfAttackConstraints: 0
-  anyOfMaterialConstraints: 0
-  anyOfSpecialConstraints: 0
-  allOfWeaponType: 0
-  allOfHandedness: 0
-  allOfDamageType: 0
-  allOfSpecial: 0
-  allOfAttackConstraints: 0
-  allOfMaterialConstraints: 0
-  allOfSpecialConstraints: 0
 --- !u!114 &114307704326701326
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -187,26 +130,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
   m_Name: New Element
   m_EditorClassIdentifier: 
-  description: Frosty Bust
   cost: -1
   rarity: 0
   ulimateEquipmentPage: 0
   qualityType: 2
   bonusEquivalent: 2
-  anyOfWeaponType: 0
-  anyOfHandedness: 0
-  anyOfDamageType: 0
-  anyOfSpecial: 0
-  anyOfAttackConstraints: 0
-  anyOfMaterialConstraints: 0
-  anyOfSpecialConstraints: 0
-  allOfWeaponType: 0
-  allOfHandedness: 0
-  allOfDamageType: 0
-  allOfSpecial: 0
-  allOfAttackConstraints: 0
-  allOfMaterialConstraints: 0
-  allOfSpecialConstraints: 0
 --- !u!114 &114357626602875008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -218,26 +146,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
   m_Name: New Element
   m_EditorClassIdentifier: 
-  description: +2
   cost: -1
   rarity: 0
   ulimateEquipmentPage: 0
   qualityType: 1
   bonusEquivalent: 2
-  anyOfWeaponType: 0
-  anyOfHandedness: 0
-  anyOfDamageType: 0
-  anyOfSpecial: 0
-  anyOfAttackConstraints: 0
-  anyOfMaterialConstraints: 0
-  anyOfSpecialConstraints: 0
-  allOfWeaponType: 0
-  allOfHandedness: 0
-  allOfDamageType: 0
-  allOfSpecial: 0
-  allOfAttackConstraints: 0
-  allOfMaterialConstraints: 0
-  allOfSpecialConstraints: 0
 --- !u!114 &114412274475184886
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -249,26 +162,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
   m_Name: New Element
   m_EditorClassIdentifier: 
-  description: +3
   cost: -1
   rarity: 0
   ulimateEquipmentPage: 0
   qualityType: 1
   bonusEquivalent: 3
-  anyOfWeaponType: 0
-  anyOfHandedness: 0
-  anyOfDamageType: 0
-  anyOfSpecial: 0
-  anyOfAttackConstraints: 0
-  anyOfMaterialConstraints: 0
-  anyOfSpecialConstraints: 0
-  allOfWeaponType: 0
-  allOfHandedness: 0
-  allOfDamageType: 0
-  allOfSpecial: 0
-  allOfAttackConstraints: 0
-  allOfMaterialConstraints: 0
-  allOfSpecialConstraints: 0
+--- !u!114 &114760223229924052
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
+  m_Name: NAME
+  m_EditorClassIdentifier: 
+  cost: 0
+  rarity: 0
+  ulimateEquipmentPage: 999
+  qualityType: 0
+  bonusEquivalent: 0
 --- !u!114 &114774282400780644
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -280,23 +194,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
   m_Name: New Element
   m_EditorClassIdentifier: 
-  description: Flaming
   cost: -1
   rarity: 0
   ulimateEquipmentPage: 0
   qualityType: 2
   bonusEquivalent: 1
-  anyOfWeaponType: 0
-  anyOfHandedness: 0
-  anyOfDamageType: 0
-  anyOfSpecial: 0
-  anyOfAttackConstraints: 0
-  anyOfMaterialConstraints: 0
-  anyOfSpecialConstraints: 0
-  allOfWeaponType: 0
-  allOfHandedness: 0
-  allOfDamageType: 0
-  allOfSpecial: 0
-  allOfAttackConstraints: 0
-  allOfMaterialConstraints: 0
-  allOfSpecialConstraints: 0

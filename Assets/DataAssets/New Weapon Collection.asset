@@ -12,9 +12,15 @@ MonoBehaviour:
   m_Name: New Weapon Collection
   m_EditorClassIdentifier: 
   items:
-  - {fileID: 0}
-  potentialWeaponQualities: {fileID: 0}
---- !u!114 &114035290243847426
+  - {fileID: 114011054985504594}
+  - {fileID: 114821236236235838}
+  - {fileID: 114689205865444682}
+  - {fileID: 114013064014626094}
+  - {fileID: 114801651991046682}
+  - {fileID: 114963298854120872}
+  potentialWeaponQualities: {fileID: 11400000, guid: 22d9852b713b5274e9104f2b0afad1a6,
+    type: 2}
+--- !u!114 &114011054985504594
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -22,11 +28,171 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b3b0d996462f1e49853283c9cb69ab7, type: 3}
-  m_Name: New Element
+  m_Script: {fileID: 11500000, guid: b1da055e05d87b645ba0026090a41514, type: 3}
+  m_Name: Third
   m_EditorClassIdentifier: 
   cost: 0
   rarity: 0
-  ulimateEquipmentPage: 0
-  qualityType: 0
-  bonusEquivalent: 0
+  ulimateEquipmentPage: 999
+  weaponType: 1
+  handedness: 1
+  damageType: 1
+  weaponGroup: 512
+  special: 0
+  constraints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+--- !u!114 &114013064014626094
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1da055e05d87b645ba0026090a41514, type: 3}
+  m_Name: NAME
+  m_EditorClassIdentifier: 
+  cost: 0
+  rarity: 0
+  ulimateEquipmentPage: 999
+  weaponType: 1
+  handedness: 1
+  damageType: 1
+  weaponGroup: 512
+  special: 0
+  constraints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+--- !u!114 &114689205865444682
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1da055e05d87b645ba0026090a41514, type: 3}
+  m_Name: NAME
+  m_EditorClassIdentifier: 
+  cost: 0
+  rarity: 0
+  ulimateEquipmentPage: 999
+  weaponType: 1
+  handedness: 1
+  damageType: 1
+  weaponGroup: 512
+  special: 0
+  constraints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+--- !u!114 &114801651991046682
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1da055e05d87b645ba0026090a41514, type: 3}
+  m_Name: NAME
+  m_EditorClassIdentifier: 
+  cost: 0
+  rarity: 0
+  ulimateEquipmentPage: 999
+  weaponType: 1
+  handedness: 1
+  damageType: 1
+  weaponGroup: 512
+  special: 0
+  constraints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+--- !u!114 &114821236236235838
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1da055e05d87b645ba0026090a41514, type: 3}
+  m_Name: NAME
+  m_EditorClassIdentifier: 
+  cost: 0
+  rarity: 0
+  ulimateEquipmentPage: 999
+  weaponType: 1
+  handedness: 1
+  damageType: 1
+  weaponGroup: 512
+  special: 0
+  constraints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+--- !u!114 &114963298854120872
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1da055e05d87b645ba0026090a41514, type: 3}
+  m_Name: NAME
+  m_EditorClassIdentifier: 
+  cost: 0
+  rarity: 0
+  ulimateEquipmentPage: 999
+  weaponType: 1
+  handedness: 1
+  damageType: 1
+  weaponGroup: 512
+  special: 0
+  constraints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

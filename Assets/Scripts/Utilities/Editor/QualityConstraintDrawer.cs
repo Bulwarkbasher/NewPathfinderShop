@@ -24,12 +24,16 @@ public class QualityConstraintDrawer : PropertyDrawer
         if (!m_HasSetupRun)
             Setup(property);
 
+        m_SerializedObject.Update ();
+
         EditorGUI.indentLevel++;
         
         Rect singleLineRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
         m_AllowedProp.boolValue = EditorGUI.ToggleLeft(singleLineRect, m_NameProp.stringValue, m_AllowedProp.boolValue);
 
         EditorGUI.indentLevel--;
+
+        m_SerializedObject.ApplyModifiedProperties ();
     }
 
     void Setup(SerializedProperty property)

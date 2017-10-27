@@ -1,33 +1,21 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEditor;
 using System;
 
+// TODO AFTER: use ItemCollectionEditor
 [CustomEditor(typeof(WeaponQualityCollection))]
-public class WeaponQualitiesCollectionEditor : Editor
+public class WeaponQualitiesCollectionEditor : AssetWithSubAssetElementsEditor<WeaponQualityCollection, WeaponQuality>
 {
-    WeaponQualityCollection m_WeaponQualityCollection;
     SerializedProperty m_QualitiesProp;
-    
-    private void OnEnable ()
+
+    protected override void GetProperties ()
     {
         m_QualitiesProp = serializedObject.FindProperty("qualities");
-
-        m_WeaponQualityCollection = (WeaponQualityCollection)target;
     }
 
-
-    public override void OnInspectorGUI()
+    protected override void AssetGUI ()
     {
-        for (int i = 0; i < m_QualitiesProp.arraySize; i++)
-        {
-            SerializedProperty elementProp = m_QualitiesProp.GetArrayElementAtIndex (i);
-            EditorGUILayout.PropertyField (elementProp);
-        }
-
-        if (GUILayout.Button("Add"))
-        {
-            m_QualitiesProp.AddObjectAsSubAsset<WeaponQuality>(m_WeaponQualityCollection, true);
-        }
+        CollectionGUI (m_QualitiesProp);
+        AddButtonGUI (m_QualitiesProp, WeaponQuality.CreateBlank);
     }
 }

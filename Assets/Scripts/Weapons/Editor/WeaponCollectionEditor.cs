@@ -1,36 +1,37 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
+// TODO AFTER: use ItemCollectionEditor
 [CustomEditor(typeof(WeaponCollection))]
-public class WeaponCollectionEditor : Editor
+public class WeaponCollectionEditor : AssetWithSubAssetElementsEditor<WeaponCollection, Weapon>
 {
-    WeaponCollection m_WeaponCollection;
     SerializedProperty m_ItemsProp;
     SerializedProperty m_WeaponQualityCollectionProp;
 
-    private void OnEnable ()
+    protected override void GetProperties ()
     {
         m_ItemsProp = serializedObject.FindProperty("items");
-        m_WeaponQualityCollectionProp = serializedObject.FindProperty ("potentialWeaponQualities");
-
-        m_WeaponCollection = (WeaponCollection)target;
+        m_WeaponQualityCollectionProp = serializedObject.FindProperty("potentialWeaponQualities");
     }
 
-    public override void OnInspectorGUI()
+    protected override void AssetGUI ()
     {
-        EditorGUILayout.PropertyField (m_WeaponQualityCollectionProp);
-
-        for (int i = 0; i < m_ItemsProp.arraySize; i++)
+        if (m_ItemsProp.arraySize == 0)
         {
-            SerializedProperty elementProp = m_ItemsProp.GetArrayElementAtIndex(i);
-            EditorGUILayout.PropertyField(elementProp);
+            EditorGUILayout.PropertyField(m_WeaponQualityCollectionProp);
+        }
+        else
+        {
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            EditorGUILayout.LabelField(new GUIContent("Weapon Quality Collection"), new GUIContent(m_WeaponQualityCollectionProp.objectReferenceValue.name));
+            EditorGUILayout.EndVertical();
         }
 
-        if (GUILayout.Button("Add"))
+        CollectionGUI (m_ItemsProp);
+
+        if (m_WeaponQualityCollectionProp.objectReferenceValue != null)
         {
-            m_ItemsProp.AddObjectAsSubAsset<WeaponQuality>(m_WeaponCollection, true);
+            AddButtonGUI (m_ItemsProp, Weapon.CreateBlank, m_WeaponQualityCollectionProp.objectReferenceValue as WeaponQualityCollection);
         }
     }
 }
