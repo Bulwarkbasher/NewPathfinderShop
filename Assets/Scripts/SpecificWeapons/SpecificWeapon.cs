@@ -12,7 +12,7 @@ public class SpecificWeapon : SpecificItem<SpecificWeapon>
 
     private string m_Description;
     
-    public static SpecificWeapon CreateRandom (PowerLevel powerLevel, int budget, WeaponCollection availableWeapons, WeaponQualityCollection availableQualities)
+    public static SpecificWeapon CreateRandom (SpecificItem.PowerLevel powerLevel, int budget, WeaponCollection availableWeapons, WeaponQualityCollection availableQualities)
     {
         int originalBudget = budget;
         SpecificWeapon newSpecificWeapon = CreateInstance<SpecificWeapon>();

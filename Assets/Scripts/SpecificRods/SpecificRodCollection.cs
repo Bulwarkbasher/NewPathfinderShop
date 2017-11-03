@@ -9,7 +9,7 @@ public class SpecificRodCollection : SpecificItemCollection<SpecificRod, Specifi
         return CreateInstance<SpecificRodCollection>();
     }
 
-    protected override SpecificRod GetRandomSpecificItem(SpecificRod.PowerLevel powerLevel, int budget)
+    protected override SpecificRod GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
     {
         return SpecificRod.CreateRandom();
     }

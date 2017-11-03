@@ -9,7 +9,7 @@ public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, Spe
         return CreateInstance<SpecificStaffCollection>();
     }
 
-    protected override SpecificStaff GetRandomSpecificItem(SpecificStaff.PowerLevel powerLevel, int budget)
+    protected override SpecificStaff GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
     {
         return SpecificStaff.CreateRandom();
     }

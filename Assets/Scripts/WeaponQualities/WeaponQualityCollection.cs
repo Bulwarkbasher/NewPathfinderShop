@@ -2,12 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 
-// TODO NEXT: use ItemCollection
 [CreateAssetMenu]
-public class WeaponQualityCollection : Saveable<WeaponQualityCollection>
+public class WeaponQualityCollection : ItemCollection<WeaponQualityCollection, WeaponQuality>
 {
-    public WeaponQuality[] qualities = new WeaponQuality[0];
-
     public static WeaponQualityCollection Create (string name)
     {
         WeaponQualityCollection weaponQualityCollection = CreateInstance<WeaponQualityCollection>();
@@ -18,7 +15,7 @@ public class WeaponQualityCollection : Saveable<WeaponQualityCollection>
             throw new UnityException("Weapon Quality Collection name invalid, name cannot start with Default");
 
         weaponQualityCollection.name = name;
-        weaponQualityCollection.qualities = new WeaponQuality[0];
+        weaponQualityCollection.items = new WeaponQuality[0];
 
         SaveableHolder.AddSaveable(weaponQualityCollection);
 
@@ -27,10 +24,10 @@ public class WeaponQualityCollection : Saveable<WeaponQualityCollection>
 
     public WeaponQuality PickWeaponQuality (Weapon weaponToAddTo, int budget, WeaponQuality[] bonusEquivalentQualities, bool allowMaterials, bool allowBonuses, bool allowAbilities)
     {
-        if (qualities.Length == 0)
+        if (items.Length == 0)
             return null;
 
-        WeaponQuality[] availableQualities = qualities.Where(x => x.CostToIncrease(bonusEquivalentQualities) <= budget).ToArray();
+        WeaponQuality[] availableQualities = items.Where(x => x.CostToIncrease(bonusEquivalentQualities) <= budget).ToArray();
 
         for(int i = 0; i < bonusEquivalentQualities.Length; i++)
         {
@@ -57,9 +54,9 @@ public class WeaponQualityCollection : Saveable<WeaponQualityCollection>
 
         jsonString += name + jsonSplitter[0];
 
-        for (int i = 0; i < qualities.Length; i++)
+        for (int i = 0; i < items.Length; i++)
         {
-            jsonString += WeaponQuality.GetJsonString(qualities[i]) + jsonSplitter[0];
+            jsonString += WeaponQuality.GetJsonString(items[i]) + jsonSplitter[0];
         }
 
         return jsonString;
@@ -69,10 +66,10 @@ public class WeaponQualityCollection : Saveable<WeaponQualityCollection>
     {
         name = splitJsonString[0];
 
-        qualities = new WeaponQuality[splitJsonString.Length - 1];
-        for (int i = 0; i < qualities.Length; i++)
+        items = new WeaponQuality[splitJsonString.Length - 1];
+        for (int i = 0; i < items.Length; i++)
         {
-            qualities[i] = WeaponQuality.CreateFromJsonString (splitJsonString[i + 1]);
+            items[i] = WeaponQuality.CreateFromJsonString (splitJsonString[i + 1]);
         }
     }
 }

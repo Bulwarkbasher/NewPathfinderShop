@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\James\.Rider2017.2\system\resharper-host\local\Transient\ReSharperHost\v10\SolutionCaches\_PathfinderShop.430572202.00" t="ExcludeRecursive" />
+    <e p="C:\Workspace\PathfinderShop" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor-firstpass.csproj" t="IncludeRecursive" />
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="Plugins" t="Include">
+          <e p="Editor" t="Include">
+            <e p="JetBrains" t="Include">
+              <e p="Unity3DRider.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Scripts" t="Include">
+          <e p="ArmourQualities" t="Include">
+            <e p="ArmourQuality.cs" t="Include" />
+            <e p="ArmourQualityCollection.cs" t="Include" />
+          </e>
+          <e p="Armours" t="Include">
+            <e p="Armour.cs" t="Include" />
+            <e p="ArmourCollection.cs" t="Include" />
+          </e>
+          <e p="Campaigns" t="Include">
+            <e p="Campaign.cs" t="Include" />
+          </e>
+          <e p="DevNotes.cs" t="Include" />
+          <e p="Editor" t="Include">
+            <e p="Helpers" t="Include">
+              <e p="EditorWithSubEditors.cs" t="Include" />
+              <e p="EnumColumn.cs" t="Include" />
+              <e p="FlagsPropertyColumn.cs" t="Include" />
+              <e p="SerializedPropertyExtensions.cs" t="Include" />
+              <e p="TableEditor" t="Include">
+                <e p="Columns" t="Include">
+                  <e p="Column.cs" t="Include" />
+                  <e p="DoublePropertyColumn.cs" t="Include" />
+                  <e p="RemoveRowColumn.cs" t="Include" />
+                  <e p="SinglePropertyColumn.cs" t="Include" />
+                </e>
+                <e p="Row.cs" t="Include" />
+                <e p="TableEditor.cs" t="Include" />
+                <e p="TableEditorSettings.cs" t="Include" />
+              </e>
+            </e>
+            <e p="Testing" t="Include">
+              <e p="DataItem.cs" t="Include" />
+              <e p="DataItemCollection.cs" t="Include" />
+              <e p="DataItemCollectionEditor.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Items" t="Include">
+            <e p="Editor" t="Include">
+              <e p="ItemCollectionEditor.cs" t="Include" />
+              <e p="ItemCostColumn.cs" t="Include" />
+              <e p="ItemDescriptionColumn.cs" t="Include" />
+              <e p="ItemEditButtonColumn.cs" t="Include" />
+              <e p="ItemPageColumn.cs" t="Include" />
+              <e p="ItemRarityColumn.cs" t="Include" />
+            </e>
+            <e p="Item.cs" t="Include" />
+            <e p="ItemCollection.cs" t="Include" />
+          </e>
+          <e p="Qualities" t="Include">
+            <e p="Editor" t="Include">
+              <e p="QualityBonusEquivalentColumn.cs" t="Include" />
+              <e p="QualityTypeColumn.cs" t="Include" />
+            </e>
+            <e p="Quality.cs" t="Include" />
+          </e>
+          <e p="Settings" t="Include">
+            <e p="DefaultResourceHolder.cs" t="Include" />
+            <e p="PerCreatorRarity.cs" t="Include" />
+            <e p="PerSizeAvailability.cs" t="Include" />
+            <e p="PerSizeReadyCash.cs" t="Include" />
+            <e p="PerSizeRestockFrequencyModifiers.cs" t="Include" />
+            <e p="PerSizeRestockSettings.cs" t="Include" />
+            <e p="PerStockTypePerSizeAvailability.cs" t="Include" />
+          </e>
+          <e p="Settlements" t="Include">
+            <e p="Settlement.cs" t="Include" />
+          </e>
+          <e p="Shops" t="Include">
+            <e p="Shop.cs" t="Include" />
+          </e>
+          <e p="SpecificArmours" t="Include">
+            <e p="SpecificArmour.cs" t="Include" />
+            <e p="SpecificArmourCollection.cs" t="Include" />
+          </e>
+          <e p="SpecificItems" t="Include">
+            <e p="SpecificItem.cs" t="Include" />
+            <e p="SpecificItemCollection.cs" t="Include" />
+          </e>
+          <e p="SpecificPotion" t="Include">
+            <e p="SpecificPotion.cs" t="Include" />
+            <e p="SpecificPotionCollection.cs" t="Include" />
+          </e>
+          <e p="SpecificRing" t="Include">
+            <e p="SpecificRing.cs" t="Include" />
+            <e p="SpecificRingCollection.cs" t="Include" />
+          </e>
+          <e p="SpecificRods" t="Include">
+            <e p="SpecificRod.cs" t="Include" />
+            <e p="SpecificRodCollection.cs" t="Include" />
+          </e>
+          <e p="SpecificScrolls" t="Include">
+            <e p="SpecificScroll.cs" t="Include" />
+            <e p="SpecificScrollCollection.cs" t="Include" />
+          </e>
+          <e p="SpecificStaves" t="Include">
+            <e p="SpecificStaff.cs" t="Include" />
+            <e p="SpecificStaffCollection.cs" t="Include" />
+          </e>
+          <e p="SpecificWands" t="Include">
+            <e p="SpecificWand.cs" t="Include" />
+            <e p="SpecificWandCollection.cs" t="Include" />
+          </e>
+          <e p="SpecificWeapons" t="Include">
+            <e p="Editor" t="Include">
+              <e p="SpecificWeaponCollectionEditor.cs" t="Include" />
+            </e>
+            <e p="SpecificWeapon.cs" t="Include" />
+            <e p="SpecificWeaponCollection.cs" t="Include" />
+          </e>
+          <e p="SpecificWondrous" t="Include">
+            <e p="SpecificWondrous.cs" t="Include" />
+            <e p="SpecificWondrousCollection.cs" t="Include" />
+          </e>
+          <e p="Spells" t="Include">
+            <e p="Editor" t="Include">
+              <e p="SpellCollectionEditor.cs" t="Include" />
+              <e p="SpellDrawer.cs" t="Include" />
+            </e>
+            <e p="Spell.cs" t="Include" />
+            <e p="SpellCollection.cs" t="Include" />
+          </e>
+          <e p="Utilities" t="Include">
+            <e p="Availability.cs" t="Include" />
+            <e p="Editor" t="Include">
+              <e p="AssetWithSubAssetElementsEditor.cs" t="Include" />
+              <e p="QualityConstraintDrawer.cs" t="Include" />
+              <e p="RangeDrawer.cs" t="Include" />
+              <e p="SubAssetElementDrawer.cs" t="Include" />
+            </e>
+            <e p="FlagUtilities.cs" t="Include" />
+            <e p="Jsonable.cs" t="Include" />
+            <e p="QualityConstraint.cs" t="Include" />
+            <e p="Range.cs" t="Include" />
+            <e p="RarityWeighting.cs" t="Include" />
+            <e p="RestockSettings.cs" t="Include" />
+            <e p="Saveable.cs" t="Include" />
+            <e p="SaveableHolder.cs" t="Include" />
+            <e p="SaveableScriptableObject.cs" t="Include" />
+            <e p="StratRange.cs" t="Include" />
+            <e p="Wrapper.cs" t="Include" />
+          </e>
+          <e p="WeaponQualities" t="Include">
+            <e p="Editor" t="Include">
+              <e p="WeaponQualitiesCollectionEditor.cs" t="Include" />
+              <e p="WeaponQualityCostColumn.cs" t="Include" />
+              <e p="WeaponQualityDrawer.cs" t="Include" />
+            </e>
+            <e p="WeaponQuality.cs" t="Include" />
+            <e p="WeaponQualityCollection.cs" t="Include" />
+          </e>
+          <e p="Weapons" t="Include">
+            <e p="Editor" t="Include">
+              <e p="WeaponCollectionEditor.cs" t="Include" />
+              <e p="WeaponDrawer.cs" t="Include" />
+            </e>
+            <e p="Weapon.cs" t="Include" />
+            <e p="WeaponCollection.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Testing" t="Include">
+          <e p="Editor" t="Include">
+            <e p="TestSOEditor.cs" t="Include" />
+          </e>
+          <e p="TestMB.cs" t="Include" />
+          <e p="TestSO.cs" t="Include" />
+        </e>
+      </e>
+      <e p="Library" t="ExcludeRecursive" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="PathfinderShop.sln" t="IncludeFlat" />
+      <e p="Temp" t="ExcludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+      </e>
+    </e>
+  </component>
+</project>

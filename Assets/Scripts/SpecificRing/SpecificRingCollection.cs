@@ -9,7 +9,7 @@ public class SpecificRingCollection : SpecificItemCollection<SpecificRing, Speci
         return CreateInstance<SpecificRingCollection>();
     }
 
-    protected override SpecificRing GetRandomSpecificItem(SpecificRing.PowerLevel powerLevel, int budget)
+    protected override SpecificRing GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
     {
         return SpecificRing.CreateRandom();
     }

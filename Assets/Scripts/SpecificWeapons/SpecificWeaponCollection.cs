@@ -29,7 +29,7 @@ public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon, S
         return newSpecificWeaponCollection;
     }
     
-    protected override SpecificWeapon GetRandomSpecificItem (SpecificWeapon.PowerLevel powerLevel, int budget)
+    protected override SpecificWeapon GetRandomSpecificItem (SpecificItem.PowerLevel powerLevel, int budget)
     {
         return SpecificWeapon.CreateRandom(powerLevel, budget, availableWeapons, availableWeaponQualities);
     }

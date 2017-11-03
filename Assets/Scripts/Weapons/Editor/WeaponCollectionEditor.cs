@@ -1,16 +1,13 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-// TODO AFTER: use ItemCollectionEditor
 [CustomEditor(typeof(WeaponCollection))]
-public class WeaponCollectionEditor : AssetWithSubAssetElementsEditor<WeaponCollection, Weapon>
+public class WeaponCollectionEditor : ItemCollectionEditor<WeaponCollection, Weapon>
 {
-    SerializedProperty m_ItemsProp;
     SerializedProperty m_WeaponQualityCollectionProp;
 
-    protected override void GetProperties ()
+    protected override void GetAdditionalProperties ()
     {
-        m_ItemsProp = serializedObject.FindProperty("items");
         m_WeaponQualityCollectionProp = serializedObject.FindProperty("potentialWeaponQualities");
     }
 
@@ -27,11 +24,6 @@ public class WeaponCollectionEditor : AssetWithSubAssetElementsEditor<WeaponColl
             EditorGUILayout.EndVertical();
         }
 
-        CollectionGUI (m_ItemsProp);
-
-        if (m_WeaponQualityCollectionProp.objectReferenceValue != null)
-        {
-            AddButtonGUI (m_ItemsProp, Weapon.CreateBlank, m_WeaponQualityCollectionProp.objectReferenceValue as WeaponQualityCollection);
-        }
+        DrawDefaultAssetGUI (Weapon.CreateBlank, m_WeaponQualityCollectionProp.objectReferenceValue as WeaponQualityCollection);
     }
 }

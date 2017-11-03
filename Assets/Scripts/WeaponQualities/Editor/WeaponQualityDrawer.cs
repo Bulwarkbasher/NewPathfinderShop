@@ -56,7 +56,7 @@ public class WeaponQualityDrawer : SubAssetElementDrawer
         {
             switch ((Quality.QualityType)m_QualityTypeProp.intValue)
             {
-                // TODO: set page number to appropriate for each type
+                // TODO FROM HOME: set page number to appropriate for each type
                 case Quality.QualityType.SpecialMaterial:
                     break;
                 case Quality.QualityType.EnhancementBonus:

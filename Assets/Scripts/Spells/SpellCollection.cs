@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu]
 public class SpellCollection : Saveable<SpellCollection>
 {
     public Spell[] spells = new Spell[0];
@@ -23,6 +24,27 @@ public class SpellCollection : Saveable<SpellCollection>
         return newSpellCollection;
     }
 
+    public Spell PickSpell (int budget, Spell.Creator creator, int spellLevel, int creatorLevel, int chargeCount)
+    {
+        if (spells.Length == 0)
+            return null;
+        
+        List<Spell> availableSpells = new List<Spell> ();
+
+        for (int i = 0; i < spells.Length; i++)
+        {
+            float cost = spells[i].GetCostFromLevel (Spell.Container.Wand, creator, creatorLevel, chargeCount * 0.02f);
+            cost += spells[i].materialCost * chargeCount;
+            
+            if (cost < budget && spells[i].creatorLevels[creator] == spellLevel)
+            {
+                availableSpells.Add (spells[i]);
+            }
+        }
+
+        return Spell.PickSpell (availableSpells, Spell.Container.Wand);
+    }
+
     public void AddSpell(Spell newSpell)
     {
         Spell[] newSpells = new Spell[spells.Length + 1];
@@ -42,25 +64,6 @@ public class SpellCollection : Saveable<SpellCollection>
             newSpells[i] = spells[oldWeaponIndex];
         }
     }
-
-    /*public Spell PickWeapon(ref float budget, Spell.Container container, Spell.Creator creator, int creatorLevel)
-    {
-        if (spells.Length == 0)
-            return null;
-
-        List<Spell> affordableSpellList = new List<Spell>();
-
-        for (int i = 0; i < spells.Length; i++)
-        {
-            if (spells[i].GetCost (container, creator, creatorLevel) < budget)
-                affordableSpellList.Add(spells[i]);
-        }
-
-        Spell chosenWeapon = Spell.PickSpell (affordableSpellList);
-        budget -= chosenWeapon.GetCost (container, creator, creatorLevel);
-
-        return chosenWeapon;
-    }*/
 
     protected override string ConvertToJsonString(string[] jsonSplitter)
     {

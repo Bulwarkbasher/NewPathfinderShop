@@ -5,13 +5,17 @@ using UnityEngine;
 public abstract class SpecificItem<TChild> : Jsonable<TChild>
     where TChild : Jsonable<TChild>
 {
+    public SpecificItem.PowerLevel powerLevel;
+    public int cost;
+}
+
+
+public abstract class SpecificItem
+{
     public enum PowerLevel
     {
         Minor,
         Medium,
         Major,
     }
-    
-    public PowerLevel powerLevel;
-    public int cost;
 }

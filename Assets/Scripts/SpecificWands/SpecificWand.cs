@@ -5,10 +5,19 @@ using UnityEngine;
 public class SpecificWand : SpecificItem<SpecificWand>
 {
     // TODO: complete me
+    public Spell spell;
 
-    public static SpecificWand CreateRandom()
+    public static SpecificWand CreateRandom(SpecificItem.PowerLevel powerLevel, int budget, SpellCollection availableSpells)
     {
-        return CreateInstance<SpecificWand>();
+        SpecificWand newSpecificWand = CreateInstance<SpecificWand> ();
+        newSpecificWand.powerLevel = powerLevel;
+        int spellLevel = 0;    // TODO: decide these based on powerlevel.  Have settings for rarity of creator classes.
+        Spell.Creator creator = Spell.Creator.Alc;
+        int creatorLevel = 0;
+        int chargeCount = Random.Range (1, 51);
+        budget /= chargeCount;
+        newSpecificWand.spell = availableSpells.PickSpell (budget, creator, spellLevel, creatorLevel, chargeCount);
+        return newSpecificWand;
     }
 
     protected override void SetupFromSplitJsonString (string[] splitJsonString)

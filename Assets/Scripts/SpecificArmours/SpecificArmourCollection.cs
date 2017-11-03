@@ -9,7 +9,7 @@ public class SpecificArmourCollection : SpecificItemCollection<SpecificArmour, S
         return CreateInstance<SpecificArmourCollection>();
     }
 
-    protected override SpecificArmour GetRandomSpecificItem (SpecificArmour.PowerLevel powerLevel, int budget)
+    protected override SpecificArmour GetRandomSpecificItem (SpecificItem.PowerLevel powerLevel, int budget)
     {
         return SpecificArmour.CreateRandom ();
     }

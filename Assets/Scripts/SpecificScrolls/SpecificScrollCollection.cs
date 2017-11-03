@@ -9,7 +9,7 @@ public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll, S
         return CreateInstance<SpecificScrollCollection> ();
     }
 
-    protected override SpecificScroll GetRandomSpecificItem(SpecificScroll.PowerLevel powerLevel, int budget)
+    protected override SpecificScroll GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
     {
         return SpecificScroll.CreateRandom ();
     }

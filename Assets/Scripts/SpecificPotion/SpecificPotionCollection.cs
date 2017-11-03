@@ -9,7 +9,7 @@ public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion, S
         return CreateInstance<SpecificPotionCollection>();
     }
 
-    protected override SpecificPotion GetRandomSpecificItem(SpecificPotion.PowerLevel powerLevel, int budget)
+    protected override SpecificPotion GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
     {
         return SpecificPotion.CreateRandom();
     }

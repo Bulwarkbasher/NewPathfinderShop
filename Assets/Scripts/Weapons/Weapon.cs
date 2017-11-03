@@ -102,17 +102,17 @@ public class Weapon : Item<Weapon>
 
     public static Weapon CreateBlank (WeaponQualityCollection weaponQualityCollection)
     {
-        return Create ("NAME", 0, Item.Rarity.Mundane, 999, WeaponType.Simple,  // TODO: change this to actual ue page
+        return Create ("NAME", 0, Item.Rarity.Mundane, 999, WeaponType.Simple,  // TODO FROM HOME: change this to actual ue page
             Handedness.Light, DamageType.Bludgeoning, WeaponGroup.Hammers, 0, weaponQualityCollection);
     }
 
     public void SetupQualityConstraints (WeaponQualityCollection weaponQualityCollection)
     {
-        constraints = new QualityConstraint[weaponQualityCollection.qualities.Length];
+        constraints = new QualityConstraint[weaponQualityCollection.items.Length];
         for (int i = 0; i < constraints.Length; i++)
         {
             constraints[i] = CreateInstance<QualityConstraint>();
-            constraints[i].name = weaponQualityCollection.qualities[i].name;
+            constraints[i].name = weaponQualityCollection.items[i].name;
             constraints[i].allowed = true;
         }
     }

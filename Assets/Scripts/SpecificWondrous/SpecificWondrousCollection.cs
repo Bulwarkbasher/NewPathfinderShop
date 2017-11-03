@@ -9,7 +9,7 @@ public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrou
         return CreateInstance<SpecificWondrousCollection>();
     }
 
-    protected override SpecificWondrous GetRandomSpecificItem(SpecificWondrous.PowerLevel powerLevel, int budget)
+    protected override SpecificWondrous GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
     {
         return SpecificWondrous.CreateRandom();
     }

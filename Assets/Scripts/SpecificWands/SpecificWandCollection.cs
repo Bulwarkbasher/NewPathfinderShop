@@ -9,9 +9,10 @@ public class SpecificWandCollection : SpecificItemCollection<SpecificWand, Speci
         return CreateInstance<SpecificWandCollection>();
     }
 
-    protected override SpecificWand GetRandomSpecificItem(SpecificWand.PowerLevel powerLevel, int budget)
+    protected override SpecificWand GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
     {
-        return SpecificWand.CreateRandom();
+        //return SpecificWand.CreateRandom();
+        return CreateInstance<SpecificWand> ();
     }
 
     public static void AddToShop(Shop shop, Availability stockAvailability, SpellCollection availableSpells)

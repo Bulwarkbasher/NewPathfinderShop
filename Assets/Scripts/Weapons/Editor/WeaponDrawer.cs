@@ -50,19 +50,19 @@ public class WeaponDrawer : SubAssetElementDrawer
         EditorGUI.PropertyField(nameFoldoutLineRect, m_PageProp);
 
         nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        m_WeaponTypeProp.intValue = (int)((Weapon.WeaponType)EditorGUI.EnumMaskField(nameFoldoutLineRect, "Weapon Type", (Weapon.WeaponType)m_WeaponTypeProp.intValue));
+        m_WeaponTypeProp.intValue = (int)(Weapon.WeaponType)EditorGUI.EnumMaskField(nameFoldoutLineRect, "Weapon Type", (Weapon.WeaponType)m_WeaponTypeProp.intValue);
 
         nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        m_HandednessProp.intValue = (int)((Weapon.Handedness)EditorGUI.EnumMaskField(nameFoldoutLineRect, "Handedness", (Weapon.Handedness)m_HandednessProp.intValue));
+        m_HandednessProp.intValue = (int)(Weapon.Handedness)EditorGUI.EnumMaskField(nameFoldoutLineRect, "Handedness", (Weapon.Handedness)m_HandednessProp.intValue);
 
         nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        m_DamageTypeProp.intValue = (int)((Weapon.DamageType)EditorGUI.EnumMaskField(nameFoldoutLineRect, "Damage Type", (Weapon.DamageType)m_DamageTypeProp.intValue));
+        m_DamageTypeProp.intValue = (int)(Weapon.DamageType)EditorGUI.EnumMaskField(nameFoldoutLineRect, "Damage Type", (Weapon.DamageType)m_DamageTypeProp.intValue);
 
         nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        m_WeaponGroupProp.intValue = (int)((Weapon.WeaponGroup)EditorGUI.EnumMaskField(nameFoldoutLineRect, "Weapon Group", (Weapon.WeaponGroup)m_WeaponGroupProp.intValue));
+        m_WeaponGroupProp.intValue = (int)(Weapon.WeaponGroup)EditorGUI.EnumMaskField(nameFoldoutLineRect, "Weapon Group", (Weapon.WeaponGroup)m_WeaponGroupProp.intValue);
 
         nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        m_SpecialProp.intValue = (int)((Weapon.Special)EditorGUI.EnumMaskField(nameFoldoutLineRect, "Special", (Weapon.Special)m_SpecialProp.intValue));
+        m_SpecialProp.intValue = (int)(Weapon.Special)EditorGUI.EnumMaskField(nameFoldoutLineRect, "Special", (Weapon.Special)m_SpecialProp.intValue);
 
         nameFoldoutLineRect.y += nameFoldoutLineRect.height;
         m_ConstraintsProp.isExpanded = EditorGUI.Foldout(nameFoldoutLineRect, m_ConstraintsProp.isExpanded, "Allowed Qualities");

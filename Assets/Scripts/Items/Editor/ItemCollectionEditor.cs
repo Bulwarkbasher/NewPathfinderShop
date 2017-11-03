@@ -6,7 +6,7 @@ public abstract class ItemCollectionEditor<TCollection, TItem> : AssetWithSubAss
     where TCollection : ItemCollection<TCollection, TItem>
     where TItem : Item<TItem>
 {
-    SerializedProperty m_ItemsProp;
+    protected SerializedProperty m_ItemsProp;
 
     protected sealed override void GetProperties ()
     {
