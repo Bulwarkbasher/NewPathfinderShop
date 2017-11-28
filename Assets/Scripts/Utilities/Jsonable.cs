@@ -4,6 +4,24 @@ using UnityEngine;
 public abstract class Jsonable<TChild> : ScriptableObject
     where TChild : Jsonable<TChild>
 {
+    const string k_EmptyString = "EMPTYSTRING";
+
+    public static string GetSafeJsonFromString(string notes)
+    {
+        if (string.IsNullOrEmpty(notes))
+            return k_EmptyString;
+
+        return notes;
+    }
+
+    public static string CreateStringFromSafeJson(string json)
+    {
+        if (json == k_EmptyString)
+            return "";
+
+        return json;
+    }
+
     protected static string[] GetJsonSplitter()
     {
         string[] jsonSplitter = { "###" + typeof(TChild) + "Splitter###" };

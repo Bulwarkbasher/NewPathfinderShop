@@ -3,7 +3,7 @@ using System;
 
 public class Shop : Jsonable<Shop>
 {
-    public enum Size    // TODO: to data
+    public enum Size    // TODO NEXT: to data
     {
         Stall,
         Boutique,
@@ -25,9 +25,6 @@ public class Shop : Jsonable<Shop>
         Wondrous = 1 << 8,
     }
 
-    // TODO: some of the for Default Availabilities values cannot be set by ranges from the book.
-    // TODO: ranges aren't specified for things like weapons where it can potentially go up to +10 and lead to very bad ranges
-    
     public string notes;
     public Size size;
     public StockType stockTypes;
@@ -186,7 +183,7 @@ public class Shop : Jsonable<Shop>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += notes + jsonSplitter[0];
+        jsonString += GetSafeJsonFromString(notes) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)size) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)stockTypes) + jsonSplitter[0];
         jsonString += perSizeRestockFrequencyModifiers.name + jsonSplitter[0];
@@ -211,7 +208,7 @@ public class Shop : Jsonable<Shop>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        notes = splitJsonString[1];
+        notes = CreateStringFromSafeJson(splitJsonString[1]);
         size = (Size)Wrapper<int>.CreateFromJsonString (splitJsonString[2]);
         stockTypes = (StockType)Wrapper<int>.CreateFromJsonString (splitJsonString[3]);
         perSizeRestockFrequencyModifiers = PerSizeRestockFrequencyModifiers.Load (splitJsonString[4]);

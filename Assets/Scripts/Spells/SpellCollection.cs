@@ -28,17 +28,17 @@ public class SpellCollection : Saveable<SpellCollection>
 
         return newSpellCollection;
     }
-
-    public Spell PickSpell (ref float budget, Spell.Container container, int chargeCount = 50)
+    
+    public void PickAndApplySpell (FloatRange budget, SpecificPotion specificPotion)
     {
         if (spells.Length == 0)
-            return null;
+            return;
 
-        PerCreatorRarity perCreatorRarity = perContainerPerCreatorRarity[container];
-        string creator = perCreatorRarity.PickSpellCastingClass(characterCasterTypes);
-        CharacterCasterTypes.CasterType creatorCasterType = characterCasterTypes[creator];
+        PerCreatorRarity perCreatorRarity = perContainerPerCreatorRarity[Spell.Container.Potion];
+        specificPotion.creator = perCreatorRarity.PickSpellCastingClass(characterCasterTypes);
+        CharacterCasterTypes.CasterType creatorCasterType = characterCasterTypes[specificPotion.creator];
 
-        List<Spell> availableSpells = new List<Spell> ();
+        List<Spell> availableSpells = new List<Spell>();
         List<int> randomCasterLevelsForSpells = new List<int>();
 
         for (int i = 0; i < spells.Length; i++)
@@ -47,25 +47,25 @@ public class SpellCollection : Saveable<SpellCollection>
 
             // Check the spell can be cast by selected creator.
             bool canBeCreatedByCreator = false;
-            for(int j = 0; j < currentSpell.creatorLevels.pairings.Length; j++)
+            for (int j = 0; j < currentSpell.creatorLevels.pairings.Length; j++)
             {
-                if (currentSpell.creatorLevels.enumSetting[j] == creator && currentSpell.creatorLevels.pairings[j] >= 0)
+                if (currentSpell.creatorLevels.enumSetting[j] == specificPotion.creator && currentSpell.creatorLevels.pairings[j] >= 0)
                     canBeCreatedByCreator = true;
             }
-            if(!canBeCreatedByCreator)
+            if (!canBeCreatedByCreator)
                 continue;
 
             // Given the spell can be cast by the creator, find at which level the creator casts it.
-            int spellLevelForCreator = currentSpell.creatorLevels[creator];
+            int spellLevelForCreator = currentSpell.creatorLevels[specificPotion.creator];
 
             // Given the spell's level for the creator, find a random level for the creator.
             int minCreatorLevel = CharacterCasterTypes.MinCasterLevel(creatorCasterType, spellLevelForCreator);
             List<int> levelList = new List<int>();
             int currentLevel = 20;
             int levelCounter = 1;
-            while(currentLevel >= minCreatorLevel)
+            while (currentLevel >= minCreatorLevel)
             {
-                for(int j = 0; j < levelCounter; j++)
+                for (int j = 0; j < levelCounter; j++)
                 {
                     levelList.Add(currentLevel);
                 }
@@ -75,62 +75,94 @@ public class SpellCollection : Saveable<SpellCollection>
             int randomCreatorLevel = levelList[Random.Range(0, levelList.Count)];
 
             // Given the creator's level, find the cost of the spell.
-            float cost = -1f;
-            switch (container)
-            {
-                case Spell.Container.Potion:
-                    cost = spells[i].GetPotionCost(creator, randomCreatorLevel);
-                    break;
-                case Spell.Container.Scroll:
-                    cost = spells[i].GetScrollCost(creator, randomCreatorLevel);
-                    break;
-                case Spell.Container.Wand:
-                    cost = spells[i].GetWandCost(creator, randomCreatorLevel, chargeCount);
-                    break;
-            }
+            float cost = spells[i].GetPotionCost(specificPotion.creator, randomCreatorLevel);
             if (cost < 0f)
                 continue;
 
-            if (cost < budget)
+            if (cost > budget.min && cost < budget.max)
             {
-                availableSpells.Add (spells[i]);
+                availableSpells.Add(spells[i]);
                 randomCasterLevelsForSpells.Add(randomCreatorLevel);
             }
         }
 
-        Spell chosenSpell = Spell.PickSpell(availableSpells, container);
+        specificPotion.spell = Spell.PickSpell(availableSpells, Spell.Container.Potion);
 
         int spellIndex = -1;
-        for(int i = 0; i < availableSpells.Count; i++)
+        for (int i = 0; i < availableSpells.Count; i++)
         {
-            if (availableSpells[i] == chosenSpell)
+            if (availableSpells[i] == specificPotion.spell)
                 spellIndex = -1;
         }
+        specificPotion.cost = specificPotion.spell.GetPotionCost(specificPotion.creator, randomCasterLevelsForSpells[spellIndex]);
+    }
 
-        switch (container)
+    public void PickAndApplySpell (FloatRange budget, SpecificScroll specificScroll)
+    {
+        if (spells.Length == 0)
+            return;
+
+        PerCreatorRarity perCreatorRarity = perContainerPerCreatorRarity[Spell.Container.Scroll];
+        specificScroll.creator = perCreatorRarity.PickSpellCastingClass(characterCasterTypes);
+        CharacterCasterTypes.CasterType creatorCasterType = characterCasterTypes[specificScroll.creator];
+
+        List<Spell> availableSpells = new List<Spell>();
+        List<int> randomCasterLevelsForSpells = new List<int>();
+
+        for (int i = 0; i < spells.Length; i++)
         {
-            case Spell.Container.Potion:
-                budget -= chosenSpell.GetPotionCost(creator, randomCasterLevelsForSpells[spellIndex]);
-                break;
-            case Spell.Container.Scroll:
-                budget -= chosenSpell.GetScrollCost(creator, randomCasterLevelsForSpells[spellIndex]);
-                break;
-            case Spell.Container.Wand:
-                budget -= chosenSpell.GetWandCost(creator, randomCasterLevelsForSpells[spellIndex], chargeCount);
-                break;
+            Spell currentSpell = spells[i];
+
+            // Check the spell can be cast by selected creator.
+            bool canBeCreatedByCreator = false;
+            for (int j = 0; j < currentSpell.creatorLevels.pairings.Length; j++)
+            {
+                if (currentSpell.creatorLevels.enumSetting[j] == specificScroll.creator && currentSpell.creatorLevels.pairings[j] >= 0)
+                    canBeCreatedByCreator = true;
+            }
+            if (!canBeCreatedByCreator)
+                continue;
+
+            // Given the spell can be cast by the creator, find at which level the creator casts it.
+            int spellLevelForCreator = currentSpell.creatorLevels[specificScroll.creator];
+
+            // Given the spell's level for the creator, find a random level for the creator.
+            int minCreatorLevel = CharacterCasterTypes.MinCasterLevel(creatorCasterType, spellLevelForCreator);
+            List<int> levelList = new List<int>();
+            int currentLevel = 20;
+            int levelCounter = 1;
+            while (currentLevel >= minCreatorLevel)
+            {
+                for (int j = 0; j < levelCounter; j++)
+                {
+                    levelList.Add(currentLevel);
+                }
+                levelCounter++;
+                currentLevel--;
+            }
+            int randomCreatorLevel = levelList[Random.Range(0, levelList.Count)];
+
+            // Given the creator's level, find the cost of the spell.
+            float cost = spells[i].GetScrollCost(specificScroll.creator, randomCreatorLevel);
+            if (cost < 0f)
+                continue;
+
+            if (cost > budget.min && cost < budget.max)
+            {
+                availableSpells.Add(spells[i]);
+                randomCasterLevelsForSpells.Add(randomCreatorLevel);
+            }
         }
 
-        return chosenSpell;
-    }
+        specificScroll.spell = Spell.PickSpell(availableSpells, Spell.Container.Scroll);
 
-    public void PickAndApplySpell (float budget, SpecificPotion specificPotion)
-    {
-        // TODO: complete me
-    }
-
-    public void PickAndApplySpell (float budget, SpecificScroll specificScroll)
-    {
-        // TODO: complete me
+        int spellIndex = -1;
+        for (int i = 0; i < availableSpells.Count; i++)
+        {
+            if (availableSpells[i] == specificScroll.spell)
+                spellIndex = -1;
+        }
+        specificScroll.cost = specificScroll.spell.GetScrollCost(specificScroll.creator, randomCasterLevelsForSpells[spellIndex]);
     }
 
     public void PickAndApplySpell(FloatRange budget, SpecificWand specificWand)
@@ -198,8 +230,7 @@ public class SpellCollection : Saveable<SpellCollection>
             if (availableSpells[i] == specificWand.spell)
                 spellIndex = -1;
         }
-        specificWand.cost = specificWand.spell.GetWandCost(specificWand.creator, randomCasterLevelsForSpells[spellIndex], specificWand.charges);
-        
+        specificWand.cost = specificWand.spell.GetWandCost(specificWand.creator, randomCasterLevelsForSpells[spellIndex], specificWand.charges);        
     }
 
     public void AddSpell(Spell newSpell)
