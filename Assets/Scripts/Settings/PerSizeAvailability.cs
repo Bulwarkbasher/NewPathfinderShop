@@ -5,35 +5,35 @@ using UnityEngine;
 public class PerSizeAvailability : Saveable<PerSizeAvailability>
 {
     [SerializeField]
-    protected Availability m_StallAvailability;
+    protected IntStratRanges m_StallStratRanges;
     [SerializeField]
-    protected Availability m_BoutiqueAvailability;
+    protected IntStratRanges m_BoutiqueStratRanges;
     [SerializeField]
-    protected Availability m_OutletAvailability;
+    protected IntStratRanges m_OutletStratRanges;
     [SerializeField]
-    protected Availability m_EmporiumAvailability;
+    protected IntStratRanges m_EmporiumStratRanges;
 
-    public Availability this [Shop.Size size]
+    public IntStratRanges this [Shop.Size size]
     {
         get
         {
             switch (size)
             {
                 case Shop.Size.Stall:
-                    return m_StallAvailability;
+                    return m_StallStratRanges;
                 case Shop.Size.Boutique:
-                    return m_BoutiqueAvailability;
+                    return m_BoutiqueStratRanges;
                 case Shop.Size.Outlet:
-                    return m_OutletAvailability;
+                    return m_OutletStratRanges;
                 case Shop.Size.Emporium:
-                    return m_EmporiumAvailability;
+                    return m_EmporiumStratRanges;
                 default:
                     throw new ArgumentOutOfRangeException ("size", size, "Unknown Shop Size.");
             }
         }
     }
 
-    public static PerSizeAvailability Create (string name, Availability stall, Availability boutique, Availability outlet, Availability emporium)
+    public static PerSizeAvailability Create (string name, IntStratRanges stall, IntStratRanges boutique, IntStratRanges outlet, IntStratRanges emporium)
     {
         PerSizeAvailability newPerSizeAvailability = CreateInstance<PerSizeAvailability> ();
 
@@ -43,10 +43,10 @@ public class PerSizeAvailability : Saveable<PerSizeAvailability>
             throw new UnityException("Settings name invalid, name cannot start with Default");
 
         newPerSizeAvailability.name = name;
-        newPerSizeAvailability.m_StallAvailability = stall;
-        newPerSizeAvailability.m_BoutiqueAvailability = boutique;
-        newPerSizeAvailability.m_OutletAvailability = outlet;
-        newPerSizeAvailability.m_EmporiumAvailability = emporium;
+        newPerSizeAvailability.m_StallStratRanges = stall;
+        newPerSizeAvailability.m_BoutiqueStratRanges = boutique;
+        newPerSizeAvailability.m_OutletStratRanges = outlet;
+        newPerSizeAvailability.m_EmporiumStratRanges = emporium;
 
         SaveableHolder.AddSaveable (newPerSizeAvailability);
 
@@ -58,10 +58,10 @@ public class PerSizeAvailability : Saveable<PerSizeAvailability>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += Availability.GetJsonString(m_StallAvailability) + jsonSplitter[0];
-        jsonString += Availability.GetJsonString(m_BoutiqueAvailability) + jsonSplitter[0];
-        jsonString += Availability.GetJsonString(m_OutletAvailability) + jsonSplitter[0];
-        jsonString += Availability.GetJsonString(m_EmporiumAvailability) + jsonSplitter[0];
+        jsonString += IntStratRanges.GetJsonString(m_StallStratRanges) + jsonSplitter[0];
+        jsonString += IntStratRanges.GetJsonString(m_BoutiqueStratRanges) + jsonSplitter[0];
+        jsonString += IntStratRanges.GetJsonString(m_OutletStratRanges) + jsonSplitter[0];
+        jsonString += IntStratRanges.GetJsonString(m_EmporiumStratRanges) + jsonSplitter[0];
 
         return jsonString;
     }
@@ -69,9 +69,9 @@ public class PerSizeAvailability : Saveable<PerSizeAvailability>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        m_StallAvailability = Availability.CreateFromJsonString(splitJsonString[1]);
-        m_BoutiqueAvailability = Availability.CreateFromJsonString(splitJsonString[2]);
-        m_OutletAvailability = Availability.CreateFromJsonString(splitJsonString[3]);
-        m_EmporiumAvailability = Availability.CreateFromJsonString(splitJsonString[4]);
+        m_StallStratRanges = IntStratRanges.CreateFromJsonString(splitJsonString[1]);
+        m_BoutiqueStratRanges = IntStratRanges.CreateFromJsonString(splitJsonString[2]);
+        m_OutletStratRanges = IntStratRanges.CreateFromJsonString(splitJsonString[3]);
+        m_EmporiumStratRanges = IntStratRanges.CreateFromJsonString(splitJsonString[4]);
     }
 }

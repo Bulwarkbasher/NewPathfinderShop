@@ -6,7 +6,7 @@ public abstract class SpecificItem<TChild> : Jsonable<TChild>
     where TChild : Jsonable<TChild>
 {
     public SpecificItem.PowerLevel powerLevel;
-    public int cost;
+    public float cost;
 }
 
 

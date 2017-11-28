@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomPropertyDrawer(typeof(Range))]
+[CustomPropertyDrawer(typeof(IntRange))]
 public class RangeDrawer : PropertyDrawer
 {
     GUIContent m_MinContent = new GUIContent("Min");

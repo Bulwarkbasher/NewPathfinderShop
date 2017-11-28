@@ -13,30 +13,19 @@ public class SpellDrawer : SubAssetElementDrawer
     SerializedProperty m_ScrollRarityProp;
     SerializedProperty m_WandRarityProp;
     SerializedProperty m_CreatorLevelsProp;
-    SerializedProperty m_AlchemistLevelProp;
-    SerializedProperty m_BardLevelProp;
-    SerializedProperty m_ClericOracleLevelProp;
-    SerializedProperty m_DruidLevelProp;
-    SerializedProperty m_InquisitorLevelProp;
-    SerializedProperty m_MagusLevelProp;
-    SerializedProperty m_PaladinLevelProp;
-    SerializedProperty m_RangerLevelProp;
-    SerializedProperty m_SorcererWizardLevelProp;
-    SerializedProperty m_SummonerLevelProp;
-    SerializedProperty m_WitchLevelProp;
     SerializedProperty m_BookProp;
     SerializedProperty m_PageProp;
     SerializedProperty m_MaterialCostProp;
 
     protected override int GetPropertyLineCount (SerializedProperty property, GUIContent label)
     {
-        int count = 8;
+        int count = 7;
         if (m_AllowancesProp.isExpanded)
             count += 3;
         if (m_RaritiesProp.isExpanded)
             count += 3;
         if (m_CreatorLevelsProp.isExpanded)
-            count += 11;
+            count += EnumSettingEditorHelpers.GetEnumSettingIntPairingLineCount(m_CreatorLevelsProp);
         return count;
     }
 
@@ -51,17 +40,6 @@ public class SpellDrawer : SubAssetElementDrawer
         m_ScrollRarityProp = m_RaritiesProp.FindPropertyRelative("scrollRarity");
         m_WandRarityProp = m_RaritiesProp.FindPropertyRelative("wandRarity");
         m_CreatorLevelsProp = m_SerializedObject.FindProperty("creatorLevels");
-        m_AlchemistLevelProp = m_CreatorLevelsProp.FindPropertyRelative ("alchemistLevel");
-        m_BardLevelProp = m_CreatorLevelsProp.FindPropertyRelative("bardLevel");
-        m_ClericOracleLevelProp = m_CreatorLevelsProp.FindPropertyRelative("clericOracleLevel");
-        m_DruidLevelProp = m_CreatorLevelsProp.FindPropertyRelative("druidLevel");
-        m_InquisitorLevelProp = m_CreatorLevelsProp.FindPropertyRelative("inquisitorLevel");
-        m_MagusLevelProp = m_CreatorLevelsProp.FindPropertyRelative("magusLevel");
-        m_PaladinLevelProp = m_CreatorLevelsProp.FindPropertyRelative("paladinLevel");
-        m_RangerLevelProp = m_CreatorLevelsProp.FindPropertyRelative("rangerLevel");
-        m_SorcererWizardLevelProp = m_CreatorLevelsProp.FindPropertyRelative("sorcererWizardLevel");
-        m_SummonerLevelProp = m_CreatorLevelsProp.FindPropertyRelative("summonerLevel");
-        m_WitchLevelProp = m_CreatorLevelsProp.FindPropertyRelative("witchLevel");
         m_BookProp = m_SerializedObject.FindProperty("book");
         m_PageProp = m_SerializedObject.FindProperty("page");
         m_MaterialCostProp = m_SerializedObject.FindProperty("materialCost");
@@ -107,43 +85,11 @@ public class SpellDrawer : SubAssetElementDrawer
 
         if (m_CreatorLevelsProp.isExpanded)
         {
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_AlchemistLevelProp);
-
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_BardLevelProp);
-
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_ClericOracleLevelProp);
-
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_DruidLevelProp);
-
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_InquisitorLevelProp);
-
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_MagusLevelProp);
-
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_PaladinLevelProp);
-
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_RangerLevelProp);
-
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_SorcererWizardLevelProp);
-
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_SummonerLevelProp);
-
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_WitchLevelProp);
+            EnumSettingEditorHelpers.DrawEnumSettingIntPairing(m_CreatorLevelsProp, "Character Classes");
         }
 
         nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EditorGUI.PropertyField (nameFoldoutLineRect, m_BookProp);
-
+        EnumSettingEditorHelpers.DrawEnumSettingIndexPopup(nameFoldoutLineRect, m_BookProp);
 
         nameFoldoutLineRect.y += nameFoldoutLineRect.height;
         EditorGUI.PropertyField(nameFoldoutLineRect, m_PageProp);

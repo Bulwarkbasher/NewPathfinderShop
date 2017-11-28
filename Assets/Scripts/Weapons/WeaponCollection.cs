@@ -6,9 +6,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class WeaponCollection : ItemCollection<WeaponCollection, Weapon>
 {
-    public WeaponQualityCollection potentialWeaponQualities;
-
-    public static WeaponCollection Create(string name, WeaponQualityCollection potentialWeaponQualities)
+    public static WeaponCollection Create(string name, EnumSetting books)
     {
         WeaponCollection newWeaponCollection = CreateInstance<WeaponCollection>();
 
@@ -19,7 +17,7 @@ public class WeaponCollection : ItemCollection<WeaponCollection, Weapon>
 
         newWeaponCollection.name = name;
         newWeaponCollection.items = new Weapon[0];
-        newWeaponCollection.potentialWeaponQualities = potentialWeaponQualities;
+        newWeaponCollection.books = books;
 
         SaveableHolder.AddSaveable(newWeaponCollection);
 
@@ -28,11 +26,11 @@ public class WeaponCollection : ItemCollection<WeaponCollection, Weapon>
 
     public void AddWeapon ()
     {
-        Weapon newWeapon = Weapon.CreateBlank (potentialWeaponQualities);
+        Weapon newWeapon = Weapon.CreateBlank (books);
         AddItem (newWeapon);
     }
     
-    public Weapon PickWeapon(ref int budget)
+    public Weapon PickWeapon(ref float budget)
     {
         if (items.Length == 0)
             return null;
@@ -58,7 +56,7 @@ public class WeaponCollection : ItemCollection<WeaponCollection, Weapon>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += potentialWeaponQualities.name + jsonSplitter[0];
+        jsonString += books.name + jsonSplitter[0];
 
         for (int i = 0; i < items.Length; i++)
         {
@@ -71,7 +69,7 @@ public class WeaponCollection : ItemCollection<WeaponCollection, Weapon>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        potentialWeaponQualities = WeaponQualityCollection.Load (splitJsonString[1]);
+        books = EnumSetting.Load(splitJsonString[1]);
 
         items = new Weapon[splitJsonString.Length - 2];
         for (int i = 0; i < items.Length; i++)

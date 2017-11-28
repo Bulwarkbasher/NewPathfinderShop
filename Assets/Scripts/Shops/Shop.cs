@@ -3,7 +3,7 @@ using System;
 
 public class Shop : Jsonable<Shop>
 {
-    public enum Size
+    public enum Size    // TODO: to data
     {
         Stall,
         Boutique,
@@ -34,7 +34,8 @@ public class Shop : Jsonable<Shop>
     public PerSizeRestockFrequencyModifiers perSizeRestockFrequencyModifiers;
     public int daysSinceLastRestock;
     public PerSizeReadyCash perSizeReadyCash;
-    public int totalCash;
+    public float totalCash;
+    public PerStockTypePerPowerLevelRange perStockTypePerPowerLevelRange;
 
     public SpecificArmourCollection specificArmourCollection;
     public SpecificPotionCollection specificPotionCollection;
@@ -131,28 +132,28 @@ public class Shop : Jsonable<Shop>
     protected void Restock(RestockSettings restockSettings)
     {
         if ((stockTypes | StockType.Armour) == stockTypes)
-            specificArmourCollection.Restock(restockSettings);
+            specificArmourCollection.Restock(restockSettings, perStockTypePerPowerLevelRange[StockType.Armour]);
         if ((stockTypes | StockType.Potion) == stockTypes)
-            specificPotionCollection.Restock(restockSettings);
+            specificPotionCollection.Restock(restockSettings, perStockTypePerPowerLevelRange[StockType.Potion]);
         if ((stockTypes | StockType.Ring) == stockTypes)
-            specificRingCollection.Restock(restockSettings);
+            specificRingCollection.Restock(restockSettings, perStockTypePerPowerLevelRange[StockType.Ring]);
         if ((stockTypes | StockType.Rod) == stockTypes)
-            specificRodCollection.Restock(restockSettings);
+            specificRodCollection.Restock(restockSettings, perStockTypePerPowerLevelRange[StockType.Rod]);
         if ((stockTypes | StockType.Scroll) == stockTypes)
-            specificScrollCollection.Restock(restockSettings);
+            specificScrollCollection.Restock(restockSettings, perStockTypePerPowerLevelRange[StockType.Scroll]);
         if ((stockTypes | StockType.Staff) == stockTypes)
-            specificStaffCollection.Restock(restockSettings);
+            specificStaffCollection.Restock(restockSettings, perStockTypePerPowerLevelRange[StockType.Staff]);
         if ((stockTypes | StockType.Wand) == stockTypes)
-            specificWandCollection.Restock(restockSettings);
+            specificWandCollection.Restock(restockSettings, perStockTypePerPowerLevelRange[StockType.Wand]);
         if ((stockTypes | StockType.Weapon) == stockTypes)
-            specificWeaponCollection.Restock(restockSettings);
+            specificWeaponCollection.Restock(restockSettings, perStockTypePerPowerLevelRange[StockType.Weapon]);
         if ((stockTypes | StockType.Wondrous) == stockTypes)
-            specificWondrousCollection.Restock(restockSettings);       
+            specificWondrousCollection.Restock(restockSettings, perStockTypePerPowerLevelRange[StockType.Wondrous]);       
     }
 
-    protected int GetTotalStockValue ()
+    protected float GetTotalStockValue ()
     {
-        int totalStockValue = 0;
+        float totalStockValue = 0;
         totalStockValue += specificArmourCollection.GetTotalCost ();
         totalStockValue += specificPotionCollection.GetTotalCost();
         totalStockValue += specificRingCollection.GetTotalCost();
@@ -165,18 +166,18 @@ public class Shop : Jsonable<Shop>
         return totalStockValue;
     }
 
-    protected int GetMaxPossibleStockValue ()
+    protected float GetMaxPossibleStockValue ()
     {
-        int maxStockValue = 0;
-        maxStockValue += specificArmourCollection.stockAvailability.MaxTotalBudget ();
-        maxStockValue += specificPotionCollection.stockAvailability.MaxTotalBudget ();
-        maxStockValue += specificRingCollection.stockAvailability.MaxTotalBudget ();
-        maxStockValue += specificRodCollection.stockAvailability.MaxTotalBudget ();
-        maxStockValue += specificScrollCollection.stockAvailability.MaxTotalBudget ();
-        maxStockValue += specificStaffCollection.stockAvailability.MaxTotalBudget ();
-        maxStockValue += specificWandCollection.stockAvailability.MaxTotalBudget ();
-        maxStockValue += specificWeaponCollection.stockAvailability.MaxTotalBudget ();
-        maxStockValue += specificWondrousCollection.stockAvailability.MaxTotalBudget();
+        float maxStockValue = 0;
+        maxStockValue += specificArmourCollection.GetMaxPossibleValue(perStockTypePerPowerLevelRange[StockType.Armour]);
+        maxStockValue += specificPotionCollection.GetMaxPossibleValue(perStockTypePerPowerLevelRange[StockType.Potion]);
+        maxStockValue += specificRingCollection.GetMaxPossibleValue(perStockTypePerPowerLevelRange[StockType.Ring]);
+        maxStockValue += specificRodCollection.GetMaxPossibleValue(perStockTypePerPowerLevelRange[StockType.Rod]);
+        maxStockValue += specificScrollCollection.GetMaxPossibleValue(perStockTypePerPowerLevelRange[StockType.Scroll]);
+        maxStockValue += specificStaffCollection.GetMaxPossibleValue(perStockTypePerPowerLevelRange[StockType.Staff]);
+        maxStockValue += specificWandCollection.GetMaxPossibleValue(perStockTypePerPowerLevelRange[StockType.Wand]);
+        maxStockValue += specificWeaponCollection.GetMaxPossibleValue(perStockTypePerPowerLevelRange[StockType.Weapon]);
+        maxStockValue += specificWondrousCollection.GetMaxPossibleValue(perStockTypePerPowerLevelRange[StockType.Wondrous]);
         return maxStockValue;
     }
 
@@ -191,7 +192,8 @@ public class Shop : Jsonable<Shop>
         jsonString += perSizeRestockFrequencyModifiers.name + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(daysSinceLastRestock) + jsonSplitter[0];
         jsonString += perSizeReadyCash.name + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(totalCash) + jsonSplitter[0];
+        jsonString += Wrapper<float>.GetJsonString(totalCash) + jsonSplitter[0];
+        jsonString += perStockTypePerPowerLevelRange.name + jsonSplitter[0];
 
         jsonString += SpecificArmourCollection.GetJsonString(specificArmourCollection) + jsonSplitter[0];
         jsonString += SpecificPotionCollection.GetJsonString(specificPotionCollection) + jsonSplitter[0];
@@ -215,16 +217,17 @@ public class Shop : Jsonable<Shop>
         perSizeRestockFrequencyModifiers = PerSizeRestockFrequencyModifiers.Load (splitJsonString[4]);
         daysSinceLastRestock = Wrapper<int>.CreateFromJsonString (splitJsonString[5]);
         perSizeReadyCash = PerSizeReadyCash.Load (splitJsonString[6]);
-        totalCash = Wrapper<int>.CreateFromJsonString (splitJsonString[7]);
+        totalCash = Wrapper<float>.CreateFromJsonString (splitJsonString[7]);
+        perStockTypePerPowerLevelRange = PerStockTypePerPowerLevelRange.Load(splitJsonString[8]);
 
-        specificArmourCollection = SpecificArmourCollection.CreateFromJsonString(splitJsonString[8]);
-        specificPotionCollection = SpecificPotionCollection.CreateFromJsonString(splitJsonString[9]);
-        specificRingCollection = SpecificRingCollection.CreateFromJsonString (splitJsonString[10]);
-        specificRodCollection = SpecificRodCollection.CreateFromJsonString (splitJsonString[11]);
-        specificScrollCollection = SpecificScrollCollection.CreateFromJsonString (splitJsonString[12]);
-        specificStaffCollection = SpecificStaffCollection.CreateFromJsonString (splitJsonString[13]);
-        specificWandCollection = SpecificWandCollection.CreateFromJsonString (splitJsonString[14]);
-        specificWeaponCollection = SpecificWeaponCollection.CreateFromJsonString(splitJsonString[15]);
-        specificWondrousCollection = SpecificWondrousCollection.CreateFromJsonString (splitJsonString[16]);
+        specificArmourCollection = SpecificArmourCollection.CreateFromJsonString(splitJsonString[9]);
+        specificPotionCollection = SpecificPotionCollection.CreateFromJsonString(splitJsonString[10]);
+        specificRingCollection = SpecificRingCollection.CreateFromJsonString (splitJsonString[11]);
+        specificRodCollection = SpecificRodCollection.CreateFromJsonString (splitJsonString[12]);
+        specificScrollCollection = SpecificScrollCollection.CreateFromJsonString (splitJsonString[13]);
+        specificStaffCollection = SpecificStaffCollection.CreateFromJsonString (splitJsonString[14]);
+        specificWandCollection = SpecificWandCollection.CreateFromJsonString (splitJsonString[15]);
+        specificWeaponCollection = SpecificWeaponCollection.CreateFromJsonString(splitJsonString[16]);
+        specificWondrousCollection = SpecificWondrousCollection.CreateFromJsonString (splitJsonString[17]);
     }
 }

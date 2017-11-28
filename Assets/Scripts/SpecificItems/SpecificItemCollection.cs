@@ -4,12 +4,12 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild> : Jsonable<T
     where TSpecificItem : SpecificItem<TSpecificItem>
     where TChild : Jsonable<TChild>
 {
-    public Availability stockAvailability;
+    public IntStratRanges stockAvailability;
     public TSpecificItem[] specificItems = new TSpecificItem[0];
 
-    public int GetTotalCost ()
+    public float GetTotalCost ()
     {
-        int total = 0;
+        float total = 0;
         for (int i = 0; i < specificItems.Length; i++)
         {
             total += specificItems[i].cost;
@@ -17,14 +17,23 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild> : Jsonable<T
         return total;
     }
 
-    public int GetTotalCost(SpecificItem.PowerLevel powerLevel)
+    public float GetTotalCost(SpecificItem.PowerLevel powerLevel)
     {
-        int total = 0;
+        float total = 0;
         for (int i = 0; i < specificItems.Length; i++)
         {
             if (specificItems[i].powerLevel == powerLevel)
                 total += specificItems[i].cost;
         }
+        return total;
+    }
+
+    public float GetMaxPossibleValue(PerPowerLevelRange perPowerLevelBudgetRange)
+    {
+        float total = 0f;
+        total += stockAvailability.minor.max * perPowerLevelBudgetRange[SpecificItem.PowerLevel.Minor].max;
+        total += stockAvailability.medium.max * perPowerLevelBudgetRange[SpecificItem.PowerLevel.Medium].max;
+        total += stockAvailability.major.max * perPowerLevelBudgetRange[SpecificItem.PowerLevel.Major].max;
         return total;
     }
 
@@ -55,14 +64,14 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild> : Jsonable<T
         specificItems = newSpecificItems;
     }
 
-    public void AddRandom(SpecificItem.PowerLevel powerLevel, int budget)
+    public void AddRandom(SpecificItem.PowerLevel powerLevel, PerPowerLevelRange perPowerLevelItemBudgetRange)
     {
         TSpecificItem[] newSpecificWeapons = new TSpecificItem[specificItems.Length + 1];
         for (int i = 0; i < specificItems.Length; i++)
         {
             newSpecificWeapons[i] = specificItems[i];
         }
-        newSpecificWeapons[specificItems.Length] = GetRandomSpecificItem (powerLevel, budget);
+        newSpecificWeapons[specificItems.Length] = CreateRandomSpecificItem (powerLevel, perPowerLevelItemBudgetRange[powerLevel]);
         specificItems = newSpecificWeapons;
     }
 
@@ -84,23 +93,23 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild> : Jsonable<T
         specificItems[index] = specificItem;
     }
 
-    public void ReplaceWithRandom(int index, SpecificItem.PowerLevel powerLevel, int budget)
+    public void ReplaceWithRandom(int index, SpecificItem.PowerLevel powerLevel, PerPowerLevelRange perPowerLevelItemBudgetRange)
     {
-        specificItems[index] = GetRandomSpecificItem (powerLevel, budget);
+        specificItems[index] = CreateRandomSpecificItem (powerLevel, perPowerLevelItemBudgetRange[powerLevel]);
     }
 
-    public void Restock(RestockSettings restockSettings)
+    public void Restock(RestockSettings restockSettings, PerPowerLevelRange perPowerLevelItemBudgetRange)
     {
         SellStock(restockSettings);
 
-        BuyStock();
+        BuyStock(perPowerLevelItemBudgetRange);
     }
 
     protected void SellStock(RestockSettings restockSettings)
     {
-        int totalCost = GetTotalCost();
+        float totalCost = GetTotalCost();
         float percentToRestock = restockSettings.percent.Random() / 100f;
-        int restockAmount = Mathf.FloorToInt(totalCost * percentToRestock);
+        float restockAmount = totalCost * percentToRestock;
         bool nothingSold = false;
         while (restockAmount > 0)
         {
@@ -126,39 +135,36 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild> : Jsonable<T
         }
     }
 
-    protected void BuyStock()
+    protected void BuyStock(PerPowerLevelRange perPowerLevelItemBudgetRange)
     {
-        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Minor, stockAvailability.stock.minor, stockAvailability.budget.minor, stockAvailability.budgetVariation);
-        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Medium, stockAvailability.stock.medium, stockAvailability.budget.medium, stockAvailability.budgetVariation);
-        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Major, stockAvailability.stock.major, stockAvailability.budget.major, stockAvailability.budgetVariation);
+        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Minor, stockAvailability.minor, perPowerLevelItemBudgetRange[SpecificItem.PowerLevel.Minor]);
+        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Medium, stockAvailability.medium, perPowerLevelItemBudgetRange[SpecificItem.PowerLevel.Medium]);
+        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Major, stockAvailability.major, perPowerLevelItemBudgetRange[SpecificItem.PowerLevel.Major]);
     }
 
-    protected void BuyStockAtPowerLevel(SpecificItem.PowerLevel powerLevel, Range stockRange, Range budgetRange, float budgetVariation)
+    protected void BuyStockAtPowerLevel(SpecificItem.PowerLevel powerLevel, IntRange stockRange, FloatRange itemBudgetRange)
     {
         int desiredCount = stockRange.Random();
         int currentCount = GetTotalCount(powerLevel);
-        int desiredTotalBudget = budgetRange.Random();
-        int currentBudget = GetTotalCost(powerLevel);
+        float currentBudget = GetTotalCost(powerLevel);
 
         int requiredStockCount = desiredCount - currentCount;
+        float desiredTotalBudget = itemBudgetRange.Mean * requiredStockCount;
+
         if (requiredStockCount > 0)
         {
-            int requiredStockBudget = desiredTotalBudget - currentBudget;
+            float requiredStockBudget = desiredTotalBudget - currentBudget;
 
             if (requiredStockBudget > 0)
             {
-                int meanBudget = Mathf.FloorToInt(requiredStockBudget / requiredStockCount);
-
                 for (int i = 0; i < requiredStockCount; i++)
                 {
-                    int specificBudget = Mathf.FloorToInt(meanBudget * Random.Range(-budgetVariation, budgetVariation));
-
-                    TSpecificItem randomSpecificItem = GetRandomSpecificItem(powerLevel, specificBudget);
+                    TSpecificItem randomSpecificItem = CreateRandomSpecificItem(powerLevel, itemBudgetRange);
                     Add(randomSpecificItem);
                 }
             }
         }
     }
 
-    protected abstract TSpecificItem GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget);
+    protected abstract TSpecificItem CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange);
 }

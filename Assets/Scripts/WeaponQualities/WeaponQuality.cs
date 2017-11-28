@@ -3,21 +3,23 @@ using System.Collections;
 
 public class WeaponQuality : Quality<WeaponQuality>
 {
-    public static WeaponQuality Create (string name, int cost, Item.Rarity rarity, int page,
+    public static WeaponQuality Create (string name, int cost, Item.Rarity rarity, EnumSettingIndex book, int page,
         Quality.QualityType qualityType, Quality.BonusEquivalent bonusEquivalent)
     {
         WeaponQuality newWeaponQuality = CreateInstance<WeaponQuality> ();
         newWeaponQuality.name = name;
         newWeaponQuality.rarity = rarity;
-        newWeaponQuality.ulimateEquipmentPage = page;
+        newWeaponQuality.book = book;
+        newWeaponQuality.page = page;
         newWeaponQuality.qualityType = qualityType;
         newWeaponQuality.bonusEquivalent = bonusEquivalent;
         return newWeaponQuality;
     }
 
-    public static WeaponQuality CreateBlank ()
+    public static WeaponQuality CreateBlank (EnumSetting books)
     {
-        return Create ("NAME", 0, Item.Rarity.Mundane, 999, Quality.QualityType.SpecialMaterial, Quality.BonusEquivalent.NA);
+        return Create ("NAME", 0, Item.Rarity.Mundane, new EnumSettingIndex(books, 0), 999,
+            Quality.QualityType.SpecialMaterial, Quality.BonusEquivalent.NA);
     }
 
     public static int BonusToCost (Quality.BonusEquivalent bonus)
@@ -25,7 +27,7 @@ public class WeaponQuality : Quality<WeaponQuality>
         return (int)bonus * (int)bonus * 2000;
     }
     
-    public int GetCost ()
+    public float GetCost ()
     {
         if (bonusEquivalent != Quality.BonusEquivalent.NA)
         {
@@ -35,7 +37,7 @@ public class WeaponQuality : Quality<WeaponQuality>
         return cost;
     }
 
-    public int CostToIncrease (WeaponQuality[] oldQualities)
+    public float CostToIncrease (WeaponQuality[] oldQualities)
     {
         if (bonusEquivalent == Quality.BonusEquivalent.NA)
             return cost;
@@ -59,9 +61,9 @@ public class WeaponQuality : Quality<WeaponQuality>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(cost) + jsonSplitter[0];
+        jsonString += Wrapper<float>.GetJsonString(cost) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)rarity) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(ulimateEquipmentPage) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(page) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)qualityType) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)bonusEquivalent) + jsonString[0];
 
@@ -72,9 +74,9 @@ public class WeaponQuality : Quality<WeaponQuality>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        cost = Wrapper<int>.CreateFromJsonString (splitJsonString[1]);
+        cost = Wrapper<float>.CreateFromJsonString (splitJsonString[1]);
         rarity = (Item.Rarity)Wrapper<int>.CreateFromJsonString (splitJsonString[2]);
-        ulimateEquipmentPage = Wrapper<int>.CreateFromJsonString (splitJsonString[3]);
+        page = Wrapper<int>.CreateFromJsonString (splitJsonString[3]);
         qualityType = (Quality.QualityType)Wrapper<int>.CreateFromJsonString (splitJsonString[4]);
         bonusEquivalent = (Quality.BonusEquivalent)Wrapper<int>.CreateFromJsonString (splitJsonString[5]);
     }

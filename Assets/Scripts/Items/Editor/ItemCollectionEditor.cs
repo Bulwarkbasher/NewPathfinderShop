@@ -6,10 +6,12 @@ public abstract class ItemCollectionEditor<TCollection, TItem> : AssetWithSubAss
     where TCollection : ItemCollection<TCollection, TItem>
     where TItem : Item<TItem>
 {
+    protected SerializedProperty m_BooksProp;
     protected SerializedProperty m_ItemsProp;
 
     protected sealed override void GetProperties ()
     {
+        m_BooksProp = serializedObject.FindProperty ("books");
         m_ItemsProp = serializedObject.FindProperty ("items");
 
         GetAdditionalProperties ();
@@ -35,26 +37,44 @@ public abstract class ItemCollectionEditor<TCollection, TItem> : AssetWithSubAss
         }
     }
 
+    protected void BooksGUI ()
+    {
+        if (m_ItemsProp.arraySize == 0)
+        {
+            EditorGUILayout.PropertyField(m_BooksProp);
+        }
+        else
+        {
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            EditorGUILayout.LabelField(new GUIContent("Books"), new GUIContent(m_BooksProp.objectReferenceValue.name));
+            EditorGUILayout.EndVertical();
+        }
+    }
+
     protected void DrawDefaultAssetGUI (Func<TItem> createBlankFunction)
     {
+        BooksGUI();
         CollectionGUI();
         AddButtonGUI (createBlankFunction);
     }
 
     protected void DrawDefaultAssetGUI<TArg0>(Func<TArg0, TItem> createBlankFunction, TArg0 arg0)
     {
+        BooksGUI();
         CollectionGUI();
         AddButtonGUI(createBlankFunction, arg0);
     }
 
     protected void DrawDefaultAssetGUI<TArg0, TArg1>(Func<TArg0, TArg1, TItem> createBlankFunction, TArg0 arg0, TArg1 arg1)
     {
+        BooksGUI();
         CollectionGUI();
         AddButtonGUI(createBlankFunction, arg0, arg1);
     }
 
     protected void DrawDefaultAssetGUI<TArg0, TArg1, TArg2>(Func<TArg0, TArg1, TArg2, TItem> createBlankFunction, TArg0 arg0, TArg1 arg1, TArg2 arg2)
     {
+        BooksGUI();
         CollectionGUI();
         AddButtonGUI(createBlankFunction, arg0, arg1, arg2);
     }

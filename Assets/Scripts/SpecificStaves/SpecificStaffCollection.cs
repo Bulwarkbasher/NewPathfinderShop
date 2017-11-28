@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, SpecificStaffCollection>
 {
-    public static SpecificStaffCollection Create(Availability stockAvailability)
+    public static SpecificStaffCollection Create(IntStratRanges stockAvailability)
     {
         return CreateInstance<SpecificStaffCollection>();
     }
 
-    protected override SpecificStaff GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificStaff CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
     {
         return SpecificStaff.CreateRandom();
     }
 
-    public static void AddToShop(Shop shop, Availability stockAvailability)
+    public static void AddToShop(Shop shop, IntStratRanges stockAvailability)
     {
         shop.stockTypes |= Shop.StockType.Staff;
 

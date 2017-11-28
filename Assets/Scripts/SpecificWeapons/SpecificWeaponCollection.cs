@@ -4,16 +4,14 @@ using System;
 [CreateAssetMenu]
 public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon, SpecificWeaponCollection>
 {
-    public WeaponCollection availableWeapons;
-    public WeaponQualityCollection availableWeaponQualities;
-    
-    public static SpecificWeaponCollection Create (Availability stockAvailability, WeaponCollection availableWeapons, WeaponQualityCollection availableWeaponQualities)
+    public WeaponQualityConstraintsMatrix matrix;
+
+    public static SpecificWeaponCollection Create (IntStratRanges stockAvailability, WeaponQualityConstraintsMatrix matrix, PerPowerLevelRange perPowerLevelItemBudgetRange)
     {
         SpecificWeaponCollection newSpecificWeaponCollection = CreateInstance<SpecificWeaponCollection>();
         newSpecificWeaponCollection.stockAvailability = stockAvailability;
-        newSpecificWeaponCollection.availableWeapons = availableWeapons;
-        newSpecificWeaponCollection.availableWeaponQualities = availableWeaponQualities;
-        newSpecificWeaponCollection.BuyStock();
+        newSpecificWeaponCollection.matrix = matrix;
+        newSpecificWeaponCollection.BuyStock(perPowerLevelItemBudgetRange);
 
         return newSpecificWeaponCollection;
     }
@@ -22,54 +20,54 @@ public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon, S
     {
         SpecificWeaponCollection newSpecificWeaponCollection = CreateInstance<SpecificWeaponCollection>();
         newSpecificWeaponCollection.stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Weapon][size];
-        newSpecificWeaponCollection.availableWeapons = DefaultResourceHolder.DefaultWeaponCollection;
-        newSpecificWeaponCollection.availableWeaponQualities = DefaultResourceHolder.DefaultWeaponQualityCollection;
-        newSpecificWeaponCollection.BuyStock();
+        newSpecificWeaponCollection.matrix = DefaultResourceHolder.DefaultWeaponQualityConstraintsMatrix;
+        newSpecificWeaponCollection.BuyStock(DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Weapon]);
 
         return newSpecificWeaponCollection;
     }
     
-    protected override SpecificWeapon GetRandomSpecificItem (SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificWeapon CreateRandomSpecificItem (SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
     {
-        return SpecificWeapon.CreateRandom(powerLevel, budget, availableWeapons, availableWeaponQualities);
+        return SpecificWeapon.CreateRandom(powerLevel, matrix, budgetRange);
     }
 
-    public static void AddToShop(Shop shop, Availability stockAvailability, WeaponCollection availableWeapons, WeaponQualityCollection availableWeaponQualities)
+    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, WeaponQualityConstraintsMatrix matrix, PerPowerLevelRange perPowerLevelItemBudgetRange)
     {
         shop.stockTypes |= Shop.StockType.Weapon;
 
         if (stockAvailability == null)
             stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Weapon][shop.size];
 
-        if (availableWeapons == null)
-            availableWeapons = DefaultResourceHolder.DefaultWeaponCollection;
+        if (matrix == null)
+            matrix = DefaultResourceHolder.DefaultWeaponQualityConstraintsMatrix;
 
-        if (availableWeaponQualities == null)
-            availableWeaponQualities = DefaultResourceHolder.DefaultWeaponQualityCollection;
+        if (perPowerLevelItemBudgetRange == null)
+            perPowerLevelItemBudgetRange = DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Weapon];
 
-        shop.specificWeaponCollection = Create(stockAvailability, availableWeapons, availableWeaponQualities);
+        shop.specificWeaponCollection = Create(stockAvailability, matrix, perPowerLevelItemBudgetRange);
     }
 
     protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
-        jsonString += Availability.GetJsonString(stockAvailability) + jsonSplitter[0];
-        jsonString += availableWeapons.name + jsonSplitter[0];
-        jsonString += availableWeaponQualities.name + jsonSplitter[0];
+        jsonString += name + jsonSplitter[0];
+        jsonString += IntStratRanges.GetJsonString(stockAvailability) + jsonSplitter[0];
+        jsonString += matrix.name + jsonSplitter[0];
 
         for(int i = 0; i < specificItems.Length; i++)
         {
             jsonString += SpecificWeapon.GetJsonString(specificItems[i]) + jsonSplitter[0];
         }
+
         return jsonString;
     }
 
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        stockAvailability = Availability.CreateFromJsonString(splitJsonString[0]);
-        availableWeapons = WeaponCollection.Load (splitJsonString[1]);
-        availableWeaponQualities = WeaponQualityCollection.Load (splitJsonString[2]);
+        name = splitJsonString[0];
+        stockAvailability = IntStratRanges.CreateFromJsonString(splitJsonString[1]);
+        matrix = WeaponQualityConstraintsMatrix.Load(splitJsonString[2]);
         
         specificItems = new SpecificWeapon[splitJsonString.Length - 3];
         for (int i = 0; i < specificItems.Length; i++)

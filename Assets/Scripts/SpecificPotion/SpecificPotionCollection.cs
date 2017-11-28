@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion, SpecificPotionCollection>
 {
-    public static SpecificPotionCollection Create(Availability stockAvailability, SpellCollection availableSpells)
+    public static SpecificPotionCollection Create(IntStratRanges stockAvailability, SpellCollection availableSpells)
     {
         return CreateInstance<SpecificPotionCollection>();
     }
 
-    protected override SpecificPotion GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificPotion CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
     {
         return SpecificPotion.CreateRandom();
     }
 
-    public static void AddToShop(Shop shop, Availability stockAvailability, SpellCollection availableSpells)
+    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, SpellCollection availableSpells)
     {
         shop.stockTypes |= Shop.StockType.Potion;
 

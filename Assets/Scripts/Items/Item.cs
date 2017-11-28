@@ -3,9 +3,10 @@
 public abstract class Item<TChild> : Jsonable<TChild>
     where TChild : Item<TChild>
 {
-    public int cost;
+    public float cost;
     public Item.Rarity rarity;
-    public int ulimateEquipmentPage;
+    public EnumSettingIndex book;
+    public int page;
 
     public static TChild PickItem (TChild[] items)
     {

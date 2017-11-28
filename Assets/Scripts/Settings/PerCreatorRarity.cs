@@ -2,74 +2,135 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
+[CreateAssetMenu]
 public class PerCreatorRarity : Saveable<PerCreatorRarity>
 {
     [SerializeField]
-    protected Item.Rarity m_AlchemistRarity;
+    protected EnumSetting m_CharacterClasses;
     [SerializeField]
-    protected Item.Rarity m_BardRarity;
-    [SerializeField]
-    protected Item.Rarity m_ClericOracleRarity;
-    [SerializeField]
-    protected Item.Rarity m_DruidRarity;
-    [SerializeField]
-    protected Item.Rarity m_InquisitorRarity;
-    [SerializeField]
-    protected Item.Rarity m_MagusRarity;
-    [SerializeField]
-    protected Item.Rarity m_PaladinRarity;
-    [SerializeField]
-    protected Item.Rarity m_RangerRarity;
-    [SerializeField]
-    protected Item.Rarity m_SorcererWizardRarity;
-    [SerializeField]
-    protected Item.Rarity m_SummonerRarity;
-    [SerializeField]
-    protected Item.Rarity m_WitchRarity;
+    protected Item.Rarity[] m_CharacterClassRarities;
 
-    public Item.Rarity this [Spell.Creator creator]
+    public Item.Rarity this [string characterClass]
     {
         get
         {
-            switch (creator)
+            for (int i = 0; i < m_CharacterClasses.settings.Length; i++)
             {
-                case Spell.Creator.Alc:
-                    return m_AlchemistRarity;
-                case Spell.Creator.Brd:
-                    return m_BardRarity;
-                case Spell.Creator.ClrOcl:
-                    return m_ClericOracleRarity;
-                case Spell.Creator.Drd:
-                    return m_DruidRarity;
-                case Spell.Creator.Inq:
-                    return m_InquisitorRarity;
-                case Spell.Creator.Mag:
-                    return m_MagusRarity;
-                case Spell.Creator.Pal:
-                    return m_PaladinRarity;
-                case Spell.Creator.Rgr:
-                    return m_RangerRarity;
-                case Spell.Creator.SorWiz:
-                    return m_SorcererWizardRarity;
-                case Spell.Creator.Sum:
-                    return m_SummonerRarity;
-                case Spell.Creator.Wit:
-                    return m_WitchRarity;
-                default:
-                    throw new ArgumentOutOfRangeException (nameof(creator), creator, null);
+                if (m_CharacterClasses.settings[i] == characterClass)
+                {
+                    return m_CharacterClassRarities[i];
+                }
             }
+            throw new ArgumentOutOfRangeException(nameof(characterClass), characterClass, null);
         }
     }
-    
-    // TODO NEXT: complete this.  Compare to PerSizeAvailability and make another setting for PerContainerPerCreatorRarity compared to PerStockTypePerSizeAvailability
+
+    public Item.Rarity this [int index]
+    {
+        get { return m_CharacterClassRarities[index]; }
+    }    
+
+    public static PerCreatorRarity Create (string name, EnumSetting characterClasses, Item.Rarity[] rarities)
+    {
+        PerCreatorRarity newPerCreatorRarity = CreateInstance<PerCreatorRarity>();
+
+        if (CheckName(name) == NameCheckResult.Bad)
+            throw new UnityException("Settings name invalid, contains invalid characters.");
+        if (CheckName(name) == NameCheckResult.IsDefault)
+            throw new UnityException("Settings name invalid, name cannot start with Default");
+
+        newPerCreatorRarity.name = name;
+        newPerCreatorRarity.m_CharacterClasses = characterClasses;
+        newPerCreatorRarity.m_CharacterClassRarities = rarities;
+
+        SaveableHolder.AddSaveable(newPerCreatorRarity);
+
+        return newPerCreatorRarity;
+    }
+
+
+    public string PickClass()
+    {
+        float weightSum = 0f;
+
+        for (int i = 0; i < m_CharacterClassRarities.Length; i++)
+        {
+            weightSum += Campaign.RarityWeighting.RarityToWeight(m_CharacterClassRarities[i]);
+        }
+
+        float randomWeightSum = Random.Range(0f, weightSum);
+        float weightCounter = randomWeightSum;
+
+        for (int i = 0; i < m_CharacterClassRarities.Length; i++)
+        {
+            weightCounter -= Campaign.RarityWeighting.RarityToWeight(m_CharacterClassRarities[i]);
+
+            if (weightCounter <= 0f)
+            {
+                return m_CharacterClasses.settings[i];
+            }
+        }
+
+        return null;
+    }
+
+    public string PickSpellCastingClass (CharacterCasterTypes characterCasterTypes)
+    {
+        float weightSum = 0f;
+
+        for (int i = 0; i < m_CharacterClassRarities.Length; i++)
+        {
+            if (characterCasterTypes[i] == CharacterCasterTypes.CasterType.NoSpells)
+                continue;
+
+            weightSum += Campaign.RarityWeighting.RarityToWeight(m_CharacterClassRarities[i]);
+        }
+
+        float randomWeightSum = Random.Range(0f, weightSum);
+        float weightCounter = randomWeightSum;
+
+        for (int i = 0; i < m_CharacterClassRarities.Length; i++)
+        {
+            if (characterCasterTypes[i] == CharacterCasterTypes.CasterType.NoSpells)
+                continue;
+
+            weightCounter -= Campaign.RarityWeighting.RarityToWeight(m_CharacterClassRarities[i]);
+
+            if (weightCounter <= 0f)
+            {
+                return m_CharacterClasses.settings[i];
+            }
+        }
+
+        return null;
+    }
+
     protected override string ConvertToJsonString (string[] jsonSplitter)
     {
-        throw new System.NotImplementedException ();
+        string jsonString = "";
+
+        jsonString += name + jsonSplitter[0];
+        jsonString += EnumSetting.GetJsonString(m_CharacterClasses) + jsonSplitter[0];
+        
+        for(int i = 0; i < m_CharacterClassRarities.Length; i++)
+        {
+            jsonString += Wrapper<int>.GetJsonString((int)m_CharacterClassRarities[i]) + jsonSplitter[0];
+        }
+
+        return jsonString;
     }
 
     protected override void SetupFromSplitJsonString (string[] splitJsonString)
     {
-        throw new System.NotImplementedException ();
+        name = splitJsonString[0];
+        m_CharacterClasses = EnumSetting.Load(splitJsonString[1]);
+
+        m_CharacterClassRarities = new Item.Rarity[splitJsonString.Length - 2];
+        for(int i = 0; i < m_CharacterClassRarities.Length; i++)
+        {
+            m_CharacterClassRarities[i] = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[i + 2]);
+        }
     }
 }

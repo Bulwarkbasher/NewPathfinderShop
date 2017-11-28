@@ -4,18 +4,20 @@ using UnityEngine;
 
 public class SpecificWandCollection : SpecificItemCollection<SpecificWand, SpecificWandCollection>
 {
-    public static SpecificWandCollection Create(Availability stockAvailability, SpellCollection availableSpells)
+    public SpellCollection spellCollection;
+
+    public static SpecificWandCollection Create(IntStratRanges stockAvailability, SpellCollection availableSpells)
     {
         return CreateInstance<SpecificWandCollection>();
     }
 
-    protected override SpecificWand GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificWand CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budget)
     {
         //return SpecificWand.CreateRandom();
         return CreateInstance<SpecificWand> ();
     }
 
-    public static void AddToShop(Shop shop, Availability stockAvailability, SpellCollection availableSpells)
+    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, SpellCollection availableSpells)
     {
         shop.stockTypes |= Shop.StockType.Wand;
 

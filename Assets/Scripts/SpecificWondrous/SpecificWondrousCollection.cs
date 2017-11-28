@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrous, SpecificWondrousCollection>
 {
-    public static SpecificWondrousCollection Create(Availability stockAvailability)
+    public static SpecificWondrousCollection Create(IntStratRanges stockAvailability)
     {
         return CreateInstance<SpecificWondrousCollection>();
     }
 
-    protected override SpecificWondrous GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificWondrous CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
     {
         return SpecificWondrous.CreateRandom();
     }
 
-    public static void AddToShop(Shop shop, Availability stockAvailability)
+    public static void AddToShop(Shop shop, IntStratRanges stockAvailability)
     {
         shop.stockTypes |= Shop.StockType.Wand;
 

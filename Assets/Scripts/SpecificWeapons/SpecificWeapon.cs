@@ -8,97 +8,59 @@ public class SpecificWeapon : SpecificItem<SpecificWeapon>
     public Weapon weapon;
     public WeaponQuality enhancementBonus;
     public WeaponQuality specialMaterial;
-    public WeaponQuality[] specialAbilities;
+    public WeaponQuality[] specialAbilities = new WeaponQuality[0];
 
-    private string m_Description;
-    
-    public static SpecificWeapon CreateRandom (SpecificItem.PowerLevel powerLevel, int budget, WeaponCollection availableWeapons, WeaponQualityCollection availableQualities)
+    public static SpecificWeapon CreateRandom (SpecificItem.PowerLevel powerLevel, WeaponQualityConstraintsMatrix matrix, FloatRange budgetRange)
     {
-        int originalBudget = budget;
         SpecificWeapon newSpecificWeapon = CreateInstance<SpecificWeapon>();
 
         newSpecificWeapon.powerLevel = powerLevel;
-        newSpecificWeapon.weapon = availableWeapons.PickWeapon(ref budget);
+        float budget = budgetRange.Random();
+        matrix.AssignRandomWeapon(ref budget, newSpecificWeapon);
 
-        if (newSpecificWeapon.weapon == null)
-            return null;
-
-        bool weaponHasMaterial = false;
-        bool weaponHasBonus = Campaign.UsesAutomaticBonusProgressionRules;
-
-        List<WeaponQuality> weaponSpecialAbilities = new List<WeaponQuality>();
-
-        while (budget > 0)
+        while(budget > 0)
         {
-            List<WeaponQuality> bonusEquivalentQualities = new List<WeaponQuality>(weaponSpecialAbilities);
-            if (newSpecificWeapon.enhancementBonus)
-                bonusEquivalentQualities.Add(newSpecificWeapon.enhancementBonus);
-
-            WeaponQuality newQuality = availableQualities.PickWeaponQuality(newSpecificWeapon.weapon, budget, bonusEquivalentQualities.ToArray(), !weaponHasMaterial, !weaponHasBonus, weaponHasBonus);
-
-            if (newQuality == null)
+            if (!matrix.AddRandomWeaponQuality(ref budget, newSpecificWeapon))
                 break;
-
-            if (newQuality.qualityType == Quality.QualityType.SpecialMaterial)
-            {
-                weaponHasMaterial = true;
-                newSpecificWeapon.specialMaterial = newQuality;
-            }
-            else if (newQuality.qualityType == Quality.QualityType.EnhancementBonus)
-            {
-                weaponHasBonus = true;
-                newSpecificWeapon.enhancementBonus = newQuality;
-            }
-            else
-            {
-                weaponSpecialAbilities.Add(newQuality);
-            }            
-
-            int costToAdd = newQuality.CostToIncrease(bonusEquivalentQualities.ToArray());
-
-            budget -= costToAdd;
         }
-
-        newSpecificWeapon.specialAbilities = weaponSpecialAbilities.ToArray();
 
         if (newSpecificWeapon.specialMaterial == null)
-        {
-            WeaponQuality blankSpecialMaterial = CreateInstance<WeaponQuality>();
-            newSpecificWeapon.specialMaterial = blankSpecialMaterial;
-        }
+            newSpecificWeapon.specialMaterial = WeaponQuality.CreateBlank(matrix.weaponCollection.books);
         if (newSpecificWeapon.enhancementBonus == null)
-        {
-            WeaponQuality blankSpecialMaterial = CreateInstance<WeaponQuality>();
-            newSpecificWeapon.specialMaterial = blankSpecialMaterial;
-        }
+            newSpecificWeapon.enhancementBonus = WeaponQuality.CreateBlank(matrix.weaponCollection.books);
 
-        newSpecificWeapon.cost = originalBudget - budget;
+        newSpecificWeapon.CalculateCost();
+        newSpecificWeapon.CalculateName();
 
         return newSpecificWeapon;
     }
-    
+        
     public void SwapWeapon (Weapon newWeapon)
     {
         weapon = newWeapon;
         CalculateCost();
+        CalculateName();
     }
     
     public void SwapEnhancement (WeaponQuality newEnhancement)
     {
         enhancementBonus = newEnhancement;
         CalculateCost();
+        CalculateName();
     }
     
     public void SwapSpecialMaterial (WeaponQuality newMaterial)
     {
         specialMaterial = newMaterial;
         CalculateCost();
+        CalculateName();
     }
     
     public void SwapSpecialAbility (int oldAbilityIndex, WeaponQuality newSpecialAbility)
     {
         specialAbilities[oldAbilityIndex] = newSpecialAbility;
         CalculateCost();
+        CalculateName();
     }
     
     public void AddSpecialAbility (WeaponQuality newSpecialAbility)
@@ -111,6 +73,7 @@ public class SpecificWeapon : SpecificItem<SpecificWeapon>
         newSpecialAbilities[specialAbilities.Length] = newSpecialAbility;
         specialAbilities = newSpecialAbilities;
         CalculateCost();
+        CalculateName();
     }
 
     public void RemoveSpecialAbility (int removeAt)
@@ -126,6 +89,7 @@ public class SpecificWeapon : SpecificItem<SpecificWeapon>
         }
         specialAbilities = newSpecialAbilities;
         CalculateCost();
+        CalculateName();
     }
     
     private void CalculateCost ()
@@ -146,30 +110,31 @@ public class SpecificWeapon : SpecificItem<SpecificWeapon>
         cost += WeaponQuality.BonusToCost((Quality.BonusEquivalent)bonus);
     }
 
-    public override string ToString()
+    void CalculateName ()
     {
-        m_Description = "";
+        name = "";
 
-        if(enhancementBonus)
-            m_Description += Quality.GetBonusEquivalentName(enhancementBonus.bonusEquivalent) + " ";
-        
+        if(enhancementBonus.name != "NAME")
+            name += Quality.GetBonusEquivalentName(enhancementBonus.bonusEquivalent) + " ";
+
         for (int i = 0; i < specialAbilities.Length; i++)
         {
-            m_Description += specialAbilities[i].name + " ";
+            name += specialAbilities[i].name + " ";
         }
 
-        if (specialMaterial)
-            m_Description += specialMaterial.name + " ";
+        if (specialMaterial.name != "NAME")
+            name += specialMaterial.name + " ";
 
-        m_Description += weapon.name;
-
-        return m_Description;
+        name += weapon.name;
     }
     
     protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
+        jsonString += name + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString((int)powerLevel) + jsonSplitter[0];
+        jsonString += Wrapper<float>.GetJsonString(cost) + jsonSplitter[0];
         jsonString += Weapon.GetJsonString (weapon) + jsonSplitter[0];
         jsonString += WeaponQuality.GetJsonString (enhancementBonus) + jsonSplitter[0];
         jsonString += WeaponQuality.GetJsonString(specialMaterial) + jsonSplitter[0];
@@ -184,16 +149,17 @@ public class SpecificWeapon : SpecificItem<SpecificWeapon>
     
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        weapon = Weapon.CreateFromJsonString (splitJsonString[0]);
-        enhancementBonus = WeaponQuality.CreateFromJsonString (splitJsonString[1]);
-        specialMaterial = WeaponQuality.CreateFromJsonString (splitJsonString[2]);
+        name = splitJsonString[0];
+        powerLevel = (SpecificItem.PowerLevel)Wrapper<int>.CreateFromJsonString(splitJsonString[1]);
+        cost = Wrapper<float>.CreateFromJsonString(splitJsonString[2]);
+        weapon = Weapon.CreateFromJsonString (splitJsonString[3]);
+        enhancementBonus = WeaponQuality.CreateFromJsonString (splitJsonString[4]);
+        specialMaterial = WeaponQuality.CreateFromJsonString (splitJsonString[5]);
 
-        specialAbilities = new WeaponQuality[splitJsonString.Length - 3];
+        specialAbilities = new WeaponQuality[splitJsonString.Length - 6];
         for (int i = 0; i < specialAbilities.Length; i++)
         {
-            specialAbilities[i] = WeaponQuality.CreateFromJsonString (splitJsonString[i + 3]);
+            specialAbilities[i] = WeaponQuality.CreateFromJsonString (splitJsonString[i + 6]);
         }
-
-        CalculateCost ();
     }
 }

@@ -5,15 +5,6 @@ using Random = UnityEngine.Random;
 
 public class Spell : Jsonable<Spell>
 {
-    public enum Book
-    {
-        CRB,
-        APG,
-        UM,
-        UC,
-    }
-
-
     public enum Allowance
     {
         Default,
@@ -27,22 +18,6 @@ public class Spell : Jsonable<Spell>
         Potion,
         Scroll,
         Wand,
-    }
-
-
-    public enum Creator
-    {
-        Alc,
-        Brd,
-        ClrOcl,
-        Drd,
-        Inq,
-        Mag,
-        Pal,
-        Rgr,
-        SorWiz,
-        Sum,
-        Wit,
     }
 
 
@@ -100,133 +75,147 @@ public class Spell : Jsonable<Spell>
     }
 
 
-    [Serializable]
-    public class CreatorLevels
-    {
-        public int alchemistLevel = -1;
-        public int bardLevel = -1;
-        public int clericOracleLevel = -1;
-        public int druidLevel = -1;
-        public int inquisitorLevel = -1;
-        public int magusLevel = -1;
-        public int paladinLevel = -1;
-        public int rangerLevel = -1;
-        public int sorcererWizardLevel = -1;
-        public int summonerLevel = -1;
-        public int witchLevel = -1;
-
-        public int this [Creator creator]
-        {
-            get
-            {
-                switch (creator)
-                {
-                    case Creator.Alc:
-                        return alchemistLevel;
-                    case Creator.Brd:
-                        return bardLevel;
-                    case Creator.ClrOcl:
-                        return clericOracleLevel;
-                    case Creator.Drd:
-                        return druidLevel;
-                    case Creator.Inq:
-                        return inquisitorLevel;
-                    case Creator.Mag:
-                        return magusLevel;
-                    case Creator.Pal:
-                        return paladinLevel;
-                    case Creator.Rgr:
-                        return rangerLevel;
-                    case Creator.SorWiz:
-                        return sorcererWizardLevel;
-                    case Creator.Sum:
-                        return summonerLevel;
-                    case Creator.Wit:
-                        return witchLevel;
-                    default:
-                        throw new ArgumentOutOfRangeException ("creator", creator, null);
-                }
-            }
-        }
-    }
-
-
     public Allowances allowances = new Allowances ();
     public Rarities rarities = new Rarities ();
-    public CreatorLevels creatorLevels = new CreatorLevels ();
-    public Book book;
+    public CharacterCasterTypes creatorCasterTypes = new CharacterCasterTypes();    // Not shown
+    public EnumSettingIntPairing creatorLevels = new EnumSettingIntPairing();
+    public EnumSettingIndex book;
     public int page;
     public int materialCost;
 
-    public static Spell Create (string name, Allowances allowances, Rarities rarities,
-        CreatorLevels creatorLevels, Book book, int page, int materialCost)
+    public static Spell Create(string name, Allowances allowances, Rarities rarities, CharacterCasterTypes creatorCasterTypes,
+        EnumSettingIntPairing creatorLevels, EnumSettingIndex book, int page, int materialCost)
     {
         Spell newSpell = CreateInstance<Spell> ();
         newSpell.name = name;
         newSpell.allowances = allowances;
         newSpell.rarities = rarities;
+        newSpell.creatorCasterTypes = creatorCasterTypes;
+        newSpell.creatorLevels = creatorLevels;
         newSpell.book = book;
         newSpell.page = page;
-        newSpell.creatorLevels = creatorLevels;
         newSpell.materialCost = materialCost;
         return newSpell;
     }
 
-    public static Spell CreateBlank ()
+    public static Spell CreateBlank (CharacterCasterTypes characterCasterTypes, EnumSetting books)
     {
-        return Create ("NAME", new Allowances (), new Rarities (),
-            new CreatorLevels (), Book.CRB, 999, 0);    // TODO FROM HOME: change to start of spell section from CRB
+        return Create ("NAME", new Allowances (), new Rarities (), characterCasterTypes, 
+            new EnumSettingIntPairing(characterCasterTypes.characterClasses), new EnumSettingIndex(books, 0), 239, 0);
     }
 
-    public static int CostPerCreatorLevelBySpellLevel (Container container)
+    public float GetPotionCost(string creator)
     {
-        switch (container)
-        {
-            case Container.Potion:
-                return 50;
-            case Container.Scroll:
-                return 25;
-            case Container.Wand:
-                return 750;
-            default:
-                throw new ArgumentOutOfRangeException (nameof(container), container, null);
-        }
-    }
+        Allowance allowance = allowances[Container.Potion];
+        if (allowance == Allowance.CannotBe)
+            return -1f;
 
-    public float GetCostFromLevel (Container container, Creator creator, int creatorLevel, float chargeProportion = 1f)
-    {
         int creationLevel = creatorLevels[creator];
-        
+        if (allowance == Allowance.Default && creationLevel > 3)
+            return -1f;
+
+        int creatorLevel = CharacterCasterTypes.MinCasterLevel(creatorCasterTypes[creator], creationLevel);
+
         if (creationLevel == -1)
             return -1f;
         if (creationLevel == 0)
-            return CostPerCreatorLevelBySpellLevel (container) * 0.5f * chargeProportion;
+            return 25f + materialCost;
 
-        return CostPerCreatorLevelBySpellLevel (container) * creationLevel * creatorLevel * chargeProportion;
+        return 50f * creationLevel * creatorLevel + materialCost;
     }
 
-    public float GetCostFromLevel (Container container, Creator creator, float chargeProportion = 1f)
+    public float GetPotionCost(string creator, int creatorLevel)
     {
+        Allowance allowance = allowances[Container.Potion];
+        if (allowance == Allowance.CannotBe)
+            return -1f;
+
         int creationLevel = creatorLevels[creator];
-        
+        if (allowance == Allowance.Default && creationLevel > 3)
+            return -1f;
+
         if (creationLevel == -1)
             return -1f;
         if (creationLevel == 0)
-            return CostPerCreatorLevelBySpellLevel (container) * 0.5f * chargeProportion;
+            return 25f + materialCost;
 
-        return CostPerCreatorLevelBySpellLevel (container) * creationLevel * MinCasterLevel (creator, creationLevel) * chargeProportion;
+        return 50f * creationLevel * creatorLevel + materialCost;
     }
 
-    protected int MinCasterLevel (Creator creator, int spellLevel)
+    public float GetScrollCost(string creator)
     {
-        if (creator == Creator.Alc || creator == Creator.Brd || creator == Creator.Inq || creator == Creator.Mag || creator == Creator.Sum)
-            return spellLevel * 3 - 2;
-        if (creator == Creator.ClrOcl || creator == Creator.Drd || creator == Creator.SorWiz || creator == Creator.Wit)
-            return spellLevel * 2 - 1;
-        if (creator == Creator.Pal || creator == Creator.Rgr)
-            return spellLevel * 3 + 1;
+        Allowance allowance = allowances[Container.Scroll];
+        if (allowance == Allowance.CannotBe)
+            return -1f;
 
-        return -1;
+        int creationLevel = creatorLevels[creator];
+        if (allowance == Allowance.Default && creationLevel > 3)
+            return -1f;
+
+        int creatorLevel = CharacterCasterTypes.MinCasterLevel(creatorCasterTypes[creator], creationLevel);
+
+        if (creationLevel == -1)
+            return -1f;
+        if (creationLevel == 0)
+            return 12.5f + materialCost;
+
+        return 25f * creationLevel * creatorLevel + materialCost;
+    }
+
+    public float GetScrollCost(string creator, int creatorLevel)
+    {
+        Allowance allowance = allowances[Container.Scroll];
+        if (allowance == Allowance.CannotBe)
+            return -1f;
+
+        int creationLevel = creatorLevels[creator];
+        if (allowance == Allowance.Default && creationLevel > 3)
+            return -1f;
+
+        if (creationLevel == -1)
+            return -1f;
+        if (creationLevel == 0)
+            return 12.5f + materialCost;
+
+        return 25f * creationLevel * creatorLevel + materialCost;
+    }
+
+    public float GetWandCost(string creator, int charges)
+    {
+        Allowance allowance = allowances[Container.Wand];
+        if (allowance == Allowance.CannotBe)
+            return -1f;
+
+        int creationLevel = creatorLevels[creator];
+        if (allowance == Allowance.Default && creationLevel > 4)
+            return -1f;
+
+        int creatorLevel = CharacterCasterTypes.MinCasterLevel(creatorCasterTypes[creator], creationLevel);
+
+        if (creationLevel == -1)
+            return -1f;
+        if (creationLevel == 0)
+            return (7.5f + materialCost) * charges;
+
+        return (15f + materialCost) * charges * creationLevel * creatorLevel;
+    }
+
+    public float GetWandCost(string creator, int creatorLevel, int charges)
+    {
+        Allowance allowance = allowances[Container.Wand];
+        if (allowance == Allowance.CannotBe)
+            return -1f;
+
+        int creationLevel = creatorLevels[creator];
+        if (allowance == Allowance.Default && creationLevel > 3)
+            return -1f;
+
+        if (creationLevel == -1)
+            return -1f;
+        if (creationLevel == 0)
+            return (7.5f + materialCost) * charges;
+
+        return (15 + materialCost) * charges * creationLevel * creatorLevel;
     }
 
     public static Spell PickSpell (List<Spell> spells, Container container)
@@ -267,18 +256,9 @@ public class Spell : Jsonable<Spell>
         jsonString += Wrapper<int>.GetJsonString((int)rarities[Container.Potion]) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)rarities[Container.Scroll]) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)rarities[Container.Wand]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Alc]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Brd]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.ClrOcl]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Drd]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Inq]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Mag]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Pal]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Rgr]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.SorWiz]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Sum]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(creatorLevels[Creator.Wit]) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)book) + jsonSplitter[0];
+        jsonString += creatorCasterTypes.name + jsonString[0];
+        jsonString += EnumSettingIntPairing.GetJsonString(creatorLevels) + jsonSplitter[0];
+        jsonString += EnumSettingIndex.GetJsonString(book) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(page) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(materialCost) + jsonSplitter[0];
 
@@ -294,19 +274,10 @@ public class Spell : Jsonable<Spell>
         rarities.potionRarity = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[4]);
         rarities.scrollRarity = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[5]);
         rarities.wandRarity = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[6]);
-        creatorLevels.alchemistLevel = Wrapper<int>.CreateFromJsonString (splitJsonString[7]);
-        creatorLevels.bardLevel = Wrapper<int>.CreateFromJsonString (splitJsonString[8]);
-        creatorLevels.clericOracleLevel = Wrapper<int>.CreateFromJsonString (splitJsonString[9]);
-        creatorLevels.druidLevel = Wrapper<int>.CreateFromJsonString (splitJsonString[10]);
-        creatorLevels.inquisitorLevel = Wrapper<int>.CreateFromJsonString (splitJsonString[11]);
-        creatorLevels.magusLevel = Wrapper<int>.CreateFromJsonString (splitJsonString[12]);
-        creatorLevels.paladinLevel = Wrapper<int>.CreateFromJsonString (splitJsonString[13]);
-        creatorLevels.rangerLevel = Wrapper<int>.CreateFromJsonString (splitJsonString[14]);
-        creatorLevels.sorcererWizardLevel = Wrapper<int>.CreateFromJsonString (splitJsonString[15]);
-        creatorLevels.summonerLevel = Wrapper<int>.CreateFromJsonString (splitJsonString[16]);
-        creatorLevels.witchLevel = Wrapper<int>.CreateFromJsonString(splitJsonString[17]);
-        book = (Book)Wrapper<int>.CreateFromJsonString (splitJsonString[18]);
-        page = Wrapper<int>.CreateFromJsonString (splitJsonString[19]);
-        materialCost = Wrapper<int>.CreateFromJsonString (splitJsonString[20]);
+        creatorCasterTypes = CharacterCasterTypes.Load(splitJsonString[7]);
+        creatorLevels = EnumSettingIntPairing.CreateFromJsonString(splitJsonString[8]);
+        book = EnumSettingIndex.CreateFromJsonString(splitJsonString[9]);
+        page = Wrapper<int>.CreateFromJsonString (splitJsonString[10]);
+        materialCost = Wrapper<int>.CreateFromJsonString (splitJsonString[11]);
     }
 }

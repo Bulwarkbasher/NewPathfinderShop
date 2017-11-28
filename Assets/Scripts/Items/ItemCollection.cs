@@ -4,6 +4,7 @@ public abstract class ItemCollection<TChild, TItem> : Saveable<TChild>
     where TChild : ItemCollection<TChild, TItem>
     where TItem : Item<TItem>
 {
+    public EnumSetting books;
     public TItem[] items = new TItem[0];
 
     public bool AddItem (TItem newItem)

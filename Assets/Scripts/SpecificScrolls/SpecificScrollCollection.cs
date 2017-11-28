@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll, SpecificScrollCollection>
 {
-    public static SpecificScrollCollection Create (Availability stockAvailability, SpellCollection spellCollection)
+    public static SpecificScrollCollection Create (IntStratRanges stockAvailability, SpellCollection spellCollection)
     {
         return CreateInstance<SpecificScrollCollection> ();
     }
 
-    protected override SpecificScroll GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificScroll CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
     {
         return SpecificScroll.CreateRandom ();
     }
 
-    public static void AddToShop(Shop shop, Availability stockAvailability, SpellCollection availableSpells)
+    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, SpellCollection availableSpells)
     {
         shop.stockTypes |= Shop.StockType.Scroll;
 

@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class SpecificRingCollection : SpecificItemCollection<SpecificRing, SpecificRingCollection>
 {
-    public static SpecificRingCollection Create(Availability stockAvailability)
+    public static SpecificRingCollection Create(IntStratRanges stockAvailability)
     {
         return CreateInstance<SpecificRingCollection>();
     }
 
-    protected override SpecificRing GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificRing CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
     {
         return SpecificRing.CreateRandom();
     }
 
-    public static void AddToShop(Shop shop, Availability stockAvailability)
+    public static void AddToShop(Shop shop, IntStratRanges stockAvailability)
     {
         shop.stockTypes |= Shop.StockType.Ring;
 

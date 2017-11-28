@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class SpecificRodCollection : SpecificItemCollection<SpecificRod, SpecificRodCollection>
 {
-    public static SpecificRodCollection Create(Availability stockAvailability)
+    public static SpecificRodCollection Create(IntStratRanges stockAvailability)
     {
         return CreateInstance<SpecificRodCollection>();
     }
 
-    protected override SpecificRod GetRandomSpecificItem(SpecificItem.PowerLevel powerLevel, int budget)
+    protected override SpecificRod CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
     {
         return SpecificRod.CreateRandom();
     }
 
-    public static void AddToShop(Shop shop, Availability stockAvailability)
+    public static void AddToShop(Shop shop, IntStratRanges stockAvailability)
     {
         shop.stockTypes |= Shop.StockType.Rod;
 
