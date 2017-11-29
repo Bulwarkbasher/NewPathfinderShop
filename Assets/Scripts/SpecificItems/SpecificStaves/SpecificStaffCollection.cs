@@ -6,7 +6,7 @@ public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, Spe
 {
     public StaffCollection staffCollection;
 
-    public static SpecificStaffCollection Create(IntStratRanges stockAvailability, StaffCollection staffCollection, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static SpecificStaffCollection Create(IntRangePerPowerLevel stockAvailability, StaffCollection staffCollection, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         SpecificStaffCollection newSpecificStaffCollection = CreateInstance<SpecificStaffCollection>();
         newSpecificStaffCollection.stockAvailability = stockAvailability;
@@ -15,12 +15,12 @@ public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, Spe
         return newSpecificStaffCollection;
     }
 
-    public static SpecificStaffCollection Create(Shop.Size size)
+    public static SpecificStaffCollection Create(string shopSize)
     {
         SpecificStaffCollection newSpecificStaffCollection = CreateInstance<SpecificStaffCollection>();
-        newSpecificStaffCollection.stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Staff][size];
-        newSpecificStaffCollection.staffCollection = DefaultResourceHolder.DefaultStaffCollection;
-        newSpecificStaffCollection.BuyStock(DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Staff]);
+        newSpecificStaffCollection.stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Staff][shopSize];
+        newSpecificStaffCollection.staffCollection = Campaign.StaffCollection;
+        newSpecificStaffCollection.BuyStock(Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Staff]);
         return newSpecificStaffCollection;
     }
 
@@ -29,18 +29,18 @@ public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, Spe
         return SpecificStaff.CreateRandom(powerLevel, budgetRange, staffCollection);
     }
 
-    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, StaffCollection staffCollection, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static void AddToShop(Shop shop, IntRangePerPowerLevel stockAvailability, StaffCollection staffCollection, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         shop.stockTypes |= Shop.StockType.Wand;
 
         if (stockAvailability == null)
-            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Wand][shop.size];
+            stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Wand][shop.size];
 
         if (staffCollection == null)
-            staffCollection = DefaultResourceHolder.DefaultStaffCollection;
+            staffCollection = Campaign.StaffCollection;
 
         if (perPowerLevelItemBudgetRange == null)
-            perPowerLevelItemBudgetRange = DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Staff];
+            perPowerLevelItemBudgetRange = Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Staff];
 
         shop.specificStaffCollection = Create(stockAvailability, staffCollection, perPowerLevelItemBudgetRange);
     }
@@ -50,7 +50,7 @@ public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, Spe
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += IntStratRanges.GetJsonString(stockAvailability) + jsonSplitter[0];
+        jsonString += stockAvailability.name + jsonSplitter[0];
         jsonString += staffCollection.name + jsonSplitter[0];
 
         for (int i = 0; i < specificItems.Length; i++)
@@ -64,7 +64,7 @@ public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, Spe
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        stockAvailability = IntStratRanges.CreateFromJsonString(splitJsonString[1]);
+        stockAvailability = IntRangePerPowerLevel.Load(splitJsonString[1]);
         staffCollection = StaffCollection.Load(splitJsonString[2]);
 
         specificItems = new SpecificStaff[splitJsonString.Length - 3];

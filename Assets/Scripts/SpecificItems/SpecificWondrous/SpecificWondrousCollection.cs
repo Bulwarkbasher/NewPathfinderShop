@@ -6,7 +6,7 @@ public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrou
 {
     public WondrousCollection wondrousCollection;
 
-    public static SpecificWondrousCollection Create(IntStratRanges stockAvailability, WondrousCollection wondrousCollection, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static SpecificWondrousCollection Create(IntRangePerPowerLevel stockAvailability, WondrousCollection wondrousCollection, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         SpecificWondrousCollection newSpecificWondrousCollection = CreateInstance<SpecificWondrousCollection>();
         newSpecificWondrousCollection.stockAvailability = stockAvailability;
@@ -15,12 +15,12 @@ public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrou
         return newSpecificWondrousCollection;
     }
 
-    public static SpecificWondrousCollection Create (Shop.Size size)
+    public static SpecificWondrousCollection Create (string shopSize)
     {
         SpecificWondrousCollection newSpecificWondrousCollection = CreateInstance<SpecificWondrousCollection>();
-        newSpecificWondrousCollection.stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Wondrous][size];
-        newSpecificWondrousCollection.wondrousCollection = DefaultResourceHolder.DefaultWondrousCollection;
-        newSpecificWondrousCollection.BuyStock(DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Wondrous]);
+        newSpecificWondrousCollection.stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Wondrous][shopSize];
+        newSpecificWondrousCollection.wondrousCollection = Campaign.WondrousCollection;
+        newSpecificWondrousCollection.BuyStock(Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Wondrous]);
         return newSpecificWondrousCollection;
     }
 
@@ -29,18 +29,18 @@ public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrou
         return SpecificWondrous.CreateRandom(powerLevel, budgetRange, wondrousCollection);
     }
 
-    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, WondrousCollection wondrousCollection, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static void AddToShop(Shop shop, IntRangePerPowerLevel stockAvailability, WondrousCollection wondrousCollection, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         shop.stockTypes |= Shop.StockType.Wand;
 
         if (stockAvailability == null)
-            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Wand][shop.size];
+            stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Wand][shop.size];
 
         if (wondrousCollection == null)
-            wondrousCollection = DefaultResourceHolder.DefaultWondrousCollection;
+            wondrousCollection = Campaign.WondrousCollection;
 
         if (perPowerLevelItemBudgetRange == null)
-            perPowerLevelItemBudgetRange = DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Wondrous];
+            perPowerLevelItemBudgetRange = Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Wondrous];
 
         shop.specificWondrousCollection = Create(stockAvailability, wondrousCollection, perPowerLevelItemBudgetRange);
     }
@@ -50,7 +50,7 @@ public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrou
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += IntStratRanges.GetJsonString(stockAvailability) + jsonSplitter[0];
+        jsonString += stockAvailability.name + jsonSplitter[0];
         jsonString += wondrousCollection.name + jsonSplitter[0];
 
         for (int i = 0; i < specificItems.Length; i++)
@@ -64,7 +64,7 @@ public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrou
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        stockAvailability = IntStratRanges.CreateFromJsonString(splitJsonString[1]);
+        stockAvailability = IntRangePerPowerLevel.CreateFromJsonString(splitJsonString[1]);
         wondrousCollection = WondrousCollection.Load(splitJsonString[2]);
 
         specificItems = new SpecificWondrous[splitJsonString.Length - 3];

@@ -2,7 +2,7 @@
 using UnityEditor;
 
 [CustomPropertyDrawer(typeof(Spell))]
-public class SpellDrawer : SubAssetElementDrawer
+public class SpellDrawer : JsonableDrawer
 {
     SerializedProperty m_AllowancesProp;
     SerializedProperty m_PotionAllowanceProp;

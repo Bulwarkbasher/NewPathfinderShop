@@ -3,14 +3,6 @@ using System;
 
 public class Shop : Jsonable<Shop>
 {
-    public enum Size    // TODO NEXT: to data
-    {
-        Stall,
-        Boutique,
-        Outlet,
-        Emporium,
-    }
-
     [Flags]
     public enum StockType
     {
@@ -26,13 +18,13 @@ public class Shop : Jsonable<Shop>
     }
 
     public string notes;
-    public Size size;
+    public SelectedEnumSetting size;
     public StockType stockTypes;
-    public PerSizeRestockFrequencyModifiers perSizeRestockFrequencyModifiers;
+    public RestockFrequencyModifiersPerSize perSizeRestockFrequencyModifiers;
     public int daysSinceLastRestock;
-    public PerSizeReadyCash perSizeReadyCash;
+    public ReadyCashPerShopSize perSizeReadyCash;
     public float totalCash;
-    public PerStockTypePerPowerLevelRange perStockTypePerPowerLevelRange;
+    public FloatRangePerPowerLevelPerStockType perStockTypePerPowerLevelRange;
 
     public SpecificArmourCollection specificArmourCollection;
     public SpecificPotionCollection specificPotionCollection;
@@ -49,17 +41,17 @@ public class Shop : Jsonable<Shop>
         get { return perSizeRestockFrequencyModifiers[size]; }
     }
 
-    public int ReadyCash
+    public float ReadyCash
     {
         get { return perSizeReadyCash[size]; }
     }
 
-    public static Shop Create(string name, string notes, Size shopSize, PerSizeRestockFrequencyModifiers restockFrequencyModifiers, PerSizeReadyCash readyCash)
+    public static Shop Create(string name, string notes, EnumSetting shopSizeEnum, int shopSize, RestockFrequencyModifiersPerSize restockFrequencyModifiers, ReadyCashPerShopSize readyCash)
     {
         Shop newShop = CreateInstance<Shop>();
         newShop.name = name;
         newShop.notes = notes;
-        newShop.size = shopSize;
+        newShop.size = new SelectedEnumSetting(shopSizeEnum, shopSize);
         newShop.perSizeRestockFrequencyModifiers = restockFrequencyModifiers;
         newShop.perSizeReadyCash = readyCash;
         newShop.specificWeaponCollection = CreateInstance<SpecificWeaponCollection> ();
@@ -73,14 +65,14 @@ public class Shop : Jsonable<Shop>
         return newShop;
     }
 
-    public static Shop Create (string name, string notes, Size shopSize)
+    public static Shop Create (string name, string notes, EnumSetting shopSizeEnum, int shopSize)
     {
-        PerSizeRestockFrequencyModifiers restockFrequencyModifier = DefaultResourceHolder.DefaultPerSizeRestockFrequencyModifiers;
-        PerSizeReadyCash readyCash = DefaultResourceHolder.DefaultPerSizeReadyCash;
-        return Create (name, notes, shopSize, restockFrequencyModifier, readyCash);
+        RestockFrequencyModifiersPerSize restockFrequencyModifier = Campaign.RestockFrequencyModifiersPerSize;
+        ReadyCashPerShopSize readyCash = Campaign.ReadyCashPerShopSize;
+        return Create (name, notes, shopSizeEnum, shopSize, restockFrequencyModifier, readyCash);
     }
 
-    public Settlement GetLocation ()
+    public Settlement GetSettlement ()
     {
         Settlement[] campaignSettlements = Campaign.Current.settlements;
 
@@ -111,7 +103,7 @@ public class Shop : Jsonable<Shop>
     public void PassTime (int daysPassed)
     {
         int totalDaysSinceLastRestock = daysPassed + daysSinceLastRestock;
-        RestockSettings restockSettings = GetLocation ().RestockSettings;
+        RestockSettings restockSettings = GetSettlement ().RestockSettings;
 
         int daysUntilRestock = Mathf.FloorToInt(restockSettings.days.Random() * RestockFrequencyModifier);
         while (totalDaysSinceLastRestock - daysUntilRestock > 0)
@@ -184,7 +176,7 @@ public class Shop : Jsonable<Shop>
 
         jsonString += name + jsonSplitter[0];
         jsonString += GetSafeJsonFromString(notes) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)size) + jsonSplitter[0];
+        jsonString += SelectedEnumSetting.GetJsonString(size);
         jsonString += Wrapper<int>.GetJsonString((int)stockTypes) + jsonSplitter[0];
         jsonString += perSizeRestockFrequencyModifiers.name + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(daysSinceLastRestock) + jsonSplitter[0];
@@ -209,13 +201,13 @@ public class Shop : Jsonable<Shop>
     {
         name = splitJsonString[0];
         notes = CreateStringFromSafeJson(splitJsonString[1]);
-        size = (Size)Wrapper<int>.CreateFromJsonString (splitJsonString[2]);
+        size = SelectedEnumSetting.CreateFromJsonString (splitJsonString[2]);
         stockTypes = (StockType)Wrapper<int>.CreateFromJsonString (splitJsonString[3]);
-        perSizeRestockFrequencyModifiers = PerSizeRestockFrequencyModifiers.Load (splitJsonString[4]);
+        perSizeRestockFrequencyModifiers = RestockFrequencyModifiersPerSize.Load (splitJsonString[4]);
         daysSinceLastRestock = Wrapper<int>.CreateFromJsonString (splitJsonString[5]);
-        perSizeReadyCash = PerSizeReadyCash.Load (splitJsonString[6]);
+        perSizeReadyCash = ReadyCashPerShopSize.Load (splitJsonString[6]);
         totalCash = Wrapper<float>.CreateFromJsonString (splitJsonString[7]);
-        perStockTypePerPowerLevelRange = PerStockTypePerPowerLevelRange.Load(splitJsonString[8]);
+        perStockTypePerPowerLevelRange = FloatRangePerPowerLevelPerStockType.Load(splitJsonString[8]);
 
         specificArmourCollection = SpecificArmourCollection.CreateFromJsonString(splitJsonString[9]);
         specificPotionCollection = SpecificPotionCollection.CreateFromJsonString(splitJsonString[10]);

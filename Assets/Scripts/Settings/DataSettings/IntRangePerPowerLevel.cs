@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [CreateAssetMenu]
-public class PerPowerLevelRange : Saveable<PerPowerLevelRange>
+public class IntRangePerPowerLevel : Saveable<IntRangePerPowerLevel>
 {
     [SerializeField]
-    protected FloatRange m_MinorRange;
+    protected IntRange m_MinorRange;
     [SerializeField]
-    protected FloatRange m_MediumRange;
+    protected IntRange m_MediumRange;
     [SerializeField]
-    protected FloatRange m_MajorRange;
+    protected IntRange m_MajorRange;
 
-    public FloatRange this [SpecificItem.PowerLevel powerLevel]
+    public IntRange this[SpecificItem.PowerLevel powerLevel]
     {
         get
         {
@@ -31,9 +31,9 @@ public class PerPowerLevelRange : Saveable<PerPowerLevelRange>
         }
     }
 
-    public static PerPowerLevelRange Create (string name, FloatRange minorRange, FloatRange mediumRange, FloatRange majorRange)
+    public static IntRangePerPowerLevel Create(string name, IntRange minorRange, IntRange mediumRange, IntRange majorRange)
     {
-        PerPowerLevelRange newPerPowerLevelRange = CreateInstance<PerPowerLevelRange>();
+        IntRangePerPowerLevel newPerPowerLevelRange = CreateInstance<IntRangePerPowerLevel>();
 
         if (CheckName(name) == NameCheckResult.Bad)
             throw new UnityException("Settings name invalid, contains invalid characters.");
@@ -55,9 +55,9 @@ public class PerPowerLevelRange : Saveable<PerPowerLevelRange>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += FloatRange.GetJsonString(m_MinorRange) + jsonSplitter[0];
-        jsonString += FloatRange.GetJsonString(m_MediumRange) + jsonSplitter[0];
-        jsonString += FloatRange.GetJsonString(m_MajorRange) + jsonSplitter[0];
+        jsonString += IntRange.GetJsonString(m_MinorRange) + jsonSplitter[0];
+        jsonString += IntRange.GetJsonString(m_MediumRange) + jsonSplitter[0];
+        jsonString += IntRange.GetJsonString(m_MajorRange) + jsonSplitter[0];
 
         return jsonString;
     }
@@ -65,8 +65,8 @@ public class PerPowerLevelRange : Saveable<PerPowerLevelRange>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        m_MinorRange = FloatRange.CreateFromJsonString(splitJsonString[1]);
-        m_MediumRange = FloatRange.CreateFromJsonString(splitJsonString[2]);
-        m_MajorRange = FloatRange.CreateFromJsonString(splitJsonString[3]);
+        m_MinorRange = IntRange.CreateFromJsonString(splitJsonString[1]);
+        m_MediumRange = IntRange.CreateFromJsonString(splitJsonString[2]);
+        m_MajorRange = IntRange.CreateFromJsonString(splitJsonString[3]);
     }
 }

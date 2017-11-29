@@ -2,28 +2,28 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class PerStockTypePerSizeAvailability : Saveable<PerStockTypePerSizeAvailability>
+public class AvailabilityPerShopSizePerStockType : Saveable<AvailabilityPerShopSizePerStockType>
 {
     [SerializeField]
-    protected PerSizeAvailability m_ArmourPerSizeAvailability;
+    protected IntRangePerPowerLevelPerShopSize m_ArmourPerSizeAvailability;
     [SerializeField]
-    protected PerSizeAvailability m_PotionPerSizeAvailability;
+    protected IntRangePerPowerLevelPerShopSize m_PotionPerSizeAvailability;
     [SerializeField]
-    protected PerSizeAvailability m_RingPerSizeAvailability;
+    protected IntRangePerPowerLevelPerShopSize m_RingPerSizeAvailability;
     [SerializeField]
-    protected PerSizeAvailability m_RodPerSizeAvailability;
+    protected IntRangePerPowerLevelPerShopSize m_RodPerSizeAvailability;
     [SerializeField]
-    protected PerSizeAvailability m_ScrollPerSizeAvailability;
+    protected IntRangePerPowerLevelPerShopSize m_ScrollPerSizeAvailability;
     [SerializeField]
-    protected PerSizeAvailability m_StaffPerSizeAvailability;
+    protected IntRangePerPowerLevelPerShopSize m_StaffPerSizeAvailability;
     [SerializeField]
-    protected PerSizeAvailability m_WandPerSizeAvailability;
+    protected IntRangePerPowerLevelPerShopSize m_WandPerSizeAvailability;
     [SerializeField]
-    protected PerSizeAvailability m_WeaponPerSizeAvailability;
+    protected IntRangePerPowerLevelPerShopSize m_WeaponPerSizeAvailability;
     [SerializeField]
-    protected PerSizeAvailability m_WondrousPerSizeAvailability;
+    protected IntRangePerPowerLevelPerShopSize m_WondrousPerSizeAvailability;
 
-    public PerSizeAvailability this [Shop.StockType type]
+    public IntRangePerPowerLevelPerShopSize this [Shop.StockType type]
     {
         get
         {
@@ -53,9 +53,9 @@ public class PerStockTypePerSizeAvailability : Saveable<PerStockTypePerSizeAvail
         }
     }
 
-    public static PerStockTypePerSizeAvailability Create(string name, PerSizeAvailability armour, PerSizeAvailability potion, PerSizeAvailability ring, PerSizeAvailability rod, PerSizeAvailability scroll, PerSizeAvailability staff, PerSizeAvailability wand, PerSizeAvailability weapon, PerSizeAvailability wondrous)
+    public static AvailabilityPerShopSizePerStockType Create(string name, IntRangePerPowerLevelPerShopSize armour, IntRangePerPowerLevelPerShopSize potion, IntRangePerPowerLevelPerShopSize ring, IntRangePerPowerLevelPerShopSize rod, IntRangePerPowerLevelPerShopSize scroll, IntRangePerPowerLevelPerShopSize staff, IntRangePerPowerLevelPerShopSize wand, IntRangePerPowerLevelPerShopSize weapon, IntRangePerPowerLevelPerShopSize wondrous)
     {
-        PerStockTypePerSizeAvailability newPerStockTypePerSizeAvailability = CreateInstance<PerStockTypePerSizeAvailability> ();
+        AvailabilityPerShopSizePerStockType newPerStockTypePerSizeAvailability = CreateInstance<AvailabilityPerShopSizePerStockType> ();
 
         if (CheckName(name) == NameCheckResult.Bad)
             throw new UnityException("Settings name invalid, contains invalid characters.");
@@ -99,14 +99,14 @@ public class PerStockTypePerSizeAvailability : Saveable<PerStockTypePerSizeAvail
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        m_ArmourPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[1]);
-        m_PotionPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[2]);
-        m_RingPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[3]);
-        m_RodPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[4]);
-        m_ScrollPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[5]);
-        m_StaffPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[6]);
-        m_WandPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[7]);
-        m_WeaponPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[8]);
-        m_WondrousPerSizeAvailability = PerSizeAvailability.Load(splitJsonString[9]);
+        m_ArmourPerSizeAvailability = IntRangePerPowerLevelPerShopSize.Load(splitJsonString[1]);
+        m_PotionPerSizeAvailability = IntRangePerPowerLevelPerShopSize.Load(splitJsonString[2]);
+        m_RingPerSizeAvailability = IntRangePerPowerLevelPerShopSize.Load(splitJsonString[3]);
+        m_RodPerSizeAvailability = IntRangePerPowerLevelPerShopSize.Load(splitJsonString[4]);
+        m_ScrollPerSizeAvailability = IntRangePerPowerLevelPerShopSize.Load(splitJsonString[5]);
+        m_StaffPerSizeAvailability = IntRangePerPowerLevelPerShopSize.Load(splitJsonString[6]);
+        m_WandPerSizeAvailability = IntRangePerPowerLevelPerShopSize.Load(splitJsonString[7]);
+        m_WeaponPerSizeAvailability = IntRangePerPowerLevelPerShopSize.Load(splitJsonString[8]);
+        m_WondrousPerSizeAvailability = IntRangePerPowerLevelPerShopSize.Load(splitJsonString[9]);
     }
 }

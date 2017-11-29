@@ -3,7 +3,7 @@ using System;
 
 public class Weapon : Item<Weapon>
 {
-    public static Weapon Create (string name, int cost, Item.Rarity rarity, EnumSettingIndex book,
+    public static Weapon Create (string name, int cost, Item.Rarity rarity, SelectedEnumSetting book,
         int page)
     {
         Weapon newWeapon = CreateInstance<Weapon> ();
@@ -17,7 +17,7 @@ public class Weapon : Item<Weapon>
 
     public static Weapon CreateBlank (EnumSetting books)
     {
-        return Create ("NAME", 0, Item.Rarity.Mundane, new EnumSettingIndex(books, 0), 0);
+        return Create ("NAME", 0, Item.Rarity.Mundane, new SelectedEnumSetting(books, 0), 0);
     }
 
     protected override string ConvertToJsonString(string[] jsonSplitter)
@@ -27,7 +27,7 @@ public class Weapon : Item<Weapon>
         jsonString += name + jsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString(cost) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)rarity) + jsonSplitter[0];
-        jsonString += EnumSettingIndex.GetJsonString(book) + jsonSplitter[0];
+        jsonString += SelectedEnumSetting.GetJsonString(book) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(page) + jsonSplitter[0];
         
         return jsonString;
@@ -38,7 +38,7 @@ public class Weapon : Item<Weapon>
         name = splitJsonString[0];
         cost = Wrapper<float>.CreateFromJsonString(splitJsonString[1]);
         rarity = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[2]);
-        book = EnumSettingIndex.CreateFromJsonString(splitJsonString[3]);
+        book = SelectedEnumSetting.CreateFromJsonString(splitJsonString[3]);
         page = Wrapper<int>.CreateFromJsonString(splitJsonString[4]);
     }
 }

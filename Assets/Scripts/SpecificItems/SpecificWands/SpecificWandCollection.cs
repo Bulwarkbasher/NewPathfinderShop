@@ -6,7 +6,7 @@ public class SpecificWandCollection : SpecificItemCollection<SpecificWand, Speci
 {
     public SpellCollection spellCollection;
 
-    public static SpecificWandCollection Create(IntStratRanges stockAvailability, SpellCollection availableSpells, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static SpecificWandCollection Create(IntRangePerPowerLevel stockAvailability, SpellCollection availableSpells, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         SpecificWandCollection newSpecificWandCollection = CreateInstance<SpecificWandCollection>();
         newSpecificWandCollection.stockAvailability = stockAvailability;
@@ -15,12 +15,12 @@ public class SpecificWandCollection : SpecificItemCollection<SpecificWand, Speci
         return newSpecificWandCollection;
     }
 
-    public static SpecificWandCollection Create (Shop.Size size)
+    public static SpecificWandCollection Create (string shopSize)
     {
         SpecificWandCollection newSpecificWandCollection = CreateInstance<SpecificWandCollection>();
-        newSpecificWandCollection.stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Wand][size];
-        newSpecificWandCollection.spellCollection = DefaultResourceHolder.DefaultSpellCollection;
-        newSpecificWandCollection.BuyStock(DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Wand]);
+        newSpecificWandCollection.stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Wand][shopSize];
+        newSpecificWandCollection.spellCollection = Campaign.SpellCollection;
+        newSpecificWandCollection.BuyStock(Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Wand]);
         return newSpecificWandCollection;
     }
 
@@ -29,18 +29,18 @@ public class SpecificWandCollection : SpecificItemCollection<SpecificWand, Speci
         return SpecificWand.CreateRandom(powerLevel, spellCollection, budget);
     }
 
-    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, SpellCollection availableSpells, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static void AddToShop(Shop shop, IntRangePerPowerLevel stockAvailability, SpellCollection availableSpells, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         shop.stockTypes |= Shop.StockType.Wand;
 
         if (stockAvailability == null)
-            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Wand][shop.size];
+            stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Wand][shop.size];
 
         if (availableSpells == null)
-            availableSpells = DefaultResourceHolder.DefaultSpellCollection;
+            availableSpells = Campaign.SpellCollection;
 
         if (perPowerLevelItemBudgetRange == null)
-            perPowerLevelItemBudgetRange = DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Wand];
+            perPowerLevelItemBudgetRange = Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Wand];
 
         shop.specificWandCollection = Create(stockAvailability, availableSpells, perPowerLevelItemBudgetRange);
     }
@@ -50,7 +50,7 @@ public class SpecificWandCollection : SpecificItemCollection<SpecificWand, Speci
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += IntStratRanges.GetJsonString(stockAvailability) + jsonSplitter[0];
+        jsonString += stockAvailability.name + jsonSplitter[0];
         jsonString += spellCollection.name + jsonSplitter[0];
 
         for (int i = 0; i < specificItems.Length; i++)
@@ -64,7 +64,7 @@ public class SpecificWandCollection : SpecificItemCollection<SpecificWand, Speci
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        stockAvailability = IntStratRanges.CreateFromJsonString(splitJsonString[1]);
+        stockAvailability = IntRangePerPowerLevel.Load(splitJsonString[1]);
         spellCollection = SpellCollection.Load(splitJsonString[2]);
 
         specificItems = new SpecificWand[splitJsonString.Length - 3];

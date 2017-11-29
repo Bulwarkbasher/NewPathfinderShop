@@ -6,7 +6,7 @@ public class SpecificRodCollection : SpecificItemCollection<SpecificRod, Specifi
 {
     public RodCollection rodCollection;
 
-    public static SpecificRodCollection Create(IntStratRanges stockAvailability, RodCollection rodCollection, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static SpecificRodCollection Create(IntRangePerPowerLevel stockAvailability, RodCollection rodCollection, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         SpecificRodCollection newSpecificRodCollection = CreateInstance<SpecificRodCollection>();
         newSpecificRodCollection.stockAvailability = stockAvailability;
@@ -15,12 +15,12 @@ public class SpecificRodCollection : SpecificItemCollection<SpecificRod, Specifi
         return newSpecificRodCollection;
     }
 
-    public static SpecificRodCollection Create(Shop.Size size)
+    public static SpecificRodCollection Create(string shopSize)
     {
         SpecificRodCollection newSpecificRodCollection = CreateInstance<SpecificRodCollection>();
-        newSpecificRodCollection.stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Rod][size];
-        newSpecificRodCollection.rodCollection = DefaultResourceHolder.DefaultRodCollection;
-        newSpecificRodCollection.BuyStock(DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Rod]);
+        newSpecificRodCollection.stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Rod][shopSize];
+        newSpecificRodCollection.rodCollection = Campaign.RodCollection;
+        newSpecificRodCollection.BuyStock(Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Rod]);
         return newSpecificRodCollection;
     }
 
@@ -29,18 +29,18 @@ public class SpecificRodCollection : SpecificItemCollection<SpecificRod, Specifi
         return SpecificRod.CreateRandom(powerLevel, budgetRange, rodCollection);
     }
 
-    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, RodCollection rodCollection, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static void AddToShop(Shop shop, IntRangePerPowerLevel stockAvailability, RodCollection rodCollection, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         shop.stockTypes |= Shop.StockType.Wand;
 
         if (stockAvailability == null)
-            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Wand][shop.size];
+            stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Wand][shop.size];
 
         if (rodCollection == null)
-            rodCollection = DefaultResourceHolder.DefaultRodCollection;
+            rodCollection = Campaign.RodCollection;
 
         if (perPowerLevelItemBudgetRange == null)
-            perPowerLevelItemBudgetRange = DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Rod];
+            perPowerLevelItemBudgetRange = Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Rod];
 
         shop.specificRodCollection = Create(stockAvailability, rodCollection, perPowerLevelItemBudgetRange);
     }
@@ -50,7 +50,7 @@ public class SpecificRodCollection : SpecificItemCollection<SpecificRod, Specifi
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += IntStratRanges.GetJsonString(stockAvailability) + jsonSplitter[0];
+        jsonString += stockAvailability.name + jsonSplitter[0];
         jsonString += rodCollection.name + jsonSplitter[0];
 
         for (int i = 0; i < specificItems.Length; i++)
@@ -64,7 +64,7 @@ public class SpecificRodCollection : SpecificItemCollection<SpecificRod, Specifi
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        stockAvailability = IntStratRanges.CreateFromJsonString(splitJsonString[1]);
+        stockAvailability = IntRangePerPowerLevel.Load(splitJsonString[1]);
         rodCollection = RodCollection.Load(splitJsonString[2]);
 
         specificItems = new SpecificRod[splitJsonString.Length - 3];

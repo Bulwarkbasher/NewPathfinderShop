@@ -4,25 +4,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class EnumSettingIndex
+public class SelectedEnumSetting
 {
     public EnumSetting enumSetting;
     public int index;
 
-    public string Current
-    {
-        get { return enumSetting[index]; }
-    }
-
-    public EnumSettingIndex()
+    public SelectedEnumSetting()
     {
 
     }
 
-    public EnumSettingIndex(EnumSetting enumSetting, int index)
+    public SelectedEnumSetting(EnumSetting enumSetting, int index)
     {
         this.enumSetting = enumSetting;
         this.index = index;
+    }
+
+    public static implicit operator string (SelectedEnumSetting selectedEnumSetting)
+    {
+        return selectedEnumSetting.enumSetting[selectedEnumSetting.index];
     }
 
     protected static string[] GetJsonSplitter()
@@ -31,9 +31,9 @@ public class EnumSettingIndex
         return jsonSplitter;
     }
 
-    public static EnumSettingIndex CreateFromJsonString(string jsonString)
+    public static SelectedEnumSetting CreateFromJsonString(string jsonString)
     {
-        EnumSettingIndex enumSettingIndex = new EnumSettingIndex();
+        SelectedEnumSetting enumSettingIndex = new SelectedEnumSetting();
 
         string[] splitJsonString = jsonString.Split(GetJsonSplitter(), StringSplitOptions.RemoveEmptyEntries);
 
@@ -43,7 +43,7 @@ public class EnumSettingIndex
         return enumSettingIndex;
     }
 
-    public static string GetJsonString(EnumSettingIndex enumSettingIndex)
+    public static string GetJsonString(SelectedEnumSetting enumSettingIndex)
     {
         string[] jsonSplitter = GetJsonSplitter();
 

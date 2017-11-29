@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ArmourQuality : Quality<ArmourQuality>
 {
-    public static ArmourQuality Create(string name, int cost, Item.Rarity rarity, EnumSettingIndex book, int page,
+    public static ArmourQuality Create(string name, int cost, Item.Rarity rarity, SelectedEnumSetting book, int page,
         Quality.QualityType qualityType, Quality.BonusEquivalent bonusEquivalent)
     {
         ArmourQuality newArmourQuality = CreateInstance<ArmourQuality>();
@@ -19,7 +19,7 @@ public class ArmourQuality : Quality<ArmourQuality>
 
     public static ArmourQuality CreateBlank(EnumSetting books)
     {
-        return Create("NAME", 0, Item.Rarity.Mundane, new EnumSettingIndex(books, 0), 999,
+        return Create("NAME", 0, Item.Rarity.Mundane, new SelectedEnumSetting(books, 0), 999,
             Quality.QualityType.SpecialMaterial, Quality.BonusEquivalent.NA);
     }
 

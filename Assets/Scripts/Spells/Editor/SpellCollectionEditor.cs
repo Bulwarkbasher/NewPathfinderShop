@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(SpellCollection))]
-public class SpellCollectionEditor : AssetWithSubAssetElementsEditor<SpellCollection, Spell>
+public class SpellCollectionEditor : SaveableEditor<SpellCollection, Spell>
 {
     SerializedProperty m_SpellsProp;
     SerializedProperty m_CharacterCasterTypesProp;
@@ -17,9 +17,9 @@ public class SpellCollectionEditor : AssetWithSubAssetElementsEditor<SpellCollec
         m_SpellsProp = serializedObject.FindProperty ("spells");
     }
 
-    protected override void AssetGUI ()
+    protected override void SaveableGUI ()
     {
         CollectionGUI (m_SpellsProp);
-        AddButtonGUI(m_SpellsProp, Spell.CreateBlank, m_CharacterCasterTypesProp.objectReferenceValue as CharacterCasterTypes, m_BooksProp.objectReferenceValue as EnumSetting);
+        AddButtonGUI(m_SpellsProp, Spell.CreateBlank, m_CharacterCasterTypesProp.objectReferenceValue as CasterTypesPerCharacterClass, m_BooksProp.objectReferenceValue as EnumSetting);
     }
 }

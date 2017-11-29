@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-public abstract class ItemCollectionEditor<TCollection, TItem> : AssetWithSubAssetElementsEditor<TCollection, TItem>
+public abstract class ItemCollectionEditor<TCollection, TItem> : SaveableEditor<TCollection, TItem>
     where TCollection : ItemCollection<TCollection, TItem>
     where TItem : Item<TItem>
 {

@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
+using System;
+using Random = UnityEngine.Random;
 
 public abstract class Item<TChild> : Jsonable<TChild>
     where TChild : Item<TChild>
 {
     public float cost;
     public Item.Rarity rarity;
-    public EnumSettingIndex book;
+    public SelectedEnumSetting book;
     public int page;
 
     public static TChild PickItem (TChild[] items)
@@ -14,7 +16,7 @@ public abstract class Item<TChild> : Jsonable<TChild>
 
         for (int i = 0; i < items.Length; i++)
         {
-            weightSum += Campaign.RarityWeighting.RarityToWeight(items[i].rarity);
+            weightSum += Campaign.WeightingPerRarity[items[i].rarity];
         }
 
         float randomWeightSum = Random.Range(0f, weightSum);
@@ -22,7 +24,7 @@ public abstract class Item<TChild> : Jsonable<TChild>
 
         for (int i = 0; i < items.Length; i++)
         {
-            weightCounter -= Campaign.RarityWeighting.RarityToWeight(items[i].rarity);
+            weightCounter -= Campaign.WeightingPerRarity[items[i].rarity];
 
             if (weightCounter <= 0f)
             {
@@ -49,5 +51,10 @@ public class Item
         VeryRare,
         Exceptional,
         Mythical,
+    }
+
+    public static int RarityTypeCount
+    {
+        get { return Enum.GetNames(typeof(Rarity)).Length; }
     }
 }

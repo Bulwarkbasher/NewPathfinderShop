@@ -6,7 +6,7 @@ public class SpecificRingCollection : SpecificItemCollection<SpecificRing, Speci
 {
     public RingCollection ringCollection;
 
-    public static SpecificRingCollection Create(IntStratRanges stockAvailability, RingCollection ringCollection, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static SpecificRingCollection Create(IntRangePerPowerLevel stockAvailability, RingCollection ringCollection, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         SpecificRingCollection newSpecificRingCollection = CreateInstance<SpecificRingCollection>();
         newSpecificRingCollection.stockAvailability = stockAvailability;
@@ -15,12 +15,12 @@ public class SpecificRingCollection : SpecificItemCollection<SpecificRing, Speci
         return newSpecificRingCollection;
     }
 
-    public static SpecificRingCollection Create(Shop.Size size)
+    public static SpecificRingCollection Create(string shopSize)
     {
         SpecificRingCollection newSpecificRingCollection = CreateInstance<SpecificRingCollection>();
-        newSpecificRingCollection.stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Ring][size];
-        newSpecificRingCollection.ringCollection = DefaultResourceHolder.DefaultRingCollection;
-        newSpecificRingCollection.BuyStock(DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Ring]);
+        newSpecificRingCollection.stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Ring][shopSize];
+        newSpecificRingCollection.ringCollection = Campaign.RingCollection;
+        newSpecificRingCollection.BuyStock(Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Ring]);
         return newSpecificRingCollection;
     }
 
@@ -29,18 +29,18 @@ public class SpecificRingCollection : SpecificItemCollection<SpecificRing, Speci
         return SpecificRing.CreateRandom(powerLevel, budgetRange, ringCollection);
     }
 
-    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, RingCollection ringCollection, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static void AddToShop(Shop shop, IntRangePerPowerLevel stockAvailability, RingCollection ringCollection, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         shop.stockTypes |= Shop.StockType.Wand;
 
         if (stockAvailability == null)
-            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Wand][shop.size];
+            stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Wand][shop.size];
 
         if (ringCollection == null)
-            ringCollection = DefaultResourceHolder.DefaultRingCollection;
+            ringCollection = Campaign.RingCollection;
 
         if (perPowerLevelItemBudgetRange == null)
-            perPowerLevelItemBudgetRange = DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Ring];
+            perPowerLevelItemBudgetRange = Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Ring];
 
         shop.specificRingCollection = Create(stockAvailability, ringCollection, perPowerLevelItemBudgetRange);
     }
@@ -50,7 +50,7 @@ public class SpecificRingCollection : SpecificItemCollection<SpecificRing, Speci
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += IntStratRanges.GetJsonString(stockAvailability) + jsonSplitter[0];
+        jsonString += stockAvailability.name + jsonSplitter[0];
         jsonString += ringCollection.name + jsonSplitter[0];
 
         for (int i = 0; i < specificItems.Length; i++)
@@ -64,7 +64,7 @@ public class SpecificRingCollection : SpecificItemCollection<SpecificRing, Speci
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        stockAvailability = IntStratRanges.CreateFromJsonString(splitJsonString[1]);
+        stockAvailability = IntRangePerPowerLevel.Load(splitJsonString[1]);
         ringCollection = RingCollection.Load(splitJsonString[2]);
 
         specificItems = new SpecificRing[splitJsonString.Length - 3];

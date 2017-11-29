@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class PerContainerPerCreatorRarity : Saveable<PerContainerPerCreatorRarity>
+public class RarityPerCharacterClassPerSpellContainer : Saveable<RarityPerCharacterClassPerSpellContainer>
 {
     [SerializeField]
-    protected PerCreatorRarity m_PotionPerCreatorRarity;
+    protected RarityPerCharacterClass m_PotionPerCreatorRarity;
     [SerializeField]
-    protected PerCreatorRarity m_ScrollPerCreatorRarity;
+    protected RarityPerCharacterClass m_ScrollPerCreatorRarity;
     [SerializeField]
-    protected PerCreatorRarity m_WandPerCreatorRarity;
+    protected RarityPerCharacterClass m_WandPerCreatorRarity;
 
-    public PerCreatorRarity this [Spell.Container container]
+    public RarityPerCharacterClass this [Spell.Container container]
     {
         get
         {
@@ -31,9 +31,9 @@ public class PerContainerPerCreatorRarity : Saveable<PerContainerPerCreatorRarit
         }
     }
 
-    public static PerContainerPerCreatorRarity Create (string name, PerCreatorRarity potion, PerCreatorRarity scroll, PerCreatorRarity wand)
+    public static RarityPerCharacterClassPerSpellContainer Create (string name, RarityPerCharacterClass potion, RarityPerCharacterClass scroll, RarityPerCharacterClass wand)
     {
-        PerContainerPerCreatorRarity newPerContainerPerCreatorRarity = CreateInstance<PerContainerPerCreatorRarity>();
+        RarityPerCharacterClassPerSpellContainer newPerContainerPerCreatorRarity = CreateInstance<RarityPerCharacterClassPerSpellContainer>();
 
         if (CheckName(name) == NameCheckResult.Bad)
             throw new UnityException("Settings name invalid, contains invalid characters.");
@@ -65,8 +65,8 @@ public class PerContainerPerCreatorRarity : Saveable<PerContainerPerCreatorRarit
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        m_PotionPerCreatorRarity = PerCreatorRarity.Load(splitJsonString[1]);
-        m_ScrollPerCreatorRarity = PerCreatorRarity.Load(splitJsonString[2]);
-        m_WandPerCreatorRarity = PerCreatorRarity.Load(splitJsonString[3]);
+        m_PotionPerCreatorRarity = RarityPerCharacterClass.Load(splitJsonString[1]);
+        m_ScrollPerCreatorRarity = RarityPerCharacterClass.Load(splitJsonString[2]);
+        m_WandPerCreatorRarity = RarityPerCharacterClass.Load(splitJsonString[3]);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-public abstract class SubAssetElementDrawer : PropertyDrawer
+public abstract class JsonableDrawer : PropertyDrawer
 {
     protected SerializedObject m_SerializedObject;
     protected SerializedProperty m_NameProp;

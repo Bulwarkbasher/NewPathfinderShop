@@ -6,7 +6,7 @@ public class SpecificArmourCollection : SpecificItemCollection<SpecificArmour, S
 {
     public ArmourQualityConstraintsMatrix matrix;
 
-    public static SpecificArmourCollection Create(IntStratRanges stockAvailability, ArmourQualityConstraintsMatrix matrix, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static SpecificArmourCollection Create(IntRangePerPowerLevel stockAvailability, ArmourQualityConstraintsMatrix matrix, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         SpecificArmourCollection newSpecificArmourCollection = CreateInstance<SpecificArmourCollection>();
         newSpecificArmourCollection.stockAvailability = stockAvailability;
@@ -16,12 +16,12 @@ public class SpecificArmourCollection : SpecificItemCollection<SpecificArmour, S
         return newSpecificArmourCollection;
     }
 
-    public static SpecificArmourCollection Create(Shop.Size size)
+    public static SpecificArmourCollection Create(string shopSize)
     {
         SpecificArmourCollection newSpecificArmourCollection = CreateInstance<SpecificArmourCollection>();
-        newSpecificArmourCollection.stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Armour][size];
-        newSpecificArmourCollection.matrix = DefaultResourceHolder.DefaultArmourQualityConstraintsMatrix;
-        newSpecificArmourCollection.BuyStock(DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Armour]);
+        newSpecificArmourCollection.stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Armour][shopSize];
+        newSpecificArmourCollection.matrix = Campaign.ArmourQualityConstraintsMatrix;
+        newSpecificArmourCollection.BuyStock(Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Armour]);
 
         return newSpecificArmourCollection;
     }
@@ -31,18 +31,18 @@ public class SpecificArmourCollection : SpecificItemCollection<SpecificArmour, S
         return SpecificArmour.CreateRandom(powerLevel, matrix, budgetRange);
     }
 
-    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, ArmourQualityConstraintsMatrix matrix, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static void AddToShop(Shop shop, IntRangePerPowerLevel stockAvailability, ArmourQualityConstraintsMatrix matrix, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         shop.stockTypes |= Shop.StockType.Armour;
 
         if (stockAvailability == null)
-            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Armour][shop.size];
+            stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Armour][shop.size];
 
         if (matrix == null)
-            matrix = DefaultResourceHolder.DefaultArmourQualityConstraintsMatrix;
+            matrix = Campaign.ArmourQualityConstraintsMatrix;
 
         if (perPowerLevelItemBudgetRange == null)
-            perPowerLevelItemBudgetRange = DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Armour];
+            perPowerLevelItemBudgetRange = Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Armour];
 
         shop.specificArmourCollection = Create(stockAvailability, matrix, perPowerLevelItemBudgetRange);
     }
@@ -52,7 +52,7 @@ public class SpecificArmourCollection : SpecificItemCollection<SpecificArmour, S
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += IntStratRanges.GetJsonString(stockAvailability) + jsonSplitter[0];
+        jsonString += stockAvailability.name + jsonSplitter[0];
         jsonString += matrix.name + jsonSplitter[0];
 
         for (int i = 0; i < specificItems.Length; i++)
@@ -66,7 +66,7 @@ public class SpecificArmourCollection : SpecificItemCollection<SpecificArmour, S
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        stockAvailability = IntStratRanges.CreateFromJsonString(splitJsonString[1]);
+        stockAvailability = IntRangePerPowerLevel.Load(splitJsonString[1]);
         matrix = ArmourQualityConstraintsMatrix.Load(splitJsonString[2]);
 
         specificItems = new SpecificArmour[splitJsonString.Length - 3];

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class WeaponQuality : Quality<WeaponQuality>
 {
-    public static WeaponQuality Create (string name, int cost, Item.Rarity rarity, EnumSettingIndex book, int page,
+    public static WeaponQuality Create (string name, int cost, Item.Rarity rarity, SelectedEnumSetting book, int page,
         Quality.QualityType qualityType, Quality.BonusEquivalent bonusEquivalent)
     {
         WeaponQuality newWeaponQuality = CreateInstance<WeaponQuality> ();
@@ -18,7 +18,7 @@ public class WeaponQuality : Quality<WeaponQuality>
 
     public static WeaponQuality CreateBlank (EnumSetting books)
     {
-        return Create ("NAME", 0, Item.Rarity.Mundane, new EnumSettingIndex(books, 0), 999,
+        return Create ("NAME", 0, Item.Rarity.Mundane, new SelectedEnumSetting(books, 0), 999,
             Quality.QualityType.SpecialMaterial, Quality.BonusEquivalent.NA);
     }
 

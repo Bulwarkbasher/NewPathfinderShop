@@ -13,19 +13,21 @@ public class DefaultResourceHolder : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField]
-    protected PerSizeRestockSettings m_DefaultPerSizeRestockSettings;
+    protected RestockSettingsPerSize m_DefaultPerSizeRestockSettings;
     [SerializeField]
-    protected PerStockTypePerSizeAvailability m_DefaultPerStockTypePerSizeAvailability;
+    protected AvailabilityPerShopSizePerStockType m_DefaultPerStockTypePerSizeAvailability;
     [SerializeField]
-    protected PerSizeRestockFrequencyModifiers m_DefaultPerSizeRestockFrequencyModifiers;
+    protected RestockFrequencyModifiersPerSize m_DefaultPerSizeRestockFrequencyModifiers;
     [SerializeField]
-    protected RarityWeighting m_DefaultRarityWeighting;
+    protected WeightingPerRarity m_DefaultRarityWeighting;
     [SerializeField]
-    protected PerSizeReadyCash m_DefaultPerSizeReadyCash;
+    protected ReadyCashPerShopSize m_DefaultPerSizeReadyCash;
     [SerializeField]
-    protected PerContainerPerCreatorRarity m_DefaultPerContainerPerCreatorRarity;
+    protected RarityPerCharacterClassPerSpellContainer m_DefaultPerContainerPerCreatorRarity;
     [SerializeField]
-    protected PerStockTypePerPowerLevelRange m_DefaultPerStockTypePerPowerLevelRange;
+    protected FloatRangePerPowerLevelPerStockType m_DefaultPerStockTypePerPowerLevelRange;
+    [SerializeField]
+    protected CasterTypesPerCharacterClass m_DefaultCharacterCasterTypes;
 
     [Header ("Items")]
     [SerializeField]
@@ -56,29 +58,34 @@ public class DefaultResourceHolder : MonoBehaviour
     [SerializeField]
     protected ArmourQualityConstraintsMatrix m_DefaultArmourQualityConstraintsMatrix;
 
-    public static PerSizeRestockSettings DefaultPerSizeRestockSettings
+    public static RestockSettingsPerSize DefaultPerSizeRestockSettings
     {
         get { return Instance.m_DefaultPerSizeRestockSettings; }
     }
 
-    public static PerStockTypePerSizeAvailability DefaultPerStockTypePerSizeAvailability
+    public static AvailabilityPerShopSizePerStockType DefaultPerStockTypePerSizeAvailability
     {
         get { return Instance.m_DefaultPerStockTypePerSizeAvailability; }
     }
 
-    public static PerSizeRestockFrequencyModifiers DefaultPerSizeRestockFrequencyModifiers
+    public static RestockFrequencyModifiersPerSize DefaultPerSizeRestockFrequencyModifiers
     {
         get { return Instance.m_DefaultPerSizeRestockFrequencyModifiers; }
     }
 
-    public static PerSizeReadyCash DefaultPerSizeReadyCash
+    public static ReadyCashPerShopSize DefaultPerSizeReadyCash
     {
         get { return Instance.m_DefaultPerSizeReadyCash; }
     }
 
-    public static RarityWeighting DefaultRarityWeighting
+    public static WeightingPerRarity DefaultRarityWeighting
     {
         get { return Instance.m_DefaultRarityWeighting; }
+    }
+
+    public static CasterTypesPerCharacterClass DefaultCharacterCasterTypes
+    {
+        get { return Instance.m_DefaultCharacterCasterTypes; }
     }
 
     public static ArmourCollection DefaultArmourCollection
@@ -136,12 +143,12 @@ public class DefaultResourceHolder : MonoBehaviour
         get { return Instance.m_DefaultArmourQualityConstraintsMatrix; }
     }
 
-    public static PerContainerPerCreatorRarity DefaultPerContainerPerCreatorRarity
+    public static RarityPerCharacterClassPerSpellContainer DefaultPerContainerPerCreatorRarity
     {
         get { return Instance.m_DefaultPerContainerPerCreatorRarity; }
     }
 
-    public static PerStockTypePerPowerLevelRange DefaultPerStockTypePerPowerLevelRange
+    public static FloatRangePerPowerLevelPerStockType DefaultPerStockTypePerPowerLevelRange
     {
         get { return Instance.m_DefaultPerStockTypePerPowerLevelRange; }
     }

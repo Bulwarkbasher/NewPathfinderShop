@@ -4,28 +4,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class PerStockTypePerPowerLevelRange : Saveable<PerStockTypePerPowerLevelRange>
+public class FloatRangePerPowerLevelPerStockType : Saveable<FloatRangePerPowerLevelPerStockType>
 {
     [SerializeField]
-    protected PerPowerLevelRange m_ArmourPerPowerLevelRange;
+    protected FloatRangePerPowerLevel m_ArmourPerPowerLevelRange;
     [SerializeField]
-    protected PerPowerLevelRange m_PotionPerPowerLevelRange;
+    protected FloatRangePerPowerLevel m_PotionPerPowerLevelRange;
     [SerializeField]
-    protected PerPowerLevelRange m_RingPerPowerLevelRange;
+    protected FloatRangePerPowerLevel m_RingPerPowerLevelRange;
     [SerializeField]
-    protected PerPowerLevelRange m_RodPerPowerLevelRange;
+    protected FloatRangePerPowerLevel m_RodPerPowerLevelRange;
     [SerializeField]
-    protected PerPowerLevelRange m_ScrollPerPowerLevelRange;
+    protected FloatRangePerPowerLevel m_ScrollPerPowerLevelRange;
     [SerializeField]
-    protected PerPowerLevelRange m_StaffPerPowerLevelRange;
+    protected FloatRangePerPowerLevel m_StaffPerPowerLevelRange;
     [SerializeField]
-    protected PerPowerLevelRange m_WandPerPowerLevelRange;
+    protected FloatRangePerPowerLevel m_WandPerPowerLevelRange;
     [SerializeField]
-    protected PerPowerLevelRange m_WeaponPerPowerLevelRange;
+    protected FloatRangePerPowerLevel m_WeaponPerPowerLevelRange;
     [SerializeField]
-    protected PerPowerLevelRange m_WondrousPerPowerLevelRange;
+    protected FloatRangePerPowerLevel m_WondrousPerPowerLevelRange;
 
-    public PerPowerLevelRange this [Shop.StockType type]
+    public FloatRangePerPowerLevel this [Shop.StockType type]
     {
         get
         {
@@ -55,9 +55,9 @@ public class PerStockTypePerPowerLevelRange : Saveable<PerStockTypePerPowerLevel
         }
     }
 
-    public static PerStockTypePerPowerLevelRange Create(string name, PerPowerLevelRange armour, PerPowerLevelRange potion, PerPowerLevelRange ring, PerPowerLevelRange rod, PerPowerLevelRange scroll, PerPowerLevelRange staff, PerPowerLevelRange wand, PerPowerLevelRange weapon, PerPowerLevelRange wondrous)
+    public static FloatRangePerPowerLevelPerStockType Create(string name, FloatRangePerPowerLevel armour, FloatRangePerPowerLevel potion, FloatRangePerPowerLevel ring, FloatRangePerPowerLevel rod, FloatRangePerPowerLevel scroll, FloatRangePerPowerLevel staff, FloatRangePerPowerLevel wand, FloatRangePerPowerLevel weapon, FloatRangePerPowerLevel wondrous)
     {
-        PerStockTypePerPowerLevelRange newPerStockTypePerPowerLevelRange = CreateInstance<PerStockTypePerPowerLevelRange>();
+        FloatRangePerPowerLevelPerStockType newPerStockTypePerPowerLevelRange = CreateInstance<FloatRangePerPowerLevelPerStockType>();
 
         if (CheckName(name) == NameCheckResult.Bad)
             throw new UnityException("Settings name invalid, contains invalid characters.");
@@ -101,14 +101,14 @@ public class PerStockTypePerPowerLevelRange : Saveable<PerStockTypePerPowerLevel
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        m_ArmourPerPowerLevelRange = PerPowerLevelRange.Load(splitJsonString[1]);
-        m_PotionPerPowerLevelRange = PerPowerLevelRange.Load(splitJsonString[2]);
-        m_RingPerPowerLevelRange = PerPowerLevelRange.Load(splitJsonString[3]);
-        m_RodPerPowerLevelRange = PerPowerLevelRange.Load(splitJsonString[4]);
-        m_ScrollPerPowerLevelRange = PerPowerLevelRange.Load(splitJsonString[5]);
-        m_StaffPerPowerLevelRange = PerPowerLevelRange.Load(splitJsonString[6]);
-        m_WandPerPowerLevelRange = PerPowerLevelRange.Load(splitJsonString[7]);
-        m_WeaponPerPowerLevelRange = PerPowerLevelRange.Load(splitJsonString[8]);
-        m_WondrousPerPowerLevelRange = PerPowerLevelRange.Load(splitJsonString[9]);
+        m_ArmourPerPowerLevelRange = FloatRangePerPowerLevel.Load(splitJsonString[1]);
+        m_PotionPerPowerLevelRange = FloatRangePerPowerLevel.Load(splitJsonString[2]);
+        m_RingPerPowerLevelRange = FloatRangePerPowerLevel.Load(splitJsonString[3]);
+        m_RodPerPowerLevelRange = FloatRangePerPowerLevel.Load(splitJsonString[4]);
+        m_ScrollPerPowerLevelRange = FloatRangePerPowerLevel.Load(splitJsonString[5]);
+        m_StaffPerPowerLevelRange = FloatRangePerPowerLevel.Load(splitJsonString[6]);
+        m_WandPerPowerLevelRange = FloatRangePerPowerLevel.Load(splitJsonString[7]);
+        m_WeaponPerPowerLevelRange = FloatRangePerPowerLevel.Load(splitJsonString[8]);
+        m_WondrousPerPowerLevelRange = FloatRangePerPowerLevel.Load(splitJsonString[9]);
     }
 }

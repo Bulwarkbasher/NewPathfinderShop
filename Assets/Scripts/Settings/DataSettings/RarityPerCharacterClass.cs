@@ -5,7 +5,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 [CreateAssetMenu]
-public class PerCreatorRarity : Saveable<PerCreatorRarity>
+public class RarityPerCharacterClass : Saveable<RarityPerCharacterClass>
 {
     [SerializeField]
     protected EnumSetting m_CharacterClasses;
@@ -32,9 +32,9 @@ public class PerCreatorRarity : Saveable<PerCreatorRarity>
         get { return m_CharacterClassRarities[index]; }
     }    
 
-    public static PerCreatorRarity Create (string name, EnumSetting characterClasses, Item.Rarity[] rarities)
+    public static RarityPerCharacterClass Create (string name, EnumSetting characterClasses, Item.Rarity[] rarities)
     {
-        PerCreatorRarity newPerCreatorRarity = CreateInstance<PerCreatorRarity>();
+        RarityPerCharacterClass newPerCreatorRarity = CreateInstance<RarityPerCharacterClass>();
 
         if (CheckName(name) == NameCheckResult.Bad)
             throw new UnityException("Settings name invalid, contains invalid characters.");
@@ -57,7 +57,7 @@ public class PerCreatorRarity : Saveable<PerCreatorRarity>
 
         for (int i = 0; i < m_CharacterClassRarities.Length; i++)
         {
-            weightSum += Campaign.RarityWeighting.RarityToWeight(m_CharacterClassRarities[i]);
+            weightSum += Campaign.WeightingPerRarity[m_CharacterClassRarities[i]];
         }
 
         float randomWeightSum = Random.Range(0f, weightSum);
@@ -65,7 +65,7 @@ public class PerCreatorRarity : Saveable<PerCreatorRarity>
 
         for (int i = 0; i < m_CharacterClassRarities.Length; i++)
         {
-            weightCounter -= Campaign.RarityWeighting.RarityToWeight(m_CharacterClassRarities[i]);
+            weightCounter -= Campaign.WeightingPerRarity[m_CharacterClassRarities[i]];
 
             if (weightCounter <= 0f)
             {
@@ -76,16 +76,16 @@ public class PerCreatorRarity : Saveable<PerCreatorRarity>
         return null;
     }
 
-    public string PickSpellCastingClass (CharacterCasterTypes characterCasterTypes)
+    public string PickSpellCastingClass (CasterTypesPerCharacterClass characterCasterTypes)
     {
         float weightSum = 0f;
 
         for (int i = 0; i < m_CharacterClassRarities.Length; i++)
         {
-            if (characterCasterTypes[i] == CharacterCasterTypes.CasterType.NoSpells)
+            if (characterCasterTypes[i] == CasterTypesPerCharacterClass.CasterType.NoSpells)
                 continue;
 
-            weightSum += Campaign.RarityWeighting.RarityToWeight(m_CharacterClassRarities[i]);
+            weightSum += Campaign.WeightingPerRarity[m_CharacterClassRarities[i]];
         }
 
         float randomWeightSum = Random.Range(0f, weightSum);
@@ -93,10 +93,10 @@ public class PerCreatorRarity : Saveable<PerCreatorRarity>
 
         for (int i = 0; i < m_CharacterClassRarities.Length; i++)
         {
-            if (characterCasterTypes[i] == CharacterCasterTypes.CasterType.NoSpells)
+            if (characterCasterTypes[i] == CasterTypesPerCharacterClass.CasterType.NoSpells)
                 continue;
 
-            weightCounter -= Campaign.RarityWeighting.RarityToWeight(m_CharacterClassRarities[i]);
+            weightCounter -= Campaign.WeightingPerRarity[m_CharacterClassRarities[i]];
 
             if (weightCounter <= 0f)
             {

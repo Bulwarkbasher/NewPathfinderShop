@@ -3,6 +3,8 @@ using System.IO;
 using UnityEngine;
 
 // NOTE: all front end saving should just call SaveableHolder.Save
+// TODO: remove inheritance from Jsonable?
+// TODO: make all serializeable classes jsonables instead
 public abstract class Saveable<TChild> : Jsonable<TChild>
     where TChild : Saveable<TChild>
 {

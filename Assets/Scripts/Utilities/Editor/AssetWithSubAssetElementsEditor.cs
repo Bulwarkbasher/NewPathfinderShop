@@ -2,7 +2,8 @@
 using UnityEditor;
 using UnityEngine;
 
-public abstract class AssetWithSubAssetElementsEditor<TTarget, TElement> : Editor
+// TODO: after making all serializeable classes jsonables, rework editors and drawers to use them properly
+public abstract class SaveableEditor<TTarget, TElement> : Editor
     where TTarget : ScriptableObject
     where TElement : ScriptableObject
 {
@@ -21,12 +22,12 @@ public abstract class AssetWithSubAssetElementsEditor<TTarget, TElement> : Edito
     {
         serializedObject.Update ();
 
-        AssetGUI ();
+        SaveableGUI ();
 
         serializedObject.ApplyModifiedProperties ();
     }
 
-    protected abstract void AssetGUI ();
+    protected abstract void SaveableGUI ();
 
     protected void CollectionGUI (SerializedProperty arrayProp)
     {

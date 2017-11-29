@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Rod : Item<Rod>
 {
-    public static Rod Create(string name, int cost, Item.Rarity rarity, EnumSettingIndex book,
+    public static Rod Create(string name, int cost, Item.Rarity rarity, SelectedEnumSetting book,
         int page)
     {
         Rod newRod = CreateInstance<Rod>();
@@ -18,7 +18,7 @@ public class Rod : Item<Rod>
 
     public static Rod CreateBlank(EnumSetting books)
     {
-        return Create("NAME", 0, Item.Rarity.Mundane, new EnumSettingIndex(books, 0), 0);
+        return Create("NAME", 0, Item.Rarity.Mundane, new SelectedEnumSetting(books, 0), 0);
     }
 
     protected override string ConvertToJsonString(string[] jsonSplitter)
@@ -28,7 +28,7 @@ public class Rod : Item<Rod>
         jsonString += name + jsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString(cost) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString((int)rarity) + jsonSplitter[0];
-        jsonString += EnumSettingIndex.GetJsonString(book) + jsonSplitter[0];
+        jsonString += SelectedEnumSetting.GetJsonString(book) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(page) + jsonSplitter[0];
 
         return jsonString;
@@ -39,7 +39,7 @@ public class Rod : Item<Rod>
         name = splitJsonString[0];
         cost = Wrapper<float>.CreateFromJsonString(splitJsonString[1]);
         rarity = (Item.Rarity)Wrapper<int>.CreateFromJsonString(splitJsonString[2]);
-        book = EnumSettingIndex.CreateFromJsonString(splitJsonString[3]);
+        book = SelectedEnumSetting.CreateFromJsonString(splitJsonString[3]);
         page = Wrapper<int>.CreateFromJsonString(splitJsonString[4]);
     }
 }

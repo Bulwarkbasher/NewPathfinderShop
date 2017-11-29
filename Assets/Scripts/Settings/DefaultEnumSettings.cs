@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO: app defaults and campaign defaults
-// TODO: combine this with DefaultSettings?
 public class DefaultEnumSettings : MonoBehaviour
 {
     public static DefaultEnumSettings Instance
@@ -19,7 +17,7 @@ public class DefaultEnumSettings : MonoBehaviour
     [SerializeField]
     protected EnumSetting m_DefaultCharacterClasses;
     [SerializeField]
-    protected CharacterCasterTypes m_DefaultCharacterCasterTypes;
+    protected EnumSetting m_DefaultShopSizes;
 
     public static EnumSetting DefaultBooks
     {
@@ -31,9 +29,9 @@ public class DefaultEnumSettings : MonoBehaviour
         get { return Instance.m_DefaultCharacterClasses; }
     }
 
-    public static CharacterCasterTypes DefaultCharacterCasterTypes
+    public static EnumSetting DefaultShopSizes
     {
-        get { return Instance.m_DefaultCharacterCasterTypes; }
+        get { return Instance.m_DefaultShopSizes; }
     }
 
     void Awake()

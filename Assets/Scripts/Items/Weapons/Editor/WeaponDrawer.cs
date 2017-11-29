@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [CustomPropertyDrawer(typeof(Weapon))]
-public class WeaponDrawer : SubAssetElementDrawer
+public class WeaponDrawer : JsonableDrawer
 {
     SerializedProperty m_CostProp;
     SerializedProperty m_RarityProp;

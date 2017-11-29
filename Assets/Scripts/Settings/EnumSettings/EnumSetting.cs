@@ -10,15 +10,34 @@ public class EnumSetting : Saveable<EnumSetting>
 
     public string DefaultSetting
     {
-        get { return settings[0]; }
+        get
+        {
+            if(settings != null)
+                return settings[0];
+            return "";
+        }
     }
 
     public string this [int index]
     {
         get
         {
-            index = Mathf.Clamp(index, 0, settings.Length);
-            return settings[index];
+            if(settings != null)
+            {
+                index = Mathf.Clamp(index, 0, settings.Length);
+                return settings[index];
+            }
+            return "";
+        }
+    }
+
+    public int Length
+    {
+        get
+        {
+            if(settings != null)
+                return settings.Length;
+            return 0;
         }
     }
 

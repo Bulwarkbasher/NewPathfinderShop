@@ -6,7 +6,7 @@ public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll, S
 {
     public SpellCollection spellCollection;
 
-    public static SpecificScrollCollection Create(IntStratRanges stockAvailability, SpellCollection availableSpells, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static SpecificScrollCollection Create(IntRangePerPowerLevel stockAvailability, SpellCollection availableSpells, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         SpecificScrollCollection newSpecificScrollCollection = CreateInstance<SpecificScrollCollection>();
         newSpecificScrollCollection.stockAvailability = stockAvailability;
@@ -15,12 +15,12 @@ public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll, S
         return newSpecificScrollCollection;
     }
 
-    public static SpecificScrollCollection Create(Shop.Size size)
+    public static SpecificScrollCollection Create(string shopSize)
     {
         SpecificScrollCollection newSpecificScrollCollection = CreateInstance<SpecificScrollCollection>();
-        newSpecificScrollCollection.stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Scroll][size];
-        newSpecificScrollCollection.spellCollection = DefaultResourceHolder.DefaultSpellCollection;
-        newSpecificScrollCollection.BuyStock(DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Scroll]);
+        newSpecificScrollCollection.stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Scroll][shopSize];
+        newSpecificScrollCollection.spellCollection = Campaign.SpellCollection;
+        newSpecificScrollCollection.BuyStock(Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Scroll]);
         return newSpecificScrollCollection;
     }
 
@@ -29,18 +29,18 @@ public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll, S
         return SpecificScroll.CreateRandom(powerLevel, spellCollection, budget);
     }
 
-    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, SpellCollection availableSpells, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static void AddToShop(Shop shop, IntRangePerPowerLevel stockAvailability, SpellCollection availableSpells, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         shop.stockTypes |= Shop.StockType.Scroll;
 
         if (stockAvailability == null)
-            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Scroll][shop.size];
+            stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Scroll][shop.size];
 
         if (availableSpells == null)
-            availableSpells = DefaultResourceHolder.DefaultSpellCollection;
+            availableSpells = Campaign.SpellCollection;
 
         if (perPowerLevelItemBudgetRange == null)
-            perPowerLevelItemBudgetRange = DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Scroll];
+            perPowerLevelItemBudgetRange = Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Scroll];
 
         shop.specificScrollCollection = Create(stockAvailability, availableSpells, perPowerLevelItemBudgetRange);
     }
@@ -50,7 +50,7 @@ public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll, S
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += IntStratRanges.GetJsonString(stockAvailability) + jsonSplitter[0];
+        jsonString += stockAvailability.name + jsonSplitter[0];
         jsonString += spellCollection.name + jsonSplitter[0];
 
         for (int i = 0; i < specificItems.Length; i++)
@@ -64,7 +64,7 @@ public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll, S
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        stockAvailability = IntStratRanges.CreateFromJsonString(splitJsonString[1]);
+        stockAvailability = IntRangePerPowerLevel.Load(splitJsonString[1]);
         spellCollection = SpellCollection.Load(splitJsonString[2]);
 
         specificItems = new SpecificScroll[splitJsonString.Length - 3];

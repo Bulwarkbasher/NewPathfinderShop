@@ -6,7 +6,7 @@ public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion, S
 {
     public SpellCollection spellCollection;
 
-    public static SpecificPotionCollection Create(IntStratRanges stockAvailability, SpellCollection availableSpells, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static SpecificPotionCollection Create(IntRangePerPowerLevel stockAvailability, SpellCollection availableSpells, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         SpecificPotionCollection newSpecificPotionCollection = CreateInstance<SpecificPotionCollection>();
         newSpecificPotionCollection.stockAvailability = stockAvailability;
@@ -15,12 +15,12 @@ public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion, S
         return newSpecificPotionCollection;
     }
 
-    public static SpecificPotionCollection Create(Shop.Size size)
+    public static SpecificPotionCollection Create(string shopSize)
     {
         SpecificPotionCollection newSpecificPotionCollection = CreateInstance<SpecificPotionCollection>();
-        newSpecificPotionCollection.stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Potion][size];
-        newSpecificPotionCollection.spellCollection = DefaultResourceHolder.DefaultSpellCollection;
-        newSpecificPotionCollection.BuyStock(DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Potion]);
+        newSpecificPotionCollection.stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Potion][shopSize];
+        newSpecificPotionCollection.spellCollection = Campaign.SpellCollection;
+        newSpecificPotionCollection.BuyStock(Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Potion]);
         return newSpecificPotionCollection;
     }
 
@@ -29,18 +29,18 @@ public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion, S
         return SpecificPotion.CreateRandom(powerLevel, spellCollection, budget);
     }
 
-    public static void AddToShop(Shop shop, IntStratRanges stockAvailability, SpellCollection availableSpells, PerPowerLevelRange perPowerLevelItemBudgetRange)
+    public static void AddToShop(Shop shop, IntRangePerPowerLevel stockAvailability, SpellCollection availableSpells, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
         shop.stockTypes |= Shop.StockType.Potion;
 
         if (stockAvailability == null)
-            stockAvailability = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability[Shop.StockType.Potion][shop.size];
+            stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Potion][shop.size];
 
         if (availableSpells == null)
-            availableSpells = DefaultResourceHolder.DefaultSpellCollection;
+            availableSpells = Campaign.SpellCollection;
 
         if (perPowerLevelItemBudgetRange == null)
-            perPowerLevelItemBudgetRange = DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange[Shop.StockType.Potion];
+            perPowerLevelItemBudgetRange = Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Potion];
 
         shop.specificPotionCollection = Create(stockAvailability, availableSpells, perPowerLevelItemBudgetRange);
     }
@@ -50,7 +50,7 @@ public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion, S
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += IntStratRanges.GetJsonString(stockAvailability) + jsonSplitter[0];
+        jsonString += stockAvailability.name + jsonSplitter[0];
         jsonString += spellCollection.name + jsonSplitter[0];
 
         for (int i = 0; i < specificItems.Length; i++)
@@ -64,7 +64,7 @@ public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion, S
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        stockAvailability = IntStratRanges.CreateFromJsonString(splitJsonString[1]);
+        stockAvailability = IntRangePerPowerLevel.Load(splitJsonString[1]);
         spellCollection = SpellCollection.Load(splitJsonString[2]);
 
         specificItems = new SpecificPotion[splitJsonString.Length - 3];

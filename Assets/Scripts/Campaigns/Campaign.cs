@@ -9,29 +9,20 @@ public class Campaign : Saveable<Campaign>
     }
 
     protected static Campaign current;
-    
-    public static Campaign Create (string name, bool usesAutomaticBonusProgressionRules, bool useMinimumCasterLevel, RarityWeighting rarityWeighting)
+
+    public static EnumSetting Books
     {
-        Campaign campaign = CreateInstance<Campaign> ();
-
-        if(CheckName (name) == NameCheckResult.Bad)
-            throw new UnityException("Campaign name invalid, contains invalid characters.");
-        if(CheckName (name) == NameCheckResult.IsDefault)
-            throw new UnityException("Campaign name invalid, name cannot start with Default");
-        
-        campaign.name = name;
-        campaign.m_UsesAutomaticBonusProgressionRules = usesAutomaticBonusProgressionRules;
-        campaign.m_UsesMinimumCasterLevelForSpellContainerItems = useMinimumCasterLevel;
-        campaign.m_RarityWeighting = rarityWeighting;
-
-        SaveableHolder.AddSaveable (campaign);
-
-        return campaign;
+        get { return Current.m_Books; }
     }
 
-    public static Campaign Create (string name, bool usesAutomaticBonusProgressionRules, bool useMinimumCasterLevel)
+    public static EnumSetting CharacterClasses
     {
-        return Create (name, usesAutomaticBonusProgressionRules, useMinimumCasterLevel, DefaultResourceHolder.DefaultRarityWeighting);
+        get { return Current.m_CharacterClasses; }
+    }
+
+    public static EnumSetting ShopSizes
+    {
+        get { return Current.m_ShopSizes; }
     }
 
     public static bool UsesAutomaticBonusProgressionRules
@@ -44,16 +35,169 @@ public class Campaign : Saveable<Campaign>
         get { return Current.m_UsesMinimumCasterLevelForSpellContainerItems; }
     }
 
-    public static RarityWeighting RarityWeighting
+    public static CasterTypesPerCharacterClass CasterTypesPerCharacterClass
     {
-        get { return Current.m_RarityWeighting; }
+        get { return Current.m_CasterTypesPerCharacterClass; }
     }
 
+    public static WeightingPerRarity WeightingPerRarity
+    {
+        get { return Current.m_WeightingPerRarity; }
+    }
+
+    public static RestockSettingsPerSize RestockSettingsPerSize
+    {
+        get { return Current.m_RestockSettingsPerSize; }
+    }
+
+    public static AvailabilityPerShopSizePerStockType AvailabilityPerShopSizePerStockType
+    {
+        get { return Current.m_AvailabilityPerShopSizePerStockType; }
+    }
+
+    public static RestockFrequencyModifiersPerSize RestockFrequencyModifiersPerSize
+    {
+        get { return Current.m_RestockFrequencyModifiersPerSize; }
+    }
+
+    public static ReadyCashPerShopSize ReadyCashPerShopSize
+    {
+        get { return Current.m_ReadyCashPerShopSize; }
+    }
+
+    public static ArmourCollection ArmourCollection
+    {
+        get { return Current.m_ArmourCollection; }
+    }
+
+    public static SpellCollection SpellCollection
+    {
+        get { return Current.m_SpellCollection; }
+    }
+
+    public static WeaponCollection WeaponCollection
+    {
+        get { return Current.m_WeaponCollection; }
+    }
+
+    public static RingCollection RingCollection
+    {
+        get { return Current.m_RingCollection; }
+    }
+
+    public static RodCollection RodCollection
+    {
+        get { return Current.m_RodCollection; }
+    }
+
+    public static StaffCollection StaffCollection
+    {
+        get { return Current.m_StaffCollection; }
+    }
+
+    public static WondrousCollection WondrousCollection
+    {
+        get { return Current.m_WondrousCollection; }
+    }
+
+    public static ArmourQualityCollection ArmourQualityCollection
+    {
+        get { return Current.m_ArmourQualityCollection; }
+    }
+
+    public static WeaponQualityCollection WeaponQualityCollection
+    {
+        get { return Current.m_WeaponQualityCollection; }
+    }
+
+    public static WeaponQualityConstraintsMatrix WeaponQualityConstraintsMatrix
+    {
+        get { return Current.m_WeaponQualityConstraintsMatrix; }
+    }
+
+    public static ArmourQualityConstraintsMatrix ArmourQualityConstraintsMatrix
+    {
+        get { return Current.m_ArmourQualityConstraintsMatrix; }
+    }
+
+    public static RarityPerCharacterClassPerSpellContainer RarityPerCharacterClassPerSpellContainer
+    {
+        get { return Current.m_RarityPerCharacterClassPerSpellContainer; }
+    }
+
+    public static FloatRangePerPowerLevelPerStockType BudgetRangePerPowerLevelPerStockType
+    {
+        get { return Current.m_BudgetRangePerPowerLevelPerStockType; }
+    }
+
+    // Settings
+    protected EnumSetting m_Books;
+    protected EnumSetting m_CharacterClasses;
+    protected EnumSetting m_ShopSizes;
+    protected bool m_UsesAutomaticBonusProgressionRules;
+    protected bool m_UsesMinimumCasterLevelForSpellContainerItems;
+    protected CasterTypesPerCharacterClass m_CasterTypesPerCharacterClass;
+    protected WeightingPerRarity m_WeightingPerRarity;
+    protected RestockSettingsPerSize m_RestockSettingsPerSize;
+    protected AvailabilityPerShopSizePerStockType m_AvailabilityPerShopSizePerStockType;
+    protected RestockFrequencyModifiersPerSize m_RestockFrequencyModifiersPerSize;
+    protected ReadyCashPerShopSize m_ReadyCashPerShopSize;
+    protected RarityPerCharacterClassPerSpellContainer m_RarityPerCharacterClassPerSpellContainer;
+    protected FloatRangePerPowerLevelPerStockType m_BudgetRangePerPowerLevelPerStockType;
+    protected ArmourCollection m_ArmourCollection;
+    protected SpellCollection m_SpellCollection;
+    protected WeaponCollection m_WeaponCollection;
+    protected RingCollection m_RingCollection;
+    protected RodCollection m_RodCollection;
+    protected StaffCollection m_StaffCollection;
+    protected WondrousCollection m_WondrousCollection;
+    protected ArmourQualityCollection m_ArmourQualityCollection;
+    protected WeaponQualityCollection m_WeaponQualityCollection;
+    protected WeaponQualityConstraintsMatrix m_WeaponQualityConstraintsMatrix;
+    protected ArmourQualityConstraintsMatrix m_ArmourQualityConstraintsMatrix;
+
+    public string notes;
     public Settlement[] settlements = new Settlement[0];
 
-    bool m_UsesAutomaticBonusProgressionRules;
-    bool m_UsesMinimumCasterLevelForSpellContainerItems;
-    RarityWeighting m_RarityWeighting;
+    public static Campaign Create(string name, bool usesAutomaticBonusProgressionRules, bool useMinimumCasterLevel)
+    {
+        Campaign campaign = CreateInstance<Campaign>();
+
+        if (CheckName(name) == NameCheckResult.Bad)
+            throw new UnityException("Campaign name invalid, contains invalid characters.");
+        if (CheckName(name) == NameCheckResult.IsDefault)
+            throw new UnityException("Campaign name invalid, name cannot start with Default");
+
+        campaign.name = name;
+        campaign.m_Books = DefaultEnumSettings.DefaultBooks;
+        campaign.m_CharacterClasses = DefaultEnumSettings.DefaultCharacterClasses;
+        campaign.m_ShopSizes = DefaultEnumSettings.DefaultShopSizes;
+        campaign.m_UsesAutomaticBonusProgressionRules = usesAutomaticBonusProgressionRules;
+        campaign.m_UsesMinimumCasterLevelForSpellContainerItems = useMinimumCasterLevel;
+        campaign.m_CasterTypesPerCharacterClass = DefaultResourceHolder.DefaultCharacterCasterTypes;
+        campaign.m_WeightingPerRarity = DefaultResourceHolder.DefaultRarityWeighting;
+        campaign.m_RestockSettingsPerSize = DefaultResourceHolder.DefaultPerSizeRestockSettings;
+        campaign.m_AvailabilityPerShopSizePerStockType = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability;
+        campaign.m_RestockFrequencyModifiersPerSize = DefaultResourceHolder.DefaultPerSizeRestockFrequencyModifiers;
+        campaign.m_ReadyCashPerShopSize = DefaultResourceHolder.DefaultPerSizeReadyCash;
+        campaign.m_RarityPerCharacterClassPerSpellContainer = DefaultResourceHolder.DefaultPerContainerPerCreatorRarity;
+        campaign.m_BudgetRangePerPowerLevelPerStockType = DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange;
+        campaign.m_ArmourCollection = DefaultResourceHolder.DefaultArmourCollection;
+        campaign.m_SpellCollection = DefaultResourceHolder.DefaultSpellCollection;
+        campaign.m_WeaponCollection = DefaultResourceHolder.DefaultWeaponCollection;
+        campaign.m_RingCollection = DefaultResourceHolder.DefaultRingCollection;
+        campaign.m_RodCollection = DefaultResourceHolder.DefaultRodCollection;
+        campaign.m_StaffCollection = DefaultResourceHolder.DefaultStaffCollection;
+        campaign.m_WondrousCollection = DefaultResourceHolder.DefaultWondrousCollection;
+        campaign.m_ArmourQualityCollection = DefaultResourceHolder.DefaultArmourQualityCollection;
+        campaign.m_WeaponQualityCollection = DefaultResourceHolder.DefaultWeaponQualityCollection;
+        campaign.m_WeaponQualityConstraintsMatrix = DefaultResourceHolder.DefaultWeaponQualityConstraintsMatrix;
+        campaign.m_ArmourQualityConstraintsMatrix = DefaultResourceHolder.DefaultArmourQualityConstraintsMatrix;
+
+        SaveableHolder.AddSaveable(campaign);
+
+        return campaign;
+    }
 
     public void PassTime (int daysPassed)
     {
@@ -63,30 +207,36 @@ public class Campaign : Saveable<Campaign>
         }
     }
 
-    protected override void SetupFromSplitJsonString(string[] splitJsonString)
-    {
-        name = splitJsonString[0];
-        m_UsesAutomaticBonusProgressionRules = Wrapper<bool>.CreateFromJsonString(splitJsonString[1]);
-        m_UsesMinimumCasterLevelForSpellContainerItems = Wrapper<bool>.CreateFromJsonString(splitJsonString[2]);
-        m_RarityWeighting = RarityWeighting.Load(splitJsonString[3]);
-
-        settlements = new Settlement[splitJsonString.Length - 4];
-        for (int i = 0; i < settlements.Length; i++)
-        {
-            settlements[i] = Settlement.CreateFromJsonString(splitJsonString[i + 4]);
-        }
-
-        current = this;
-    }
-
     protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
+        jsonString += GetSafeJsonFromString(notes) + jsonSplitter[0];
+        jsonString += m_Books.name + jsonSplitter[0];
+        jsonString += m_CharacterClasses.name + jsonSplitter[0];
+        jsonString += m_ShopSizes.name + jsonSplitter[0];
         jsonString += Wrapper<bool>.GetJsonString(m_UsesAutomaticBonusProgressionRules) + jsonSplitter[0];
         jsonString += Wrapper<bool>.GetJsonString(m_UsesMinimumCasterLevelForSpellContainerItems) + jsonString[0];
-        jsonString += m_RarityWeighting.name + jsonString[0];
+        jsonString += m_CasterTypesPerCharacterClass.name + jsonSplitter[0];
+        jsonString += m_WeightingPerRarity.name + jsonString[0];
+        jsonString += m_RestockSettingsPerSize.name + jsonSplitter[0];
+        jsonString += m_AvailabilityPerShopSizePerStockType.name + jsonSplitter[0];
+        jsonString += m_RestockFrequencyModifiersPerSize.name + jsonSplitter[0];
+        jsonString += m_ReadyCashPerShopSize.name + jsonSplitter[0];
+        jsonString += m_RarityPerCharacterClassPerSpellContainer.name + jsonSplitter[0];
+        jsonString += m_BudgetRangePerPowerLevelPerStockType.name + jsonSplitter[0];
+        jsonString += m_ArmourCollection.name + jsonSplitter[0];
+        jsonString += m_SpellCollection.name + jsonSplitter[0];
+        jsonString += m_WeaponCollection.name + jsonSplitter[0];
+        jsonString += m_RingCollection.name + jsonSplitter[0];
+        jsonString += m_RodCollection.name + jsonSplitter[0];
+        jsonString += m_StaffCollection.name + jsonSplitter[0];
+        jsonString += m_WondrousCollection.name + jsonSplitter[0];
+        jsonString += m_ArmourQualityCollection.name + jsonSplitter[0];
+        jsonString += m_WeaponQualityCollection.name + jsonSplitter[0];
+        jsonString += m_WeaponQualityConstraintsMatrix.name + jsonSplitter[0];
+        jsonString += m_ArmourQualityConstraintsMatrix.name + jsonSplitter[0];
 
         for (int i = 0; i < settlements.Length; i++)
         {
@@ -94,5 +244,43 @@ public class Campaign : Saveable<Campaign>
         }
 
         return jsonString;
+    }
+
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
+    {
+        name = splitJsonString[0];
+        notes = CreateStringFromSafeJson(splitJsonString[1]);
+        m_Books = EnumSetting.Load(splitJsonString[2]);
+        m_CharacterClasses = EnumSetting.Load(splitJsonString[3]);
+        m_ShopSizes = EnumSetting.Load(splitJsonString[4]);
+        m_UsesAutomaticBonusProgressionRules = Wrapper<bool>.CreateFromJsonString(splitJsonString[5]);
+        m_UsesMinimumCasterLevelForSpellContainerItems = Wrapper<bool>.CreateFromJsonString(splitJsonString[6]);
+        m_CasterTypesPerCharacterClass = CasterTypesPerCharacterClass.Load(splitJsonString[7]);
+        m_WeightingPerRarity = WeightingPerRarity.Load(splitJsonString[8]);
+        m_RestockSettingsPerSize = RestockSettingsPerSize.Load(splitJsonString[9]);
+        m_AvailabilityPerShopSizePerStockType = AvailabilityPerShopSizePerStockType.Load(splitJsonString[10]);
+        m_RestockFrequencyModifiersPerSize = RestockFrequencyModifiersPerSize.Load(splitJsonString[11]);
+        m_ReadyCashPerShopSize = ReadyCashPerShopSize.Load(splitJsonString[12]);
+        m_RarityPerCharacterClassPerSpellContainer = RarityPerCharacterClassPerSpellContainer.Load(splitJsonString[13]);
+        m_BudgetRangePerPowerLevelPerStockType = FloatRangePerPowerLevelPerStockType.Load(splitJsonString[14]);
+        m_ArmourCollection = ArmourCollection.Load(splitJsonString[15]);
+        m_SpellCollection = SpellCollection.Load(splitJsonString[16]);
+        m_WeaponCollection = WeaponCollection.Load(splitJsonString[17]);
+        m_RingCollection = RingCollection.Load(splitJsonString[18]);
+        m_RodCollection = RodCollection.Load(splitJsonString[19]);
+        m_StaffCollection = StaffCollection.Load(splitJsonString[20]);
+        m_WondrousCollection = WondrousCollection.Load(splitJsonString[21]);
+        m_ArmourQualityCollection = ArmourQualityCollection.Load(splitJsonString[22]);
+        m_WeaponQualityCollection = WeaponQualityCollection.Load(splitJsonString[23]);
+        m_WeaponQualityConstraintsMatrix = WeaponQualityConstraintsMatrix.Load(splitJsonString[24]);
+        m_ArmourQualityConstraintsMatrix = ArmourQualityConstraintsMatrix.Load(splitJsonString[25]);
+        
+        settlements = new Settlement[splitJsonString.Length - 26];
+        for (int i = 0; i < settlements.Length; i++)
+        {
+            settlements[i] = Settlement.CreateFromJsonString(splitJsonString[i + 26]);
+        }
+
+        current = this;
     }
 }
