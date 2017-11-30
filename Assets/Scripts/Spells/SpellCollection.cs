@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class SpellCollection : Saveable<SpellCollection>
 {
+    public EnumSetting characterClasses;
     public CasterTypesPerCharacterClass characterCasterTypes;
     public EnumSetting books;
     public RarityPerCharacterClassPerSpellContainer perContainerPerCreatorRarity;
@@ -60,29 +61,33 @@ public class SpellCollection : Saveable<SpellCollection>
 
             // Given the spell's level for the creator, find a random level for the creator.
             int minCreatorLevel = CasterTypesPerCharacterClass.MinCasterLevel(creatorCasterType, spellLevelForCreator);
-            List<int> levelList = new List<int>();
-            int currentLevel = 20;
-            int levelCounter = 1;
-            while (currentLevel >= minCreatorLevel)
+            int creatorLevel = minCreatorLevel;
+            if (!Campaign.UsesMinimumCasterLevelForSpellContainerItems)
             {
-                for (int j = 0; j < levelCounter; j++)
+                List<int> levelList = new List<int>();
+                int currentLevel = 20;
+                int levelCounter = 1;
+                while (currentLevel >= minCreatorLevel)
                 {
-                    levelList.Add(currentLevel);
+                    for (int j = 0; j < levelCounter; j++)
+                    {
+                        levelList.Add(currentLevel);
+                    }
+                    levelCounter++;
+                    currentLevel--;
                 }
-                levelCounter++;
-                currentLevel--;
+                creatorLevel = levelList[Random.Range(0, levelList.Count)];
             }
-            int randomCreatorLevel = levelList[Random.Range(0, levelList.Count)];
 
             // Given the creator's level, find the cost of the spell.
-            float cost = spells[i].GetPotionCost(specificPotion.creator, randomCreatorLevel);
+            float cost = spells[i].GetPotionCost(specificPotion.creator, creatorLevel);
             if (cost < 0f)
                 continue;
 
             if (cost > budget.min && cost < budget.max)
             {
                 availableSpells.Add(spells[i]);
-                randomCasterLevelsForSpells.Add(randomCreatorLevel);
+                randomCasterLevelsForSpells.Add(creatorLevel);
             }
         }
 
@@ -128,29 +133,33 @@ public class SpellCollection : Saveable<SpellCollection>
 
             // Given the spell's level for the creator, find a random level for the creator.
             int minCreatorLevel = CasterTypesPerCharacterClass.MinCasterLevel(creatorCasterType, spellLevelForCreator);
-            List<int> levelList = new List<int>();
-            int currentLevel = 20;
-            int levelCounter = 1;
-            while (currentLevel >= minCreatorLevel)
+            int creatorLevel = minCreatorLevel;
+            if (!Campaign.UsesMinimumCasterLevelForSpellContainerItems)
             {
-                for (int j = 0; j < levelCounter; j++)
+                List<int> levelList = new List<int>();
+                int currentLevel = 20;
+                int levelCounter = 1;
+                while (currentLevel >= minCreatorLevel)
                 {
-                    levelList.Add(currentLevel);
+                    for (int j = 0; j < levelCounter; j++)
+                    {
+                        levelList.Add(currentLevel);
+                    }
+                    levelCounter++;
+                    currentLevel--;
                 }
-                levelCounter++;
-                currentLevel--;
+                creatorLevel = levelList[Random.Range(0, levelList.Count)];
             }
-            int randomCreatorLevel = levelList[Random.Range(0, levelList.Count)];
 
             // Given the creator's level, find the cost of the spell.
-            float cost = spells[i].GetScrollCost(specificScroll.creator, randomCreatorLevel);
+            float cost = spells[i].GetScrollCost(specificScroll.creator, creatorLevel);
             if (cost < 0f)
                 continue;
 
             if (cost > budget.min && cost < budget.max)
             {
                 availableSpells.Add(spells[i]);
-                randomCasterLevelsForSpells.Add(randomCreatorLevel);
+                randomCasterLevelsForSpells.Add(creatorLevel);
             }
         }
 
@@ -196,29 +205,33 @@ public class SpellCollection : Saveable<SpellCollection>
 
             // Given the spell's level for the creator, find a random level for the creator.
             int minCreatorLevel = CasterTypesPerCharacterClass.MinCasterLevel(creatorCasterType, spellLevelForCreator);
-            List<int> levelList = new List<int>();
-            int currentLevel = 20;
-            int levelCounter = 1;
-            while (currentLevel >= minCreatorLevel)
+            int creatorLevel = minCreatorLevel;
+            if (!Campaign.UsesMinimumCasterLevelForSpellContainerItems)
             {
-                for (int j = 0; j < levelCounter; j++)
+                List<int> levelList = new List<int>();
+                int currentLevel = 20;
+                int levelCounter = 1;
+                while (currentLevel >= minCreatorLevel)
                 {
-                    levelList.Add(currentLevel);
+                    for (int j = 0; j < levelCounter; j++)
+                    {
+                        levelList.Add(currentLevel);
+                    }
+                    levelCounter++;
+                    currentLevel--;
                 }
-                levelCounter++;
-                currentLevel--;
+                creatorLevel = levelList[Random.Range(0, levelList.Count)];
             }
-            int randomCreatorLevel = levelList[Random.Range(0, levelList.Count)];
-
+            
             // Given the creator's level, find the cost of the spell.
-            float cost = spells[i].GetWandCost(specificWand.creator, randomCreatorLevel, specificWand.charges);
+            float cost = spells[i].GetWandCost(specificWand.creator, creatorLevel, specificWand.charges);
             if (cost < 0f)
                 continue;
 
             if (cost > budget.min && cost < budget.max)
             {
                 availableSpells.Add(spells[i]);
-                randomCasterLevelsForSpells.Add(randomCreatorLevel);
+                randomCasterLevelsForSpells.Add(creatorLevel);
             }
         }
 
@@ -243,12 +256,6 @@ public class SpellCollection : Saveable<SpellCollection>
         newSpells[spells.Length] = newSpell;
     }
 
-    public void AddBlankSpell()
-    {
-        Spell blankSpell = Spell.CreateBlank(characterCasterTypes, books);
-        AddSpell(blankSpell);
-    }
-
     public void RemoveSpellAt(int index)
     {
         Spell[] newSpells = new Spell[spells.Length - 1];
@@ -264,6 +271,7 @@ public class SpellCollection : Saveable<SpellCollection>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
+        jsonString += characterClasses.name + jsonSplitter[0];
         jsonString += characterCasterTypes.name + jsonSplitter[0];
         jsonString += books.name + jsonSplitter[0];
         jsonString += perContainerPerCreatorRarity.name + jsonSplitter[0];
@@ -279,14 +287,15 @@ public class SpellCollection : Saveable<SpellCollection>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        characterCasterTypes = CasterTypesPerCharacterClass.Load(splitJsonString[1]);
-        books = EnumSetting.Load(splitJsonString[2]);
-        perContainerPerCreatorRarity = RarityPerCharacterClassPerSpellContainer.Load(splitJsonString[3]);
+        characterClasses = EnumSetting.Load(splitJsonString[1]);
+        characterCasterTypes = CasterTypesPerCharacterClass.Load(splitJsonString[2]);
+        books = EnumSetting.Load(splitJsonString[3]);
+        perContainerPerCreatorRarity = RarityPerCharacterClassPerSpellContainer.Load(splitJsonString[4]);
 
-        spells = new Spell[splitJsonString.Length - 4];
+        spells = new Spell[splitJsonString.Length - 5];
         for (int i = 0; i < spells.Length; i++)
         {
-            spells[i] = Spell.CreateFromJsonString(splitJsonString[i + 4]);
+            spells[i] = Spell.CreateFromJsonString(splitJsonString[i + 5]);
         }
     }
 }

@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class RestockSettingsPerSize : Saveable<RestockSettingsPerSize>
+public class RestockSettingsPerSettlementSize : Saveable<RestockSettingsPerSettlementSize>
 {
     [SerializeField]
     protected RestockSettings m_ThorpeRestockSettings;
@@ -49,9 +49,9 @@ public class RestockSettingsPerSize : Saveable<RestockSettingsPerSize>
         }
     }
 
-    public static RestockSettingsPerSize Create (string name, RestockSettings thorpe, RestockSettings hamlet, RestockSettings village, RestockSettings smallTown, RestockSettings largeTown, RestockSettings smallCity, RestockSettings largeCity, RestockSettings metropolis)
+    public static RestockSettingsPerSettlementSize Create (string name, RestockSettings thorpe, RestockSettings hamlet, RestockSettings village, RestockSettings smallTown, RestockSettings largeTown, RestockSettings smallCity, RestockSettings largeCity, RestockSettings metropolis)
     {
-        RestockSettingsPerSize newPerSizeRestockSettings = CreateInstance<RestockSettingsPerSize> ();
+        RestockSettingsPerSettlementSize newPerSizeRestockSettings = CreateInstance<RestockSettingsPerSettlementSize> ();
 
         if (CheckName(name) == NameCheckResult.Bad)
             throw new UnityException("Settings name invalid, contains invalid characters.");

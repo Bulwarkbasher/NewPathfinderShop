@@ -3,55 +3,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class SelectedEnumSetting
+public class SelectedEnumSetting : Jsonable<SelectedEnumSetting>
 {
     public EnumSetting enumSetting;
     public int index;
 
-    public SelectedEnumSetting()
+    public static SelectedEnumSetting Create (EnumSetting enumSetting, int index)
     {
-
+        SelectedEnumSetting newSelectedEnumSetting = CreateInstance<SelectedEnumSetting>();
+        newSelectedEnumSetting.enumSetting = enumSetting;
+        newSelectedEnumSetting.index = index;
+        return newSelectedEnumSetting;
     }
 
-    public SelectedEnumSetting(EnumSetting enumSetting, int index)
+    public static SelectedEnumSetting CreateBlank (EnumSetting enumSetting)
     {
-        this.enumSetting = enumSetting;
-        this.index = index;
+        return Create(enumSetting, 0);
+    }
+
+    protected override string ConvertToJsonString(string[] jsonSplitter)
+    {
+        string jsonString = "";
+
+        jsonString += enumSetting.name + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(index) + jsonSplitter[0];
+
+        return jsonString;
+    }
+
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
+    {
+        enumSetting = EnumSetting.Load(splitJsonString[0]);
+        index = Wrapper<int>.CreateFromJsonString(splitJsonString[1]);
     }
 
     public static implicit operator string (SelectedEnumSetting selectedEnumSetting)
     {
         return selectedEnumSetting.enumSetting[selectedEnumSetting.index];
-    }
-
-    protected static string[] GetJsonSplitter()
-    {
-        string[] jsonSplitter = { "###EnumSettingIndexSplitter###" };
-        return jsonSplitter;
-    }
-
-    public static SelectedEnumSetting CreateFromJsonString(string jsonString)
-    {
-        SelectedEnumSetting enumSettingIndex = new SelectedEnumSetting();
-
-        string[] splitJsonString = jsonString.Split(GetJsonSplitter(), StringSplitOptions.RemoveEmptyEntries);
-
-        enumSettingIndex.enumSetting = EnumSetting.Load(splitJsonString[0]);
-        enumSettingIndex.index = Wrapper<int>.CreateFromJsonString(splitJsonString[1]);
-
-        return enumSettingIndex;
-    }
-
-    public static string GetJsonString(SelectedEnumSetting enumSettingIndex)
-    {
-        string[] jsonSplitter = GetJsonSplitter();
-
-        string jsonString = "";
-
-        jsonString += enumSettingIndex.enumSetting.name + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(enumSettingIndex.index) + jsonSplitter[0];
-
-        return jsonString;
     }
 }

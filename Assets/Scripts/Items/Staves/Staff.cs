@@ -18,7 +18,7 @@ public class Staff : Item<Staff>
 
     public static Staff CreateBlank(EnumSetting books)
     {
-        return Create("NAME", 0, Item.Rarity.Mundane, new SelectedEnumSetting(books, 0), 0);
+        return Create("NAME", 0, Item.Rarity.Mundane, SelectedEnumSetting.CreateBlank(books), 0);
     }
 
     protected override string ConvertToJsonString(string[] jsonSplitter)

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-[Serializable]
-public class IntRange
+public class IntRange : Jsonable<IntRange>
 {
     public int min;
     public int max;
@@ -16,13 +15,32 @@ public class IntRange
         return UnityEngine.Random.Range(min, max + 1);
     }
 
-    public static string GetJsonString (IntRange range)
+    public static IntRange Create (int min, int max)
     {
-        return JsonUtility.ToJson(range);
+        IntRange newIntRange = CreateInstance<IntRange>();
+        newIntRange.min = min;
+        newIntRange.max = max;
+        return newIntRange;
     }
-    
-    public static IntRange CreateFromJsonString (string jsonString)
+
+    public static IntRange CreateBlank ()
     {
-        return JsonUtility.FromJson<IntRange>(jsonString);
+        return Create(0, 0);
+    }
+
+    protected override string ConvertToJsonString(string[] jsonSplitter)
+    {
+        string jsonString = "";
+
+        jsonString += Wrapper<int>.GetJsonString(min) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(max) + jsonSplitter[0];
+
+        return jsonString;
+    }
+
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
+    {
+        min = Wrapper<int>.CreateFromJsonString(splitJsonString[0]);
+        max = Wrapper<int>.CreateFromJsonString(splitJsonString[1]);
     }
 }

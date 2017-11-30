@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [CreateAssetMenu]
-public class RestockFrequencyModifiersPerSize : Saveable<RestockFrequencyModifiersPerSize>
+public class RestockFrequencyModifiersPerShopSize : Saveable<RestockFrequencyModifiersPerShopSize>
 {
     [SerializeField]
     protected EnumSetting m_ShopSizeEnum;
@@ -22,9 +22,9 @@ public class RestockFrequencyModifiersPerSize : Saveable<RestockFrequencyModifie
         }
     }
 
-    public static RestockFrequencyModifiersPerSize Create (string name, EnumSetting shopSizeEnum)
+    public static RestockFrequencyModifiersPerShopSize Create (string name, EnumSetting shopSizeEnum)
     {
-        RestockFrequencyModifiersPerSize newPerSizeRestockFrequencyModifiers = CreateInstance<RestockFrequencyModifiersPerSize> ();
+        RestockFrequencyModifiersPerShopSize newPerSizeRestockFrequencyModifiers = CreateInstance<RestockFrequencyModifiersPerShopSize> ();
 
         if (CheckName(name) == NameCheckResult.Bad)
             throw new UnityException("Settings name invalid, contains invalid characters.");

@@ -1,11 +1,36 @@
 ﻿using UnityEngine;
 
-public abstract class SpecificItemCollection<TSpecificItem, TChild> : Jsonable<TChild>
+public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient> : Jsonable<TChild>
     where TSpecificItem : SpecificItem<TSpecificItem>
-    where TChild : Jsonable<TChild>
+    where TChild : SpecificItemCollection<TSpecificItem, TChild, TIngredient>
+    where TIngredient : Saveable<TIngredient>
 {
     public IntRangePerPowerLevel stockAvailability;
+    public TIngredient ingredient;
     public TSpecificItem[] specificItems = new TSpecificItem[0];
+
+    public static TChild Create (Shop shop)
+    {
+        TChild newSpecificItemCollection = CreateInstance<TChild>();
+        newSpecificItemCollection.stockAvailability = shop.GetSettlement().AvailabilityPerShopSizePerStockType[shop.size][newSpecificItemCollection.GetStockType()];
+        newSpecificItemCollection.ingredient = newSpecificItemCollection.GetIngredient(shop);
+        return newSpecificItemCollection;
+    }
+
+    public static void AddToShop (Shop shop)
+    {
+        TChild specificItemCollection = Create(shop);
+
+        shop.stockTypes |= specificItemCollection.GetStockType();
+
+        specificItemCollection.SetShopCollection(shop);
+    }
+
+    protected abstract Shop.StockType GetStockType();
+
+    protected abstract TIngredient GetIngredient(Shop shop);
+
+    protected abstract void SetShopCollection(Shop shop);
 
     public Shop GetShop ()
     {
@@ -239,4 +264,33 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild> : Jsonable<T
     }
 
     protected abstract TSpecificItem CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange);
+    
+    protected override string ConvertToJsonString(string[] jsonSplitter)
+    {
+        string jsonString = "";
+
+        jsonString += name + jsonSplitter[0];
+        jsonString += stockAvailability.name + jsonSplitter[0];
+        jsonString += ingredient.name + jsonSplitter[0];
+
+        for (int i = 0; i < specificItems.Length; i++)
+        {
+            jsonString += SpecificItem<TSpecificItem>.GetJsonString(specificItems[i]) + jsonSplitter[0];
+        }
+
+        return jsonString;
+    }
+
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
+    {
+        name = splitJsonString[0];
+        stockAvailability = IntRangePerPowerLevel.Load(splitJsonString[1]);
+        ingredient = Saveable<TIngredient>.Load(splitJsonString[2]);
+
+        specificItems = new TSpecificItem[splitJsonString.Length - 3];
+        for (int i = 0; i < specificItems.Length; i++)
+        {
+            specificItems[i] = SpecificItem<TSpecificItem>.CreateFromJsonString(splitJsonString[i + 3]);
+        }
+    }
 }

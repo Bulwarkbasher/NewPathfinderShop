@@ -18,7 +18,7 @@ public class WeaponQuality : Quality<WeaponQuality>
 
     public static WeaponQuality CreateBlank (EnumSetting books)
     {
-        return Create ("NAME", 0, Item.Rarity.Mundane, new SelectedEnumSetting(books, 0), 999,
+        return Create ("NAME", 0, Item.Rarity.Mundane, SelectedEnumSetting.CreateBlank(books), 999,
             Quality.QualityType.SpecialMaterial, Quality.BonusEquivalent.NA);
     }
 

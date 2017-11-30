@@ -1,76 +1,27 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, SpecificStaffCollection>
+public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, SpecificStaffCollection, StaffCollection>
 {
-    public StaffCollection staffCollection;
-
-    public static SpecificStaffCollection Create(IntRangePerPowerLevel stockAvailability, StaffCollection staffCollection, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
-    {
-        SpecificStaffCollection newSpecificStaffCollection = CreateInstance<SpecificStaffCollection>();
-        newSpecificStaffCollection.stockAvailability = stockAvailability;
-        newSpecificStaffCollection.staffCollection = staffCollection;
-        newSpecificStaffCollection.BuyStock(perPowerLevelItemBudgetRange);
-        return newSpecificStaffCollection;
-    }
-
-    public static SpecificStaffCollection Create(string shopSize)
-    {
-        SpecificStaffCollection newSpecificStaffCollection = CreateInstance<SpecificStaffCollection>();
-        newSpecificStaffCollection.stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Staff][shopSize];
-        newSpecificStaffCollection.staffCollection = Campaign.StaffCollection;
-        newSpecificStaffCollection.BuyStock(Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Staff]);
-        return newSpecificStaffCollection;
-    }
-
     protected override SpecificStaff CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
     {
-        return SpecificStaff.CreateRandom(powerLevel, budgetRange, staffCollection);
+        return SpecificStaff.CreateRandom(powerLevel, budgetRange, ingredient);
     }
 
-    public static void AddToShop(Shop shop, IntRangePerPowerLevel stockAvailability, StaffCollection staffCollection, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
+    protected override StaffCollection GetIngredient(Shop shop)
     {
-        shop.stockTypes |= Shop.StockType.Wand;
-
-        if (stockAvailability == null)
-            stockAvailability = Campaign.AvailabilityPerShopSizePerStockType[Shop.StockType.Wand][shop.size];
-
-        if (staffCollection == null)
-            staffCollection = Campaign.StaffCollection;
-
-        if (perPowerLevelItemBudgetRange == null)
-            perPowerLevelItemBudgetRange = Campaign.BudgetRangePerPowerLevelPerStockType[Shop.StockType.Staff];
-
-        shop.specificStaffCollection = Create(stockAvailability, staffCollection, perPowerLevelItemBudgetRange);
+        return shop.StaffCollection;
     }
 
-    protected override string ConvertToJsonString(string[] jsonSplitter)
+    protected override Shop.StockType GetStockType()
     {
-        string jsonString = "";
-
-        jsonString += name + jsonSplitter[0];
-        jsonString += stockAvailability.name + jsonSplitter[0];
-        jsonString += staffCollection.name + jsonSplitter[0];
-
-        for (int i = 0; i < specificItems.Length; i++)
-        {
-            jsonString += SpecificStaff.GetJsonString(specificItems[i]) + jsonSplitter[0];
-        }
-
-        return jsonString;
+        return Shop.StockType.Staff;
     }
 
-    protected override void SetupFromSplitJsonString(string[] splitJsonString)
+    protected override void SetShopCollection(Shop shop)
     {
-        name = splitJsonString[0];
-        stockAvailability = IntRangePerPowerLevel.Load(splitJsonString[1]);
-        staffCollection = StaffCollection.Load(splitJsonString[2]);
-
-        specificItems = new SpecificStaff[splitJsonString.Length - 3];
-        for (int i = 0; i < specificItems.Length; i++)
-        {
-            specificItems[i] = SpecificStaff.CreateFromJsonString(splitJsonString[i + 3]);
-        }
+        shop.specificStaffCollection = this;
     }
 }

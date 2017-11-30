@@ -3,9 +3,7 @@ using System.IO;
 using UnityEngine;
 
 // NOTE: all front end saving should just call SaveableHolder.Save
-// TODO: remove inheritance from Jsonable?
-// TODO: make all serializeable classes jsonables instead
-public abstract class Saveable<TChild> : Jsonable<TChild>
+public abstract class Saveable<TChild> : ScriptableObject
     where TChild : Saveable<TChild>
 {
     public enum NameCheckResult
@@ -72,7 +70,11 @@ public abstract class Saveable<TChild> : Jsonable<TChild>
             jsonString = sr.ReadToEnd();
         }
 
-        TChild childSaveable = CreateFromJsonString (jsonString);
+        TChild childSaveable = CreateInstance<TChild>();
+
+        string[] splitJsonString = jsonString.Split(GetJsonSplitter(), StringSplitOptions.RemoveEmptyEntries);
+
+        childSaveable.SetupFromSplitJsonString(splitJsonString);
 
         SaveableHolder.AddSaveable (childSaveable);
 
@@ -81,7 +83,8 @@ public abstract class Saveable<TChild> : Jsonable<TChild>
 
     public static void Save (TChild childSaveable)
     {
-        string jsonString = GetJsonString (childSaveable);
+        string[] jsonSplitter = GetJsonSplitter();
+        string jsonString = childSaveable.ConvertToJsonString(jsonSplitter);
 
         string folderPath = Application.persistentDataPath + "/" + typeof(TChild).Name;
         if (!Directory.Exists(folderPath))
@@ -92,4 +95,32 @@ public abstract class Saveable<TChild> : Jsonable<TChild>
         string filePath = folderPath + "/" + childSaveable.name + ".dat";
         File.WriteAllText(filePath, jsonString);
     }
+
+    const string k_EmptyString = "EMPTYSTRING";
+
+    public static string GetSafeJsonFromString(string notes)
+    {
+        if (string.IsNullOrEmpty(notes))
+            return k_EmptyString;
+
+        return notes;
+    }
+
+    public static string CreateStringFromSafeJson(string json)
+    {
+        if (json == k_EmptyString)
+            return "";
+
+        return json;
+    }
+
+    static string[] GetJsonSplitter()
+    {
+        string[] jsonSplitter = { "###" + typeof(TChild) + "Splitter###" };
+        return jsonSplitter;
+    }
+
+    protected abstract string ConvertToJsonString(string[] jsonSplitter);
+
+    protected abstract void SetupFromSplitJsonString(string[] splitJsonString);
 }

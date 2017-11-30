@@ -6,10 +6,9 @@ public class RestockSettings : Jsonable<RestockSettings>
     public IntRange days;
     public IntRange percent;
 
-    public static RestockSettings Create (string name, IntRange days, IntRange percent)
+    public static RestockSettings Create (IntRange days, IntRange percent)
     {
         RestockSettings newRestockSettings = CreateInstance<RestockSettings>();
-        newRestockSettings.name = name;
         newRestockSettings.days = days;
         newRestockSettings.percent = percent;
         return newRestockSettings;
@@ -17,7 +16,7 @@ public class RestockSettings : Jsonable<RestockSettings>
 
     public static RestockSettings CreateBlank ()
     {
-        return Create("NAME", new IntRange(), new IntRange());
+        return Create(IntRange.CreateBlank(), IntRange.CreateBlank());
     }
 
     protected override string ConvertToJsonString(string[] jsonSplitter)

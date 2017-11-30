@@ -112,7 +112,7 @@ public class RarityPerCharacterClass : Saveable<RarityPerCharacterClass>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += EnumSetting.GetJsonString(m_CharacterClasses) + jsonSplitter[0];
+        jsonString += m_CharacterClasses.name + jsonSplitter[0];
         
         for(int i = 0; i < m_CharacterClassRarities.Length; i++)
         {

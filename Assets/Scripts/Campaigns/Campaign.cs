@@ -45,19 +45,19 @@ public class Campaign : Saveable<Campaign>
         get { return Current.m_WeightingPerRarity; }
     }
 
-    public static RestockSettingsPerSize RestockSettingsPerSize
+    public static RestockSettingsPerSettlementSize RestockSettingsPerSettlementSize
     {
-        get { return Current.m_RestockSettingsPerSize; }
+        get { return Current.m_RestockSettingsPerSettlementSize; }
     }
 
-    public static AvailabilityPerShopSizePerStockType AvailabilityPerShopSizePerStockType
+    public static AvailabilityPerStockTypePerShopSize AvailabilityPerStockTypePerShopSize
     {
         get { return Current.m_AvailabilityPerShopSizePerStockType; }
     }
 
-    public static RestockFrequencyModifiersPerSize RestockFrequencyModifiersPerSize
+    public static RestockFrequencyModifiersPerShopSize RestockFrequencyModifiersPerShopSize
     {
-        get { return Current.m_RestockFrequencyModifiersPerSize; }
+        get { return Current.m_RestockFrequencyModifiersPerShopSize; }
     }
 
     public static ReadyCashPerShopSize ReadyCashPerShopSize
@@ -138,9 +138,9 @@ public class Campaign : Saveable<Campaign>
     protected bool m_UsesMinimumCasterLevelForSpellContainerItems;
     protected CasterTypesPerCharacterClass m_CasterTypesPerCharacterClass;
     protected WeightingPerRarity m_WeightingPerRarity;
-    protected RestockSettingsPerSize m_RestockSettingsPerSize;
-    protected AvailabilityPerShopSizePerStockType m_AvailabilityPerShopSizePerStockType;
-    protected RestockFrequencyModifiersPerSize m_RestockFrequencyModifiersPerSize;
+    protected RestockSettingsPerSettlementSize m_RestockSettingsPerSettlementSize;
+    protected AvailabilityPerStockTypePerShopSize m_AvailabilityPerShopSizePerStockType;
+    protected RestockFrequencyModifiersPerShopSize m_RestockFrequencyModifiersPerShopSize;
     protected ReadyCashPerShopSize m_ReadyCashPerShopSize;
     protected RarityPerCharacterClassPerSpellContainer m_RarityPerCharacterClassPerSpellContainer;
     protected FloatRangePerPowerLevelPerStockType m_BudgetRangePerPowerLevelPerStockType;
@@ -174,25 +174,25 @@ public class Campaign : Saveable<Campaign>
         campaign.m_ShopSizes = DefaultEnumSettings.DefaultShopSizes;
         campaign.m_UsesAutomaticBonusProgressionRules = usesAutomaticBonusProgressionRules;
         campaign.m_UsesMinimumCasterLevelForSpellContainerItems = useMinimumCasterLevel;
-        campaign.m_CasterTypesPerCharacterClass = DefaultResourceHolder.DefaultCharacterCasterTypes;
-        campaign.m_WeightingPerRarity = DefaultResourceHolder.DefaultRarityWeighting;
-        campaign.m_RestockSettingsPerSize = DefaultResourceHolder.DefaultPerSizeRestockSettings;
-        campaign.m_AvailabilityPerShopSizePerStockType = DefaultResourceHolder.DefaultPerStockTypePerSizeAvailability;
-        campaign.m_RestockFrequencyModifiersPerSize = DefaultResourceHolder.DefaultPerSizeRestockFrequencyModifiers;
-        campaign.m_ReadyCashPerShopSize = DefaultResourceHolder.DefaultPerSizeReadyCash;
-        campaign.m_RarityPerCharacterClassPerSpellContainer = DefaultResourceHolder.DefaultPerContainerPerCreatorRarity;
-        campaign.m_BudgetRangePerPowerLevelPerStockType = DefaultResourceHolder.DefaultPerStockTypePerPowerLevelRange;
-        campaign.m_ArmourCollection = DefaultResourceHolder.DefaultArmourCollection;
-        campaign.m_SpellCollection = DefaultResourceHolder.DefaultSpellCollection;
-        campaign.m_WeaponCollection = DefaultResourceHolder.DefaultWeaponCollection;
-        campaign.m_RingCollection = DefaultResourceHolder.DefaultRingCollection;
-        campaign.m_RodCollection = DefaultResourceHolder.DefaultRodCollection;
-        campaign.m_StaffCollection = DefaultResourceHolder.DefaultStaffCollection;
-        campaign.m_WondrousCollection = DefaultResourceHolder.DefaultWondrousCollection;
-        campaign.m_ArmourQualityCollection = DefaultResourceHolder.DefaultArmourQualityCollection;
-        campaign.m_WeaponQualityCollection = DefaultResourceHolder.DefaultWeaponQualityCollection;
-        campaign.m_WeaponQualityConstraintsMatrix = DefaultResourceHolder.DefaultWeaponQualityConstraintsMatrix;
-        campaign.m_ArmourQualityConstraintsMatrix = DefaultResourceHolder.DefaultArmourQualityConstraintsMatrix;
+        campaign.m_CasterTypesPerCharacterClass = DefaultResourceHolder.CasterTypesPerCharacterClass;
+        campaign.m_WeightingPerRarity = DefaultResourceHolder.WeightingPerRarity;
+        campaign.m_RestockSettingsPerSettlementSize = DefaultResourceHolder.RestockSettingsPerSettlementSize;
+        campaign.m_AvailabilityPerShopSizePerStockType = DefaultResourceHolder.AvailabilityPerShopSizePerStockType;
+        campaign.m_RestockFrequencyModifiersPerShopSize = DefaultResourceHolder.RestockFrequencyModifiersPerShopSize;
+        campaign.m_ReadyCashPerShopSize = DefaultResourceHolder.ReadyCashPerShopSize;
+        campaign.m_RarityPerCharacterClassPerSpellContainer = DefaultResourceHolder.RarityPerCharacterClassPerSpellContainer;
+        campaign.m_BudgetRangePerPowerLevelPerStockType = DefaultResourceHolder.BudgetRangePerPowerLevelPerStockType;
+        campaign.m_ArmourCollection = DefaultResourceHolder.ArmourCollection;
+        campaign.m_SpellCollection = DefaultResourceHolder.SpellCollection;
+        campaign.m_WeaponCollection = DefaultResourceHolder.WeaponCollection;
+        campaign.m_RingCollection = DefaultResourceHolder.RingCollection;
+        campaign.m_RodCollection = DefaultResourceHolder.RodCollection;
+        campaign.m_StaffCollection = DefaultResourceHolder.StaffCollection;
+        campaign.m_WondrousCollection = DefaultResourceHolder.WondrousCollection;
+        campaign.m_ArmourQualityCollection = DefaultResourceHolder.ArmourQualityCollection;
+        campaign.m_WeaponQualityCollection = DefaultResourceHolder.WeaponQualityCollection;
+        campaign.m_WeaponQualityConstraintsMatrix = DefaultResourceHolder.WeaponQualityConstraintsMatrix;
+        campaign.m_ArmourQualityConstraintsMatrix = DefaultResourceHolder.ArmourQualityConstraintsMatrix;
 
         SaveableHolder.AddSaveable(campaign);
 
@@ -220,9 +220,9 @@ public class Campaign : Saveable<Campaign>
         jsonString += Wrapper<bool>.GetJsonString(m_UsesMinimumCasterLevelForSpellContainerItems) + jsonString[0];
         jsonString += m_CasterTypesPerCharacterClass.name + jsonSplitter[0];
         jsonString += m_WeightingPerRarity.name + jsonString[0];
-        jsonString += m_RestockSettingsPerSize.name + jsonSplitter[0];
+        jsonString += m_RestockSettingsPerSettlementSize.name + jsonSplitter[0];
         jsonString += m_AvailabilityPerShopSizePerStockType.name + jsonSplitter[0];
-        jsonString += m_RestockFrequencyModifiersPerSize.name + jsonSplitter[0];
+        jsonString += m_RestockFrequencyModifiersPerShopSize.name + jsonSplitter[0];
         jsonString += m_ReadyCashPerShopSize.name + jsonSplitter[0];
         jsonString += m_RarityPerCharacterClassPerSpellContainer.name + jsonSplitter[0];
         jsonString += m_BudgetRangePerPowerLevelPerStockType.name + jsonSplitter[0];
@@ -257,9 +257,9 @@ public class Campaign : Saveable<Campaign>
         m_UsesMinimumCasterLevelForSpellContainerItems = Wrapper<bool>.CreateFromJsonString(splitJsonString[6]);
         m_CasterTypesPerCharacterClass = CasterTypesPerCharacterClass.Load(splitJsonString[7]);
         m_WeightingPerRarity = WeightingPerRarity.Load(splitJsonString[8]);
-        m_RestockSettingsPerSize = RestockSettingsPerSize.Load(splitJsonString[9]);
-        m_AvailabilityPerShopSizePerStockType = AvailabilityPerShopSizePerStockType.Load(splitJsonString[10]);
-        m_RestockFrequencyModifiersPerSize = RestockFrequencyModifiersPerSize.Load(splitJsonString[11]);
+        m_RestockSettingsPerSettlementSize = RestockSettingsPerSettlementSize.Load(splitJsonString[9]);
+        m_AvailabilityPerShopSizePerStockType = AvailabilityPerStockTypePerShopSize.Load(splitJsonString[10]);
+        m_RestockFrequencyModifiersPerShopSize = RestockFrequencyModifiersPerShopSize.Load(splitJsonString[11]);
         m_ReadyCashPerShopSize = ReadyCashPerShopSize.Load(splitJsonString[12]);
         m_RarityPerCharacterClassPerSpellContainer = RarityPerCharacterClassPerSpellContainer.Load(splitJsonString[13]);
         m_BudgetRangePerPowerLevelPerStockType = FloatRangePerPowerLevelPerStockType.Load(splitJsonString[14]);

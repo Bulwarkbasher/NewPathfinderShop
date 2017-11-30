@@ -13,144 +13,144 @@ public class DefaultResourceHolder : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField]
-    protected RestockSettingsPerSize m_DefaultPerSizeRestockSettings;
+    protected RestockSettingsPerSettlementSize m_RestockSettingsPerSettlementSize;
     [SerializeField]
-    protected AvailabilityPerShopSizePerStockType m_DefaultPerStockTypePerSizeAvailability;
+    protected AvailabilityPerStockTypePerShopSize m_AvailabilityPerShopSizePerStockType;
     [SerializeField]
-    protected RestockFrequencyModifiersPerSize m_DefaultPerSizeRestockFrequencyModifiers;
+    protected RestockFrequencyModifiersPerShopSize m_RestockFrequencyModifiersPerShopSize;
     [SerializeField]
-    protected WeightingPerRarity m_DefaultRarityWeighting;
+    protected WeightingPerRarity m_WeightingPerRarity;
     [SerializeField]
-    protected ReadyCashPerShopSize m_DefaultPerSizeReadyCash;
+    protected ReadyCashPerShopSize m_ReadyCashPerShopSize;
     [SerializeField]
     protected RarityPerCharacterClassPerSpellContainer m_DefaultPerContainerPerCreatorRarity;
     [SerializeField]
-    protected FloatRangePerPowerLevelPerStockType m_DefaultPerStockTypePerPowerLevelRange;
+    protected FloatRangePerPowerLevelPerStockType m_BudgetRangePerPowerLevelPerStockType;
     [SerializeField]
-    protected CasterTypesPerCharacterClass m_DefaultCharacterCasterTypes;
+    protected CasterTypesPerCharacterClass m_CasterTypesPerCharacterClass;
 
     [Header ("Items")]
     [SerializeField]
-    protected ArmourCollection m_DefaultArmourCollection;
+    protected ArmourCollection m_ArmourCollection;
     [SerializeField]
-    protected SpellCollection m_DefaultSpellCollection;
+    protected SpellCollection m_SpellCollection;
     [SerializeField]
-    protected WeaponCollection m_DefaultWeaponCollection;
+    protected WeaponCollection m_WeaponCollection;
     [SerializeField]
-    protected RingCollection m_DefaultRingCollection;
+    protected RingCollection m_RingCollection;
     [SerializeField]
-    protected RodCollection m_DefaultRodCollection;
+    protected RodCollection m_RodCollection;
     [SerializeField]
-    protected StaffCollection m_DefaultStaffCollection;
+    protected StaffCollection m_StaffCollection;
     [SerializeField]
-    protected WondrousCollection m_DefaultWondrousCollection;
+    protected WondrousCollection m_WondrousCollection;
 
 
     [Header ("Qualities")]
     [SerializeField]
-    protected ArmourQualityCollection m_DefaultArmourQualityCollection;
+    protected ArmourQualityCollection m_ArmourQualityCollection;
     [SerializeField]
-    protected WeaponQualityCollection m_DefaultWeaponQualityCollection;
+    protected WeaponQualityCollection m_WeaponQualityCollection;
 
     [Header("Matrices")]
     [SerializeField]
-    protected WeaponQualityConstraintsMatrix m_DefaultWeaponQualityConstraintsMatrix;
+    protected WeaponQualityConstraintsMatrix m_WeaponQualityConstraintsMatrix;
     [SerializeField]
-    protected ArmourQualityConstraintsMatrix m_DefaultArmourQualityConstraintsMatrix;
+    protected ArmourQualityConstraintsMatrix m_ArmourQualityConstraintsMatrix;
 
-    public static RestockSettingsPerSize DefaultPerSizeRestockSettings
+    public static RestockSettingsPerSettlementSize RestockSettingsPerSettlementSize
     {
-        get { return Instance.m_DefaultPerSizeRestockSettings; }
+        get { return Instance.m_RestockSettingsPerSettlementSize; }
     }
 
-    public static AvailabilityPerShopSizePerStockType DefaultPerStockTypePerSizeAvailability
+    public static AvailabilityPerStockTypePerShopSize AvailabilityPerShopSizePerStockType
     {
-        get { return Instance.m_DefaultPerStockTypePerSizeAvailability; }
+        get { return Instance.m_AvailabilityPerShopSizePerStockType; }
     }
 
-    public static RestockFrequencyModifiersPerSize DefaultPerSizeRestockFrequencyModifiers
+    public static RestockFrequencyModifiersPerShopSize RestockFrequencyModifiersPerShopSize
     {
-        get { return Instance.m_DefaultPerSizeRestockFrequencyModifiers; }
+        get { return Instance.m_RestockFrequencyModifiersPerShopSize; }
     }
 
-    public static ReadyCashPerShopSize DefaultPerSizeReadyCash
+    public static ReadyCashPerShopSize ReadyCashPerShopSize
     {
-        get { return Instance.m_DefaultPerSizeReadyCash; }
+        get { return Instance.m_ReadyCashPerShopSize; }
     }
 
-    public static WeightingPerRarity DefaultRarityWeighting
+    public static WeightingPerRarity WeightingPerRarity
     {
-        get { return Instance.m_DefaultRarityWeighting; }
+        get { return Instance.m_WeightingPerRarity; }
     }
 
-    public static CasterTypesPerCharacterClass DefaultCharacterCasterTypes
+    public static CasterTypesPerCharacterClass CasterTypesPerCharacterClass
     {
-        get { return Instance.m_DefaultCharacterCasterTypes; }
+        get { return Instance.m_CasterTypesPerCharacterClass; }
     }
 
-    public static ArmourCollection DefaultArmourCollection
+    public static ArmourCollection ArmourCollection
     {
-        get { return Instance.m_DefaultArmourCollection; }
+        get { return Instance.m_ArmourCollection; }
     }
 
-    public static SpellCollection DefaultSpellCollection
+    public static SpellCollection SpellCollection
     {
-        get { return Instance.m_DefaultSpellCollection; }
+        get { return Instance.m_SpellCollection; }
     }
 
-    public static WeaponCollection DefaultWeaponCollection
+    public static WeaponCollection WeaponCollection
     {
-        get { return Instance.m_DefaultWeaponCollection; }
+        get { return Instance.m_WeaponCollection; }
     }
 
-    public static RingCollection DefaultRingCollection
+    public static RingCollection RingCollection
     {
-        get { return Instance.m_DefaultRingCollection; }
+        get { return Instance.m_RingCollection; }
     }
 
-    public static RodCollection DefaultRodCollection
+    public static RodCollection RodCollection
     {
-        get { return Instance.m_DefaultRodCollection; }
+        get { return Instance.m_RodCollection; }
     }
 
-    public static StaffCollection DefaultStaffCollection
+    public static StaffCollection StaffCollection
     {
-        get { return Instance.m_DefaultStaffCollection; }
+        get { return Instance.m_StaffCollection; }
     }
 
-    public static WondrousCollection DefaultWondrousCollection
+    public static WondrousCollection WondrousCollection
     {
-        get { return Instance.m_DefaultWondrousCollection; }
+        get { return Instance.m_WondrousCollection; }
     }
 
-    public static ArmourQualityCollection DefaultArmourQualityCollection
+    public static ArmourQualityCollection ArmourQualityCollection
     {
-        get { return Instance.m_DefaultArmourQualityCollection; }
+        get { return Instance.m_ArmourQualityCollection; }
     }
 
-    public static WeaponQualityCollection DefaultWeaponQualityCollection
+    public static WeaponQualityCollection WeaponQualityCollection
     {
-        get { return Instance.m_DefaultWeaponQualityCollection; }
+        get { return Instance.m_WeaponQualityCollection; }
     }
 
-    public static WeaponQualityConstraintsMatrix DefaultWeaponQualityConstraintsMatrix
+    public static WeaponQualityConstraintsMatrix WeaponQualityConstraintsMatrix
     {
-        get { return Instance.m_DefaultWeaponQualityConstraintsMatrix; }
+        get { return Instance.m_WeaponQualityConstraintsMatrix; }
     }
 
-    public static ArmourQualityConstraintsMatrix DefaultArmourQualityConstraintsMatrix
+    public static ArmourQualityConstraintsMatrix ArmourQualityConstraintsMatrix
     {
-        get { return Instance.m_DefaultArmourQualityConstraintsMatrix; }
+        get { return Instance.m_ArmourQualityConstraintsMatrix; }
     }
 
-    public static RarityPerCharacterClassPerSpellContainer DefaultPerContainerPerCreatorRarity
+    public static RarityPerCharacterClassPerSpellContainer RarityPerCharacterClassPerSpellContainer
     {
         get { return Instance.m_DefaultPerContainerPerCreatorRarity; }
     }
 
-    public static FloatRangePerPowerLevelPerStockType DefaultPerStockTypePerPowerLevelRange
+    public static FloatRangePerPowerLevelPerStockType BudgetRangePerPowerLevelPerStockType
     {
-        get { return Instance.m_DefaultPerStockTypePerPowerLevelRange; }
+        get { return Instance.m_BudgetRangePerPowerLevelPerStockType; }
     }
 
     void Awake ()

@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 // TODO: after making all serializeable classes jsonables, rework editors and drawers to use them properly
+// NOTE: sideways text using GUI.Matrix
 public abstract class SaveableEditor<TTarget, TElement> : Editor
     where TTarget : ScriptableObject
     where TElement : ScriptableObject
