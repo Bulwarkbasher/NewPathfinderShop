@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll, SpecificScrollCollection, SpellCollection>
 {
-    protected override SpecificScroll CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budget)
+    protected override SpecificScroll CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budget)
     {
         return SpecificScroll.CreateRandom(powerLevel, ingredient, budget);
     }
@@ -15,9 +15,9 @@ public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll, S
         return shop.SpellCollection;
     }
 
-    protected override Shop.StockType GetStockType()
+    protected override string GetStockType()
     {
-        return Shop.StockType.Scroll;
+        return "Scroll";
     }
 
     protected override void SetShopCollection(Shop shop)

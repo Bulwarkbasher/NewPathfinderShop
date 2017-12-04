@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificRodCollection : SpecificItemCollection<SpecificRod, SpecificRodCollection, RodCollection>
 {
-    protected override SpecificRod CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
+    protected override SpecificRod CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange)
     {
         return SpecificRod.CreateRandom(powerLevel, budgetRange, ingredient);
     }
@@ -15,9 +15,9 @@ public class SpecificRodCollection : SpecificItemCollection<SpecificRod, Specifi
         return shop.RodCollection;
     }
 
-    protected override Shop.StockType GetStockType()
+    protected override string GetStockType()
     {
-        return Shop.StockType.Rod;
+        return "Rod";
     }
 
     protected override void SetShopCollection(Shop shop)

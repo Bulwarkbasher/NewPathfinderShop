@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion, SpecificPotionCollection, SpellCollection>
 {
-    protected override SpecificPotion CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budget)
+    protected override SpecificPotion CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budget)
     {
         return SpecificPotion.CreateRandom(powerLevel, ingredient, budget);
     }
@@ -15,9 +15,9 @@ public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion, S
         return shop.SpellCollection;
     }
 
-    protected override Shop.StockType GetStockType()
+    protected override string GetStockType()
     {
-        return Shop.StockType.Potion;
+        return "Potion";
     }
 
     protected override void SetShopCollection(Shop shop)

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, SpecificStaffCollection, StaffCollection>
 {
-    protected override SpecificStaff CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
+    protected override SpecificStaff CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange)
     {
         return SpecificStaff.CreateRandom(powerLevel, budgetRange, ingredient);
     }
@@ -15,9 +15,9 @@ public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, Spe
         return shop.StaffCollection;
     }
 
-    protected override Shop.StockType GetStockType()
+    protected override string GetStockType()
     {
-        return Shop.StockType.Staff;
+        return "Staff";
     }
 
     protected override void SetShopCollection(Shop shop)

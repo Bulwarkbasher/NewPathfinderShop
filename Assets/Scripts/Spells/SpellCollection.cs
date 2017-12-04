@@ -6,7 +6,7 @@ using UnityEngine;
 public class SpellCollection : Saveable<SpellCollection>
 {
     public EnumSetting characterClasses;
-    public CasterTypesPerCharacterClass characterCasterTypes;
+    public SaveableSelectedEnumPerEnum characterCasterTypes;
     public EnumSetting books;
     public RarityPerCharacterClassPerSpellContainer perContainerPerCreatorRarity;
     public Spell[] spells = new Spell[0];
@@ -35,9 +35,9 @@ public class SpellCollection : Saveable<SpellCollection>
         if (spells.Length == 0)
             return;
 
-        RarityPerCharacterClass perCreatorRarity = perContainerPerCreatorRarity[Spell.Container.Potion];
+        RarityPerCharacterClass perCreatorRarity = perContainerPerCreatorRarity["Potion"];
         specificPotion.creator = perCreatorRarity.PickSpellCastingClass(characterCasterTypes);
-        CasterTypesPerCharacterClass.CasterType creatorCasterType = characterCasterTypes[specificPotion.creator];
+        string creatorCasterType = characterCasterTypes[specificPotion.creator];
 
         List<Spell> availableSpells = new List<Spell>();
         List<int> randomCasterLevelsForSpells = new List<int>();
@@ -60,7 +60,7 @@ public class SpellCollection : Saveable<SpellCollection>
             int spellLevelForCreator = currentSpell.creatorLevels[specificPotion.creator];
 
             // Given the spell's level for the creator, find a random level for the creator.
-            int minCreatorLevel = CasterTypesPerCharacterClass.MinCasterLevel(creatorCasterType, spellLevelForCreator);
+            int minCreatorLevel = Spell.MinCasterLevel(creatorCasterType, spellLevelForCreator);
             int creatorLevel = minCreatorLevel;
             if (!Campaign.UsesMinimumCasterLevelForSpellContainerItems)
             {
@@ -91,7 +91,7 @@ public class SpellCollection : Saveable<SpellCollection>
             }
         }
 
-        specificPotion.spell = Spell.PickSpell(availableSpells, Spell.Container.Potion);
+        specificPotion.spell = Spell.PickSpell(availableSpells, "Potion");
 
         int spellIndex = -1;
         for (int i = 0; i < availableSpells.Count; i++)
@@ -107,9 +107,9 @@ public class SpellCollection : Saveable<SpellCollection>
         if (spells.Length == 0)
             return;
 
-        RarityPerCharacterClass perCreatorRarity = perContainerPerCreatorRarity[Spell.Container.Scroll];
+        RarityPerCharacterClass perCreatorRarity = perContainerPerCreatorRarity["Scroll"];
         specificScroll.creator = perCreatorRarity.PickSpellCastingClass(characterCasterTypes);
-        CasterTypesPerCharacterClass.CasterType creatorCasterType = characterCasterTypes[specificScroll.creator];
+        string creatorCasterType = characterCasterTypes[specificScroll.creator];
 
         List<Spell> availableSpells = new List<Spell>();
         List<int> randomCasterLevelsForSpells = new List<int>();
@@ -132,7 +132,7 @@ public class SpellCollection : Saveable<SpellCollection>
             int spellLevelForCreator = currentSpell.creatorLevels[specificScroll.creator];
 
             // Given the spell's level for the creator, find a random level for the creator.
-            int minCreatorLevel = CasterTypesPerCharacterClass.MinCasterLevel(creatorCasterType, spellLevelForCreator);
+            int minCreatorLevel = Spell.MinCasterLevel(creatorCasterType, spellLevelForCreator);
             int creatorLevel = minCreatorLevel;
             if (!Campaign.UsesMinimumCasterLevelForSpellContainerItems)
             {
@@ -163,7 +163,7 @@ public class SpellCollection : Saveable<SpellCollection>
             }
         }
 
-        specificScroll.spell = Spell.PickSpell(availableSpells, Spell.Container.Scroll);
+        specificScroll.spell = Spell.PickSpell(availableSpells, "Scroll");
 
         int spellIndex = -1;
         for (int i = 0; i < availableSpells.Count; i++)
@@ -179,9 +179,9 @@ public class SpellCollection : Saveable<SpellCollection>
         if (spells.Length == 0)
             return;
 
-        RarityPerCharacterClass perCreatorRarity = perContainerPerCreatorRarity[Spell.Container.Wand];
+        RarityPerCharacterClass perCreatorRarity = perContainerPerCreatorRarity["Wand"];
         specificWand.creator = perCreatorRarity.PickSpellCastingClass(characterCasterTypes);
-        CasterTypesPerCharacterClass.CasterType creatorCasterType = characterCasterTypes[specificWand.creator];
+        string creatorCasterType = characterCasterTypes[specificWand.creator];
 
         List<Spell> availableSpells = new List<Spell>();
         List<int> randomCasterLevelsForSpells = new List<int>();
@@ -204,7 +204,7 @@ public class SpellCollection : Saveable<SpellCollection>
             int spellLevelForCreator = currentSpell.creatorLevels[specificWand.creator];
 
             // Given the spell's level for the creator, find a random level for the creator.
-            int minCreatorLevel = CasterTypesPerCharacterClass.MinCasterLevel(creatorCasterType, spellLevelForCreator);
+            int minCreatorLevel = Spell.MinCasterLevel(creatorCasterType, spellLevelForCreator);
             int creatorLevel = minCreatorLevel;
             if (!Campaign.UsesMinimumCasterLevelForSpellContainerItems)
             {
@@ -235,7 +235,7 @@ public class SpellCollection : Saveable<SpellCollection>
             }
         }
 
-        specificWand.spell = Spell.PickSpell(availableSpells, Spell.Container.Wand);
+        specificWand.spell = Spell.PickSpell(availableSpells, "Wand");
 
         int spellIndex = -1;
         for (int i = 0; i < availableSpells.Count; i++)
@@ -288,7 +288,7 @@ public class SpellCollection : Saveable<SpellCollection>
     {
         name = splitJsonString[0];
         characterClasses = EnumSetting.Load(splitJsonString[1]);
-        characterCasterTypes = CasterTypesPerCharacterClass.Load(splitJsonString[2]);
+        characterCasterTypes = SaveableSelectedEnumPerEnum.Load(splitJsonString[2]);
         books = EnumSetting.Load(splitJsonString[3]);
         perContainerPerCreatorRarity = RarityPerCharacterClassPerSpellContainer.Load(splitJsonString[4]);
 

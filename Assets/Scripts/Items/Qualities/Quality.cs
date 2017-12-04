@@ -1,16 +1,102 @@
 ﻿using System;
 using UnityEngine;
 
-public abstract class Quality<TChild> : Item<TChild>
-    where TChild : Quality<TChild>
+public abstract class Quality<TQuality> : Item<TQuality>
+    where TQuality : Quality<TQuality>
 {
-    public Quality.QualityType qualityType;
-    public Quality.BonusEquivalent bonusEquivalent;
+    public JsonableSelectedEnumSetting qualityType;
+    public int bonusEquivalent;
+
+    public static TQuality Create(string name, int cost, JsonableSelectedEnumSetting rarity, JsonableSelectedEnumSetting book, int page,
+        JsonableSelectedEnumSetting qualityType, int bonusEquivalent)
+    {
+        TQuality newWeaponQuality = CreateInstance<TQuality>();
+        newWeaponQuality.name = name;
+        newWeaponQuality.rarity = rarity;
+        newWeaponQuality.book = book;
+        newWeaponQuality.page = page;
+        newWeaponQuality.qualityType = qualityType;
+        newWeaponQuality.bonusEquivalent = bonusEquivalent;
+        return newWeaponQuality;
+    }
+
+    public static TQuality CreateBlank(EnumSetting rarities, EnumSetting books, EnumSetting qualityTypes)
+    {
+        return Create("NAME", 0, JsonableSelectedEnumSetting.CreateBlank(rarities), JsonableSelectedEnumSetting.CreateBlank(books), 999,
+            JsonableSelectedEnumSetting.CreateBlank(qualityTypes), 0);
+    }
+
+    public static int BonusToCost (int bonus)
+    {
+        return CreateInstance<TQuality>().BonusToCostInternal(bonus);
+    }
+
+    protected abstract int BonusToCostInternal(int bonus);
+
+    public float GetCost()
+    {
+        if (bonusEquivalent != 0)
+        {
+            return BonusToCostInternal(bonusEquivalent);
+        }
+
+        return cost;
+    }
+
+    public float CostToIncrease(TQuality[] oldQualities)
+    {
+        if (bonusEquivalent == 0)
+            return cost;
+
+        int oldBonus = 0;
+
+        for (int i = 0; i < oldQualities.Length; i++)
+        {
+            oldBonus += oldQualities[i].bonusEquivalent;
+        }
+
+        return BonusToCostInternal(oldBonus + bonusEquivalent) - BonusToCostInternal(oldBonus);
+    }
+
+    public string BonusEquivalentAsString ()
+    {
+        if (bonusEquivalent == 0)
+            return "";
+
+        return bonusEquivalent.ToString();
+    }
+
+    protected override string ConvertToJsonString(string[] jsonSplitter)
+    {
+        string jsonString = "";
+
+        jsonString += name + jsonSplitter[0];
+        jsonString += Wrapper<float>.GetJsonString(cost) + jsonSplitter[0];
+        jsonString += JsonableSelectedEnumSetting.GetJsonString(rarity) + jsonSplitter[0];
+        jsonString += JsonableSelectedEnumSetting.GetJsonString(book) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(page) + jsonSplitter[0];
+        jsonString += JsonableSelectedEnumSetting.GetJsonString(qualityType) + jsonSplitter[0];
+        jsonString += Wrapper<int>.GetJsonString(bonusEquivalent) + jsonSplitter[0];
+
+        return jsonString;
+    }
+
+    protected override void SetupFromSplitJsonString(string[] splitJsonString)
+    {
+        name = splitJsonString[0];
+        cost = Wrapper<float>.CreateFromJsonString(splitJsonString[1]);
+        rarity = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[2]);
+        book = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[3]);
+        page = Wrapper<int>.CreateFromJsonString(splitJsonString[4]);
+        qualityType = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[5]);
+        bonusEquivalent = Wrapper<int>.CreateFromJsonString(splitJsonString[6]);
+    }
 }
 
 
 public class Quality
 {
+    /*[Flags]
     public enum BonusEquivalent
     {
         NA,
@@ -26,7 +112,7 @@ public class Quality
         Ten,
     }
 
-
+    [Flags]
     public enum QualityType
     {
         SpecialMaterial,
@@ -64,6 +150,6 @@ public class Quality
             default:
                 throw new ArgumentOutOfRangeException("bonusEquivalent", bonusEquivalent, null);
         }
-    }
+    }*/
 
 }

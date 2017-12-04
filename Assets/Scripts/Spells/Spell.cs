@@ -5,6 +5,7 @@ using Random = UnityEngine.Random;
 
 public class Spell : Jsonable<Spell>
 {
+    /*[Flags]
     public enum Allowance
     {
         Default,
@@ -12,29 +13,29 @@ public class Spell : Jsonable<Spell>
         CannotBe,
     }
 
-
+    [Flags]
     public enum Container
     {
         Potion,
         Scroll,
         Wand,
-    }
+    }*/
 
 
-    public SpellContainerAllowances allowances;
-    public SpellContainerRarities rarities;
-    public EnumSettingIntPairing creatorLevels;
-    public SelectedEnumSetting book;
+    public JsonableSelectedEnumPerEnum containerAllowances;      // containers, allowance
+    public JsonableSelectedEnumPerEnum containerRarities;        // containers, rarities
+    public JsonableIntPerEnumSetting creatorLevels;              // int (level), characterClasses
+    public JsonableSelectedEnumSetting book;
     public int page;
     public int materialCost;
 
-    public static Spell Create(string name, SpellContainerAllowances allowances, SpellContainerRarities rarities, CasterTypesPerCharacterClass creatorCasterTypes,
-        EnumSettingIntPairing creatorLevels, SelectedEnumSetting book, int page, int materialCost)
+    public static Spell Create(string name, JsonableSelectedEnumPerEnum containerAllowances, JsonableSelectedEnumPerEnum containerRarities,
+        JsonableIntPerEnumSetting creatorLevels, JsonableSelectedEnumSetting book, int page, int materialCost)
     {
         Spell newSpell = CreateInstance<Spell> ();
         newSpell.name = name;
-        newSpell.allowances = allowances;
-        newSpell.rarities = rarities;
+        newSpell.containerAllowances = containerAllowances;
+        newSpell.containerRarities = containerRarities;
         newSpell.creatorLevels = creatorLevels;
         newSpell.book = book;
         newSpell.page = page;
@@ -42,20 +43,36 @@ public class Spell : Jsonable<Spell>
         return newSpell;
     }
 
-    public static Spell CreateBlank (EnumSetting characterClasses, CasterTypesPerCharacterClass casterTypesPerCharacterClass, EnumSetting books)
+    public static Spell CreateBlank (EnumSetting spellContainers, EnumSetting allowances, EnumSetting rarities, EnumSetting characterClasses,
+        SaveableSelectedEnumPerEnum casterTypesPerCharacterClass, EnumSetting books)
     {
-        return Create ("NAME", SpellContainerAllowances.CreateBlank(), SpellContainerRarities.CreateBlank(), casterTypesPerCharacterClass, 
-            EnumSettingIntPairing.CreateBlank(characterClasses), SelectedEnumSetting.CreateBlank(books), 239, 0);
+        JsonableSelectedEnumPerEnum containerAllowances = JsonableSelectedEnumPerEnum.CreateBlank(spellContainers, allowances);
+        JsonableSelectedEnumPerEnum containerRarities = JsonableSelectedEnumPerEnum.CreateBlank(spellContainers, rarities);
+        JsonableIntPerEnumSetting creatorLevels = JsonableIntPerEnumSetting.CreateBlank(characterClasses);
+        JsonableSelectedEnumSetting book = JsonableSelectedEnumSetting.CreateBlank(books);
+
+        return Create ("NAME", containerAllowances, containerRarities, creatorLevels, book, 239, 0);
+    }
+
+    public static int MinCasterLevel(string casterType, int spellLevel)
+    {
+        if (casterType == "Level4Spells")
+            return spellLevel * 3 + 1;
+        if (casterType == "Level6Spells")
+            return spellLevel * 3 - 2;
+        if (casterType == "Level9Spells")
+            return spellLevel * 2 - 1;
+        return -1;
     }
 
     public float GetPotionCost(string creator, int creatorLevel)
     {
-        Allowance allowance = allowances[Container.Potion];
-        if (allowance == Allowance.CannotBe)
+        string allowance = containerAllowances["Potion"];
+        if (allowance == "CannotBe")
             return -1f;
 
         int creationLevel = creatorLevels[creator];
-        if (allowance == Allowance.Default && creationLevel > 3)
+        if (allowance == "Default" && creationLevel > 3)
             return -1f;
 
         if (creationLevel == -1)
@@ -68,12 +85,12 @@ public class Spell : Jsonable<Spell>
 
     public float GetScrollCost(string creator, int creatorLevel)
     {
-        Allowance allowance = allowances[Container.Scroll];
-        if (allowance == Allowance.CannotBe)
+        string allowance = containerAllowances["Scroll"];
+        if (allowance == "CannotBe")
             return -1f;
 
         int creationLevel = creatorLevels[creator];
-        if (allowance == Allowance.Default && creationLevel > 3)
+        if (allowance == "Default" && creationLevel > 3)
             return -1f;
 
         if (creationLevel == -1)
@@ -86,12 +103,12 @@ public class Spell : Jsonable<Spell>
     
     public float GetWandCost(string creator, int creatorLevel, int charges)
     {
-        Allowance allowance = allowances[Container.Wand];
-        if (allowance == Allowance.CannotBe)
+        string allowance = containerAllowances["Wand"];
+        if (allowance == "CannotBe")
             return -1f;
 
         int creationLevel = creatorLevels[creator];
-        if (allowance == Allowance.Default && creationLevel > 3)
+        if (allowance == "Default" && creationLevel > 3)
             return -1f;
 
         if (creationLevel == -1)
@@ -102,13 +119,13 @@ public class Spell : Jsonable<Spell>
         return (15 + materialCost) * charges * creationLevel * creatorLevel;
     }
 
-    public static Spell PickSpell (List<Spell> spells, Container container)
+    public static Spell PickSpell (List<Spell> spells, string container)
     {
         float weightSum = 0f;
 
         for (int i = 0; i < spells.Count; i++)
         {
-            Item.Rarity rarity = spells[i].rarities[container];
+            JsonableSelectedEnumSetting rarity = spells[i].containerRarities[container];
             weightSum += Campaign.WeightingPerRarity[rarity];
         }
 
@@ -117,7 +134,7 @@ public class Spell : Jsonable<Spell>
 
         for (int i = 0; i < spells.Count; i++)
         {
-            Item.Rarity rarity = spells[i].rarities[container];
+            JsonableSelectedEnumSetting rarity = spells[i].containerRarities[container];
             weightCounter -= Campaign.WeightingPerRarity[rarity];
 
             if (weightCounter <= 0f)
@@ -134,10 +151,10 @@ public class Spell : Jsonable<Spell>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += SpellContainerAllowances.GetJsonString(allowances) + jsonSplitter[0];
-        jsonString += SpellContainerRarities.GetJsonString(rarities) + jsonSplitter[0];
-        jsonString += EnumSettingIntPairing.GetJsonString(creatorLevels) + jsonSplitter[0];
-        jsonString += SelectedEnumSetting.GetJsonString(book) + jsonSplitter[0];
+        jsonString += JsonableSelectedEnumPerEnum.GetJsonString(containerAllowances) + jsonSplitter[0];
+        jsonString += JsonableSelectedEnumPerEnum.GetJsonString(containerRarities) + jsonSplitter[0];
+        jsonString += JsonableIntPerEnumSetting.GetJsonString(creatorLevels) + jsonSplitter[0];
+        jsonString += JsonableSelectedEnumSetting.GetJsonString(book) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(page) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(materialCost) + jsonSplitter[0];
 
@@ -147,10 +164,10 @@ public class Spell : Jsonable<Spell>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        allowances = SpellContainerAllowances.CreateFromJsonString(splitJsonString[1]);
-        rarities = SpellContainerRarities.CreateFromJsonString(splitJsonString[2]);
-        creatorLevels = EnumSettingIntPairing.CreateFromJsonString(splitJsonString[4]);
-        book = SelectedEnumSetting.CreateFromJsonString(splitJsonString[5]);
+        containerAllowances = JsonableSelectedEnumPerEnum.CreateFromJsonString(splitJsonString[1]);
+        containerRarities = JsonableSelectedEnumPerEnum.CreateFromJsonString(splitJsonString[2]);
+        creatorLevels = JsonableIntPerEnumSetting.CreateFromJsonString(splitJsonString[4]);
+        book = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[5]);
         page = Wrapper<int>.CreateFromJsonString (splitJsonString[6]);
         materialCost = Wrapper<int>.CreateFromJsonString (splitJsonString[7]);
     }

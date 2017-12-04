@@ -22,6 +22,6 @@ public class SpellCollectionEditor : SaveableEditor<SpellCollection, Spell>
     protected override void SaveableGUI ()
     {
         CollectionGUI (m_SpellsProp);
-        AddButtonGUI(m_SpellsProp, Spell.CreateBlank, m_CharacterClassesProp.objectReferenceValue as EnumSetting, m_CharacterCasterTypesProp.objectReferenceValue as CasterTypesPerCharacterClass, m_BooksProp.objectReferenceValue as EnumSetting);
+        //AddButtonGUI(m_SpellsProp, Spell.CreateBlank, m_CharacterClassesProp.objectReferenceValue as EnumSetting, m_CharacterCasterTypesProp.objectReferenceValue as CasterTypesPerCharacterClass, m_BooksProp.objectReferenceValue as EnumSetting);
     }
 }

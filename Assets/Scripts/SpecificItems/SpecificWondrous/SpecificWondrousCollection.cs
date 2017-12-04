@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrous, SpecificWondrousCollection, WondrousCollection>
 {
-    protected override SpecificWondrous CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
+    protected override SpecificWondrous CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange)
     {
         return SpecificWondrous.CreateRandom(powerLevel, budgetRange, ingredient);
     }
@@ -15,9 +15,9 @@ public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrou
         return shop.WondrousCollection;
     }
 
-    protected override Shop.StockType GetStockType()
+    protected override string GetStockType()
     {
-        return Shop.StockType.Wondrous;
+        return "Wondrous";
     }
 
     protected override void SetShopCollection(Shop shop)

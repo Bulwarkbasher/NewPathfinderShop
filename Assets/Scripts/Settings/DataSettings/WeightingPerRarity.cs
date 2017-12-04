@@ -11,9 +11,9 @@ public class WeightingPerRarity : Saveable<WeightingPerRarity>
         new Keyframe(1f, 0f, -0.6f, -0.6f)
     );
 
-    public float this [Item.Rarity rarity]
+    public float this [JsonableSelectedEnumSetting rarity]
     {
-        get { return m_WeightingCurve.Evaluate(((float)rarity) / Item.RarityTypeCount); }
+        get { return m_WeightingCurve.Evaluate(((float)rarity.index) / rarity.enumSetting.Length); }
     }
 
     public static WeightingPerRarity Create (string name, AnimationCurve weightingCurve)

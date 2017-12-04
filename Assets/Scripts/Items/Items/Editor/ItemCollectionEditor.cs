@@ -2,8 +2,9 @@
 using UnityEditor;
 using UnityEngine;
 
-public abstract class ItemCollectionEditor<TCollection, TItem> : SaveableEditor<TCollection, TItem>
-    where TCollection : ItemCollection<TCollection, TItem>
+public abstract class ItemCollectionEditor<TCollectionFilter, TCollection, TItem> : SaveableEditor<TCollection, TItem>
+    where TCollectionFilter : ItemCollectionFilter<TCollectionFilter, TCollection, TItem>
+    where TCollection : ItemCollection<TCollectionFilter, TCollection, TItem>
     where TItem : Item<TItem>
 {
     protected SerializedProperty m_BooksProp;

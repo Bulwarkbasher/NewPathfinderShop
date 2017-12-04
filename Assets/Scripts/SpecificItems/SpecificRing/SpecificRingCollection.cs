@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificRingCollection : SpecificItemCollection<SpecificRing, SpecificRingCollection, RingCollection>
 {
-    protected override SpecificRing CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
+    protected override SpecificRing CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange)
     {
         return SpecificRing.CreateRandom(powerLevel, budgetRange, ingredient);
     }
@@ -15,9 +15,9 @@ public class SpecificRingCollection : SpecificItemCollection<SpecificRing, Speci
         return shop.RingCollection;
     }
 
-    protected override Shop.StockType GetStockType()
+    protected override string GetStockType()
     {
-        return Shop.StockType.Ring;
+        return "Ring";
     }
 
     protected override void SetShopCollection(Shop shop)

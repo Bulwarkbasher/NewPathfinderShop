@@ -31,6 +31,19 @@ public class EnumSetting : Saveable<EnumSetting>
         }
     }
 
+    public int this [string setting]
+    {
+        get
+        {
+            for(int i = 0; i < settings.Length; i++)
+            {
+                if (settings[i] == setting)
+                    return i;
+            }
+            throw new IndexOutOfRangeException();
+        }
+    }
+
     public int Length
     {
         get

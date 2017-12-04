@@ -35,7 +35,7 @@ public class Campaign : Saveable<Campaign>
         get { return Current.m_UsesMinimumCasterLevelForSpellContainerItems; }
     }
 
-    public static CasterTypesPerCharacterClass CasterTypesPerCharacterClass
+    public static SaveableSelectedEnumPerEnum CasterTypesPerCharacterClass
     {
         get { return Current.m_CasterTypesPerCharacterClass; }
     }
@@ -136,7 +136,7 @@ public class Campaign : Saveable<Campaign>
     protected EnumSetting m_ShopSizes;
     protected bool m_UsesAutomaticBonusProgressionRules;
     protected bool m_UsesMinimumCasterLevelForSpellContainerItems;
-    protected CasterTypesPerCharacterClass m_CasterTypesPerCharacterClass;
+    protected SaveableSelectedEnumPerEnum m_CasterTypesPerCharacterClass;
     protected WeightingPerRarity m_WeightingPerRarity;
     protected RestockSettingsPerSettlementSize m_RestockSettingsPerSettlementSize;
     protected AvailabilityPerStockTypePerShopSize m_AvailabilityPerShopSizePerStockType;
@@ -255,7 +255,7 @@ public class Campaign : Saveable<Campaign>
         m_ShopSizes = EnumSetting.Load(splitJsonString[4]);
         m_UsesAutomaticBonusProgressionRules = Wrapper<bool>.CreateFromJsonString(splitJsonString[5]);
         m_UsesMinimumCasterLevelForSpellContainerItems = Wrapper<bool>.CreateFromJsonString(splitJsonString[6]);
-        m_CasterTypesPerCharacterClass = CasterTypesPerCharacterClass.Load(splitJsonString[7]);
+        m_CasterTypesPerCharacterClass = SaveableSelectedEnumPerEnum.Load(splitJsonString[7]);
         m_WeightingPerRarity = WeightingPerRarity.Load(splitJsonString[8]);
         m_RestockSettingsPerSettlementSize = RestockSettingsPerSettlementSize.Load(splitJsonString[9]);
         m_AvailabilityPerShopSizePerStockType = AvailabilityPerStockTypePerShopSize.Load(splitJsonString[10]);

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnumSettingIntPairing : Jsonable<EnumSettingIntPairing>
+public class JsonableIntPerEnumSetting : Jsonable<JsonableIntPerEnumSetting>
 {
     public EnumSetting enumSetting;
     public int[] pairings = new int[0];
@@ -30,15 +30,15 @@ public class EnumSettingIntPairing : Jsonable<EnumSettingIntPairing>
         }
     }
 
-    public static EnumSettingIntPairing Create (EnumSetting enumSetting, int[] pairings)
+    public static JsonableIntPerEnumSetting Create (EnumSetting enumSetting, int[] pairings)
     {
-        EnumSettingIntPairing newEnumSettingIntPairing = CreateInstance<EnumSettingIntPairing>();
+        JsonableIntPerEnumSetting newEnumSettingIntPairing = CreateInstance<JsonableIntPerEnumSetting>();
         newEnumSettingIntPairing.enumSetting = enumSetting;
         newEnumSettingIntPairing.pairings = pairings;
         return newEnumSettingIntPairing;
     }
 
-    public static EnumSettingIntPairing CreateBlank (EnumSetting enumSetting)
+    public static JsonableIntPerEnumSetting CreateBlank (EnumSetting enumSetting)
     {
         return Create(enumSetting, new int[enumSetting.Length]);
     }

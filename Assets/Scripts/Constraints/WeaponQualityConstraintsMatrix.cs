@@ -4,64 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class WeaponQualityConstraintsMatrix : Saveable<WeaponQualityConstraintsMatrix>
+public class WeaponQualityConstraintsMatrix : QualityConstraintsMatrix<WeaponQualityConstraintsMatrix, WeaponCollectionFilter, WeaponCollection, Weapon, WeaponQualityCollectionFilter, WeaponQualityCollection, WeaponQuality>
 {
-    public WeaponCollection weaponCollection;
-    public WeaponQualityCollection weaponQualityCollection;
-    public bool[,] matrix = new bool[0, 0]; // [Rows,Columns]
-
-    public static WeaponQualityConstraintsMatrix Create (string name, WeaponCollection weaponCollection, WeaponQualityCollection weaponQualityCollection)
-    {
-        WeaponQualityConstraintsMatrix newMatrix = CreateInstance<WeaponQualityConstraintsMatrix>();
-
-        if (CheckName(name) == NameCheckResult.Bad)
-            throw new UnityException("Spell Collection name invalid, contains invalid characters.");
-        if (CheckName(name) == NameCheckResult.IsDefault)
-            throw new UnityException("Spell Collection name invalid, name cannot start with Default");
-
-        newMatrix.name = name;
-        newMatrix.weaponCollection = weaponCollection;
-        newMatrix.weaponQualityCollection = weaponQualityCollection;
-        newMatrix.matrix = new bool[weaponCollection.items.Length, weaponQualityCollection.items.Length];
-
-        SaveableHolder.AddSaveable(newMatrix);
-
-        return newMatrix;
-    }
-
-    public bool CanWeaponUseQuality (Weapon weapon, WeaponQuality weaponQuality)
-    {
-        int weaponIndex = -1;
-        for(int i = 0; i < weaponCollection.items.Length; i ++)
-        {
-            if (weaponCollection.items[i] == weapon)
-                weaponIndex = i;
-        }
-
-        if (weaponIndex == -1)
-            return false;
-
-        int qualityIndex = -1;
-        for (int i = 0; i < weaponQualityCollection.items.Length; i++)
-        {
-            if (weaponQualityCollection.items[i] == weaponQuality)
-                qualityIndex = i;
-        }
-
-        if (qualityIndex == -1)
-            return false;
-
-        return matrix[weaponIndex, qualityIndex];
-    }
-
     public bool AddRandomWeaponQuality (ref float budget, SpecificWeapon specificWeapon)
     {
-        List<WeaponQuality> qualities = weaponQualityCollection.items.ToList();
+        List<WeaponQuality> qualities = qualityCollection.items.ToList();
 
         int weaponIndex = -1;
-        for (int i = 0; i < weaponCollection.items.Length; i++)
+        for (int i = 0; i < itemCollection.Length; i++)
         {
-            if (weaponCollection.items[i] == specificWeapon.weapon)
+            if (itemCollection[i] == specificWeapon.weapon)
                 weaponIndex = i;
         }
 
@@ -74,10 +26,10 @@ public class WeaponQualityConstraintsMatrix : Saveable<WeaponQualityConstraintsM
 
         for (int i = 0; i < qualities.Count; i++)
         {
-            Quality.QualityType qualityType = qualities[i].qualityType;
-            bool isBonus = qualityType == Quality.QualityType.EnhancementBonus;
-            bool isMaterial = qualityType == Quality.QualityType.SpecialMaterial;
-            bool isSpecial = qualityType == Quality.QualityType.SpecialMaterial;
+            string qualityType = qualities[i].qualityType;
+            bool isBonus = qualityType == "EnhancementBonus";
+            bool isMaterial = qualityType == "SpecialMaterial";
+            bool isSpecial = qualityType == "SpecialMaterial";
 
             if (!matrix[weaponIndex,i] || 
                 (isBonus && !needsBonus) || 
@@ -94,11 +46,11 @@ public class WeaponQualityConstraintsMatrix : Saveable<WeaponQualityConstraintsM
             return false;
 
         WeaponQuality chosenQuality = WeaponQuality.PickItem(qualities.ToArray());
-        if (chosenQuality.qualityType == Quality.QualityType.EnhancementBonus)
+        if (chosenQuality.qualityType == "EnhancementBonus")
             specificWeapon.enhancementBonus = chosenQuality;
-        if (chosenQuality.qualityType == Quality.QualityType.SpecialMaterial)
+        if (chosenQuality.qualityType == "SpecialMaterial")
             specificWeapon.specialMaterial = chosenQuality;
-        if (chosenQuality.qualityType == Quality.QualityType.SpecialAbility)
+        if (chosenQuality.qualityType == "SpecialAbility")
             specificWeapon.AddSpecialAbility(chosenQuality);
 
         return true;
@@ -106,43 +58,6 @@ public class WeaponQualityConstraintsMatrix : Saveable<WeaponQualityConstraintsM
 
     public void AssignRandomWeapon (ref float budget, SpecificWeapon specificWeapon)
     {
-        specificWeapon.weapon = weaponCollection.PickWeapon(ref budget);
-    }
-
-    protected override string ConvertToJsonString(string[] jsonSplitter)
-    {
-        string jsonString = "";
-
-        jsonString += name + jsonSplitter[0];
-        jsonString += weaponCollection.name + jsonSplitter[0];
-        jsonString += weaponQualityCollection.name + jsonSplitter[0];
-
-        for(int i = 0; i < weaponCollection.items.Length; i++)
-        {
-            for(int j = 0; j < weaponQualityCollection.items.Length; j++)
-            {
-                jsonString += Wrapper<bool>.GetJsonString(matrix[i, j]) + jsonSplitter[0];
-            }
-        }
-
-        return jsonString;
-    }
-
-    protected override void SetupFromSplitJsonString(string[] splitJsonString)
-    {
-        name = splitJsonString[0];
-        weaponCollection = WeaponCollection.Load(splitJsonString[1]);
-        weaponQualityCollection = WeaponQualityCollection.Load(splitJsonString[2]);
-
-        int jsonIndex = 3;
-
-        for (int i = 0; i < weaponCollection.items.Length; i++)
-        {
-            for (int j = 0; j < weaponQualityCollection.items.Length; j++)
-            {
-                matrix[i, j] = Wrapper<bool>.CreateFromJsonString(splitJsonString[jsonIndex]);
-                jsonIndex++;
-            }
-        }
+        specificWeapon.weapon = itemCollection.PickWeapon(ref budget);
     }
 }

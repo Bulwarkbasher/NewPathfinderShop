@@ -15,10 +15,10 @@ public class WeaponQualityDrawer : JsonableDrawer
     protected override int GetPropertyLineCount (SerializedProperty property, GUIContent label)
     {
         int count = 6;
-        if ((Quality.QualityType)m_QualityTypeProp.intValue != Quality.QualityType.SpecialMaterial)
+        //if ((Quality.QualityType)m_QualityTypeProp.intValue != Quality.QualityType.SpecialMaterial)
             count++;
 
-        if ((Quality.BonusEquivalent)m_BonusEquivProp.intValue == Quality.BonusEquivalent.NA)
+        //if ((Quality.BonusEquivalent)m_BonusEquivProp.intValue == Quality.BonusEquivalent.NA)
             count++;
 
         return count;
@@ -39,7 +39,7 @@ public class WeaponQualityDrawer : JsonableDrawer
         nameFoldoutLineRect.y += nameFoldoutLineRect.height;
         EditorGUI.PropertyField(nameFoldoutLineRect, m_NameProp);
 
-        if ((Quality.BonusEquivalent)m_BonusEquivProp.intValue == Quality.BonusEquivalent.NA)
+        //if ((Quality.BonusEquivalent)m_BonusEquivProp.intValue == Quality.BonusEquivalent.NA)
         {
             nameFoldoutLineRect.y += nameFoldoutLineRect.height;
             EditorGUI.PropertyField(nameFoldoutLineRect, m_CostProp);
@@ -59,7 +59,7 @@ public class WeaponQualityDrawer : JsonableDrawer
         EditorGUI.PropertyField(nameFoldoutLineRect, m_QualityTypeProp);
         if (EditorGUI.EndChangeCheck())
         {
-            switch ((Quality.QualityType)m_QualityTypeProp.intValue)
+            /*switch ((Quality.QualityType)m_QualityTypeProp.intValue)
             {
                 // TODO FROM HOME: set page number to appropriate for each type
                 case Quality.QualityType.SpecialMaterial:
@@ -68,15 +68,15 @@ public class WeaponQualityDrawer : JsonableDrawer
                     break;
                 case Quality.QualityType.SpecialAbility:
                     break;
-            }
+            }*/
         }
 
-        if ((Quality.QualityType)m_QualityTypeProp.intValue != Quality.QualityType.SpecialMaterial)
-        {
+        //if ((Quality.QualityType)m_QualityTypeProp.intValue != Quality.QualityType.SpecialMaterial)
+        //{
             nameFoldoutLineRect.y += nameFoldoutLineRect.height;
             EditorGUI.PropertyField(nameFoldoutLineRect, m_BonusEquivProp);
-        }
-        else
-            m_BonusEquivProp.enumValueIndex = (int)Quality.BonusEquivalent.NA;
+        //}
+        //else
+           // m_BonusEquivProp.enumValueIndex = (int)Quality.BonusEquivalent.NA;
     }
 }

@@ -1,22 +1,15 @@
 ﻿using UnityEngine;
 using System;
 
-public class RestockSettings : Jsonable<RestockSettings>
+public class RestockSettings : DataPerEnumSetting<RestockSettings>
 {
     public IntRange days;
     public IntRange percent;
 
-    public static RestockSettings Create (IntRange days, IntRange percent)
+    protected override void SetDefaults()
     {
-        RestockSettings newRestockSettings = CreateInstance<RestockSettings>();
-        newRestockSettings.days = days;
-        newRestockSettings.percent = percent;
-        return newRestockSettings;
-    }
-
-    public static RestockSettings CreateBlank ()
-    {
-        return Create(IntRange.CreateBlank(), IntRange.CreateBlank());
+        days = IntRange.Create();
+        percent = IntRange.Create();
     }
 
     protected override string ConvertToJsonString(string[] jsonSplitter)

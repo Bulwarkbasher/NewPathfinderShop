@@ -9,7 +9,7 @@ public class SpecificArmour : SpecificItem<SpecificArmour>
     public ArmourQuality specialMaterial;
     public ArmourQuality[] specialAbilities = new ArmourQuality[0];
 
-    public static SpecificArmour CreateRandom(SpecificItem.PowerLevel powerLevel, ArmourQualityConstraintsMatrix matrix, FloatRange budgetRange)
+    public static SpecificArmour CreateRandom(JsonableSelectedEnumSetting powerLevel, ArmourQualityConstraintsMatrix matrix, FloatRange budgetRange)
     {
         SpecificArmour newSpecificArmour = CreateInstance<SpecificArmour>();
 
@@ -24,9 +24,9 @@ public class SpecificArmour : SpecificItem<SpecificArmour>
         }
 
         if (newSpecificArmour.specialMaterial == null)
-            newSpecificArmour.specialMaterial = ArmourQuality.CreateBlank(matrix.armourCollection.books);
+            newSpecificArmour.specialMaterial = ArmourQuality.CreateBlank(matrix.itemCollection.rarities, matrix.itemCollection.books);
         if (newSpecificArmour.enhancementBonus == null)
-            newSpecificArmour.enhancementBonus = ArmourQuality.CreateBlank(matrix.armourCollection.books);
+            newSpecificArmour.enhancementBonus = ArmourQuality.CreateBlank(matrix.itemCollection.rarities, matrix.itemCollection.books);
 
         newSpecificArmour.CalculateCost();
         newSpecificArmour.CalculateName();
@@ -101,12 +101,12 @@ public class SpecificArmour : SpecificItem<SpecificArmour>
 
         for (int i = 0; i < specialAbilities.Length; i++)
         {
-            if (specialAbilities[i].bonusEquivalent == Quality.BonusEquivalent.NA)
+            if (specialAbilities[i].bonusEquivalent == 0)
                 cost += specialAbilities[i].cost;
             else
                 bonus += (int)specialAbilities[i].bonusEquivalent;
         }
-        cost += ArmourQuality.BonusToCost((Quality.BonusEquivalent)bonus);
+        cost += ArmourQuality.BonusToCost(bonus);
     }
 
     void CalculateName()
@@ -114,7 +114,7 @@ public class SpecificArmour : SpecificItem<SpecificArmour>
         name = "";
 
         if (enhancementBonus.name != "NAME")
-            name += Quality.GetBonusEquivalentName(enhancementBonus.bonusEquivalent) + " ";
+            name += enhancementBonus.BonusEquivalentAsString() + " ";
 
         for (int i = 0; i < specialAbilities.Length; i++)
         {
@@ -132,7 +132,7 @@ public class SpecificArmour : SpecificItem<SpecificArmour>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)powerLevel) + jsonSplitter[0];
+        jsonString += JsonableSelectedEnumSetting.GetJsonString(powerLevel) + jsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString(cost) + jsonSplitter[0];
         jsonString += GetSafeJsonFromString(notes) + jsonSplitter[0];
         jsonString += Armour.GetJsonString(armour) + jsonSplitter[0];
@@ -150,7 +150,7 @@ public class SpecificArmour : SpecificItem<SpecificArmour>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        powerLevel = (SpecificItem.PowerLevel)Wrapper<int>.CreateFromJsonString(splitJsonString[1]);
+        powerLevel = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[1]);
         cost = Wrapper<float>.CreateFromJsonString(splitJsonString[2]);
         notes = CreateStringFromSafeJson(splitJsonString[3]);
         armour = Armour.CreateFromJsonString(splitJsonString[4]);

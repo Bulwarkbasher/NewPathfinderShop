@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using UnityEngine;
 
 public abstract class Jsonable<TChild> : ScriptableObject
@@ -20,6 +21,46 @@ public abstract class Jsonable<TChild> : ScriptableObject
             return "";
 
         return json;
+    }
+
+    public TChild Duplicate ()
+    {
+        TChild duplicate = CreateInstance<TChild>();
+
+        Type jsonableType = typeof(Jsonable<>);
+        MethodInfo jsonableDuplicateMethod = jsonableType.GetMethod("Duplicate", BindingFlags.Public | BindingFlags.Instance);
+
+        FieldInfo[] allFieldInfos = typeof(TChild).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        for (int i = 0; i < allFieldInfos.Length; i++)
+        {
+            FieldInfo field = allFieldInfos[i];
+            Type fieldType = field.FieldType;
+
+            if (fieldType.IsArray && fieldType.GetElementType().IsSubclassOf(jsonableType))
+            {
+                object[] array = (object[])field.GetValue(this);
+                object[] duplicateArray = new object[array.Length];
+                for (int j = 0; j < array.Length; j++)
+                {
+                    duplicateArray[j] = jsonableDuplicateMethod.Invoke(array[j], null);
+                }
+                field.SetValue(duplicate, duplicateArray);
+            }
+            else if (fieldType.IsSubclassOf(jsonableType))
+            {
+                object jsonableObject = field.GetValue(this);
+                object jsonableDuplicate = jsonableDuplicateMethod.Invoke(jsonableObject, null);
+                field.SetValue(duplicate, jsonableDuplicate);
+            }
+            else
+            {
+                object originalFieldObject = field.GetValue(this);
+                field.SetValue(duplicate, originalFieldObject);
+            }
+        }
+
+        return duplicate;
     }
 
     protected static string[] GetJsonSplitter()

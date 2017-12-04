@@ -5,11 +5,12 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
     where TChild : SpecificItemCollection<TSpecificItem, TChild, TIngredient>
     where TIngredient : Saveable<TIngredient>
 {
+    public EnumSetting powerLevelEnum;
     public IntRangePerPowerLevel stockAvailability;
     public TIngredient ingredient;
     public TSpecificItem[] specificItems = new TSpecificItem[0];
 
-    public static TChild Create (Shop shop)
+    public static TChild Create (Shop shop, EnumSetting powerLevelEnum)
     {
         TChild newSpecificItemCollection = CreateInstance<TChild>();
         newSpecificItemCollection.stockAvailability = shop.GetSettlement().AvailabilityPerShopSizePerStockType[shop.size][newSpecificItemCollection.GetStockType()];
@@ -17,16 +18,17 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
         return newSpecificItemCollection;
     }
 
-    public static void AddToShop (Shop shop)
+    public static void AddToShop (Shop shop, EnumSetting powerLevelEnum)
     {
-        TChild specificItemCollection = Create(shop);
+        TChild specificItemCollection = Create(shop, powerLevelEnum);
 
-        shop.stockTypes |= specificItemCollection.GetStockType();
+        string stockType = specificItemCollection.GetStockType();
+        shop.stockTypes[stockType] = true;
 
         specificItemCollection.SetShopCollection(shop);
     }
 
-    protected abstract Shop.StockType GetStockType();
+    protected abstract string GetStockType();
 
     protected abstract TIngredient GetIngredient(Shop shop);
 
@@ -114,7 +116,7 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
         return total;
     }
 
-    public float GetTotalCost(SpecificItem.PowerLevel powerLevel)
+    public float GetTotalCost(string powerLevel)
     {
         float total = 0;
         for (int i = 0; i < specificItems.Length; i++)
@@ -128,9 +130,9 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
     public float GetMaxPossibleValue(FloatRangePerPowerLevel perPowerLevelBudgetRange)
     {
         float total = 0f;
-        total += stockAvailability[SpecificItem.PowerLevel.Minor].max * perPowerLevelBudgetRange[SpecificItem.PowerLevel.Minor].max;
-        total += stockAvailability[SpecificItem.PowerLevel.Medium].max * perPowerLevelBudgetRange[SpecificItem.PowerLevel.Medium].max;
-        total += stockAvailability[SpecificItem.PowerLevel.Major].max * perPowerLevelBudgetRange[SpecificItem.PowerLevel.Major].max;
+        total += stockAvailability["Minor"].max * perPowerLevelBudgetRange["Minor"].max;
+        total += stockAvailability["Medium"].max * perPowerLevelBudgetRange["Medium"].max;
+        total += stockAvailability["Major"].max * perPowerLevelBudgetRange["Major"].max;
         return total;
     }
 
@@ -139,7 +141,7 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
         return specificItems.Length;
     }
 
-    public int GetTotalCount(SpecificItem.PowerLevel powerLevel)
+    public int GetTotalCount(string powerLevel)
     {
         int total = 0;
         for (int i = 0; i < specificItems.Length; i++)
@@ -161,15 +163,16 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
         specificItems = newSpecificItems;
     }
 
-    public void AddRandom(SpecificItem.PowerLevel powerLevel, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
+    public void AddRandom(string powerLevel, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
-        TSpecificItem[] newSpecificWeapons = new TSpecificItem[specificItems.Length + 1];
+        TSpecificItem[] newSpecificItems = new TSpecificItem[specificItems.Length + 1];
         for (int i = 0; i < specificItems.Length; i++)
         {
-            newSpecificWeapons[i] = specificItems[i];
+            newSpecificItems[i] = specificItems[i];
         }
-        newSpecificWeapons[specificItems.Length] = CreateRandomSpecificItem (powerLevel, perPowerLevelItemBudgetRange[powerLevel]);
-        specificItems = newSpecificWeapons;
+        JsonableSelectedEnumSetting itemPowerLevel = JsonableSelectedEnumSetting.Create(powerLevelEnum, powerLevelEnum[powerLevel]);
+        newSpecificItems[specificItems.Length] = CreateRandomSpecificItem (itemPowerLevel, perPowerLevelItemBudgetRange[powerLevel]);
+        specificItems = newSpecificItems;
     }
 
     public void RemoveAt(int index)
@@ -190,9 +193,10 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
         specificItems[index] = specificItem;
     }
 
-    public void ReplaceWithRandom(int index, SpecificItem.PowerLevel powerLevel, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
+    public void ReplaceWithRandom(int index, string powerLevel, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
-        specificItems[index] = CreateRandomSpecificItem (powerLevel, perPowerLevelItemBudgetRange[powerLevel]);
+        JsonableSelectedEnumSetting itemPowerLevel = JsonableSelectedEnumSetting.Create(powerLevelEnum, powerLevelEnum[powerLevel]);
+        specificItems[index] = CreateRandomSpecificItem (itemPowerLevel, perPowerLevelItemBudgetRange[itemPowerLevel]);
     }
 
     public void Restock(RestockSettings restockSettings, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
@@ -234,12 +238,14 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
 
     protected void BuyStock(FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
-        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Minor, stockAvailability[SpecificItem.PowerLevel.Minor], perPowerLevelItemBudgetRange[SpecificItem.PowerLevel.Minor]);
-        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Medium, stockAvailability[SpecificItem.PowerLevel.Medium], perPowerLevelItemBudgetRange[SpecificItem.PowerLevel.Medium]);
-        BuyStockAtPowerLevel(SpecificItem.PowerLevel.Major, stockAvailability[SpecificItem.PowerLevel.Major], perPowerLevelItemBudgetRange[SpecificItem.PowerLevel.Major]);
+        for(int i = 0; i < powerLevelEnum.Length; i++)
+        {
+            JsonableSelectedEnumSetting powerLevel = JsonableSelectedEnumSetting.Create(powerLevelEnum, i);
+            BuyStockAtPowerLevel(powerLevel, stockAvailability[powerLevel], perPowerLevelItemBudgetRange[powerLevel]);
+        }
     }
 
-    protected void BuyStockAtPowerLevel(SpecificItem.PowerLevel powerLevel, IntRange stockRange, FloatRange itemBudgetRange)
+    protected void BuyStockAtPowerLevel(JsonableSelectedEnumSetting powerLevel, IntRange stockRange, FloatRange itemBudgetRange)
     {
         int desiredCount = stockRange.Random();
         int currentCount = GetTotalCount(powerLevel);
@@ -256,20 +262,22 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
             {
                 for (int i = 0; i < requiredStockCount; i++)
                 {
-                    TSpecificItem randomSpecificItem = CreateRandomSpecificItem(powerLevel, itemBudgetRange);
+                    JsonableSelectedEnumSetting itemPowerLevel = JsonableSelectedEnumSetting.Create(powerLevelEnum, powerLevel.index);
+                    TSpecificItem randomSpecificItem = CreateRandomSpecificItem(itemPowerLevel, itemBudgetRange);
                     Add(randomSpecificItem);
                 }
             }
         }
     }
 
-    protected abstract TSpecificItem CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budgetRange);
+    protected abstract TSpecificItem CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange);
     
     protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
+        jsonString += powerLevelEnum.name + jsonSplitter[0];
         jsonString += stockAvailability.name + jsonSplitter[0];
         jsonString += ingredient.name + jsonSplitter[0];
 
@@ -284,13 +292,14 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        stockAvailability = IntRangePerPowerLevel.Load(splitJsonString[1]);
-        ingredient = Saveable<TIngredient>.Load(splitJsonString[2]);
+        powerLevelEnum = EnumSetting.Load(splitJsonString[1]);
+        stockAvailability = IntRangePerPowerLevel.Load(splitJsonString[2]);
+        ingredient = Saveable<TIngredient>.Load(splitJsonString[3]);
 
-        specificItems = new TSpecificItem[splitJsonString.Length - 3];
+        specificItems = new TSpecificItem[splitJsonString.Length - 4];
         for (int i = 0; i < specificItems.Length; i++)
         {
-            specificItems[i] = SpecificItem<TSpecificItem>.CreateFromJsonString(splitJsonString[i + 3]);
+            specificItems[i] = SpecificItem<TSpecificItem>.CreateFromJsonString(splitJsonString[i + 4]);
         }
     }
 }

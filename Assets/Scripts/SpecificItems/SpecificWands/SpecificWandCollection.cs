@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificWandCollection : SpecificItemCollection<SpecificWand, SpecificWandCollection, SpellCollection>
 {
-    protected override SpecificWand CreateRandomSpecificItem(SpecificItem.PowerLevel powerLevel, FloatRange budget)
+    protected override SpecificWand CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budget)
     {
         return SpecificWand.CreateRandom(powerLevel, ingredient, budget);
     }
@@ -15,9 +15,9 @@ public class SpecificWandCollection : SpecificItemCollection<SpecificWand, Speci
         return shop.SpellCollection;
     }
 
-    protected override Shop.StockType GetStockType()
+    protected override string GetStockType()
     {
-        return Shop.StockType.Wand;
+        return "Wand";
     }
 
     protected override void SetShopCollection(Shop shop)

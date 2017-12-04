@@ -8,7 +8,7 @@ public class SpecificPotion : SpecificItem<SpecificPotion>
     public string creator;
     public int casterLevel;
 
-    public static SpecificPotion CreateRandom(SpecificItem.PowerLevel powerLevel, SpellCollection availableSpells, FloatRange budgetRange)
+    public static SpecificPotion CreateRandom(JsonableSelectedEnumSetting powerLevel, SpellCollection availableSpells, FloatRange budgetRange)
     {
         SpecificPotion newSpecificPotion = CreateInstance<SpecificPotion>();
         newSpecificPotion.powerLevel = powerLevel;
@@ -21,7 +21,7 @@ public class SpecificPotion : SpecificItem<SpecificPotion>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString((int)powerLevel) + jsonSplitter[0];
+        jsonString += JsonableSelectedEnumSetting.GetJsonString(powerLevel) + jsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString(cost) + jsonSplitter[0];
         jsonString += GetSafeJsonFromString(notes) + jsonSplitter[0];
         jsonString += Spell.GetJsonString(spell) + jsonSplitter[0];
@@ -34,7 +34,7 @@ public class SpecificPotion : SpecificItem<SpecificPotion>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        powerLevel = (SpecificItem.PowerLevel)Wrapper<int>.CreateFromJsonString(splitJsonString[1]);
+        powerLevel = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[1]);
         cost = Wrapper<float>.CreateFromJsonString(splitJsonString[2]);
         notes = CreateStringFromSafeJson(splitJsonString[3]);
         spell = Spell.CreateFromJsonString(splitJsonString[4]);

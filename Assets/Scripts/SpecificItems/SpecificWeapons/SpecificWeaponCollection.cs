@@ -3,7 +3,7 @@ using System;
 
 public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon, SpecificWeaponCollection, WeaponQualityConstraintsMatrix>
 {
-    protected override SpecificWeapon CreateRandomSpecificItem (SpecificItem.PowerLevel powerLevel, FloatRange budgetRange)
+    protected override SpecificWeapon CreateRandomSpecificItem (JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange)
     {
         return SpecificWeapon.CreateRandom(powerLevel, ingredient, budgetRange);
     }
@@ -13,9 +13,9 @@ public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon, S
         return shop.WeaponQualityConstraintsMatrix;
     }
 
-    protected override Shop.StockType GetStockType()
+    protected override string GetStockType()
     {
-        return Shop.StockType.Weapon;
+        return "Weapon";
     }
 
     protected override void SetShopCollection(Shop shop)

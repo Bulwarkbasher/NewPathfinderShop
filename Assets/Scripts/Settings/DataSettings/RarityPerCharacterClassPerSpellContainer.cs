@@ -7,31 +7,26 @@ using UnityEngine;
 public class RarityPerCharacterClassPerSpellContainer : Saveable<RarityPerCharacterClassPerSpellContainer>
 {
     [SerializeField]
-    protected RarityPerCharacterClass m_PotionPerCreatorRarity;
+    protected EnumSetting m_SpellContainerEnum;
     [SerializeField]
-    protected RarityPerCharacterClass m_ScrollPerCreatorRarity;
-    [SerializeField]
-    protected RarityPerCharacterClass m_WandPerCreatorRarity;
+    protected RarityPerCharacterClass[] m_CharacterClassRarities;
 
-    public RarityPerCharacterClass this [Spell.Container container]
+    public RarityPerCharacterClass this [string container]
     {
         get
         {
-            switch (container)
+            for (int i = 0; i < m_SpellContainerEnum.Length; i++)
             {
-                case Spell.Container.Potion:
-                    return m_PotionPerCreatorRarity;
-                case Spell.Container.Scroll:
-                    return m_ScrollPerCreatorRarity;
-                case Spell.Container.Wand:
-                    return m_WandPerCreatorRarity;
-                default:
-                    throw new ArgumentOutOfRangeException("container", container, "Unknown Spell Container type.");
+                if (m_SpellContainerEnum[i] == container)
+                {
+                    return m_CharacterClassRarities[i];
+                }
             }
+            throw new ArgumentOutOfRangeException(nameof(container), container, null);
         }
     }
 
-    public static RarityPerCharacterClassPerSpellContainer Create (string name, RarityPerCharacterClass potion, RarityPerCharacterClass scroll, RarityPerCharacterClass wand)
+    public static RarityPerCharacterClassPerSpellContainer Create (string name, EnumSetting spellContainerEnum, RarityPerCharacterClass[] characterClassRarities)
     {
         RarityPerCharacterClassPerSpellContainer newPerContainerPerCreatorRarity = CreateInstance<RarityPerCharacterClassPerSpellContainer>();
 
@@ -41,9 +36,8 @@ public class RarityPerCharacterClassPerSpellContainer : Saveable<RarityPerCharac
             throw new UnityException("Settings name invalid, name cannot start with Default");
 
         newPerContainerPerCreatorRarity.name = name;
-        newPerContainerPerCreatorRarity.m_PotionPerCreatorRarity = potion;
-        newPerContainerPerCreatorRarity.m_ScrollPerCreatorRarity = scroll;
-        newPerContainerPerCreatorRarity.m_WandPerCreatorRarity = wand;
+        newPerContainerPerCreatorRarity.m_SpellContainerEnum = spellContainerEnum;
+        newPerContainerPerCreatorRarity.m_CharacterClassRarities = characterClassRarities;
 
         SaveableHolder.AddSaveable(newPerContainerPerCreatorRarity);
 
@@ -55,9 +49,11 @@ public class RarityPerCharacterClassPerSpellContainer : Saveable<RarityPerCharac
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += m_PotionPerCreatorRarity.name + jsonSplitter[0];
-        jsonString += m_ScrollPerCreatorRarity.name + jsonSplitter[0];
-        jsonString += m_WandPerCreatorRarity.name + jsonSplitter[0];
+        jsonString += m_SpellContainerEnum.name + jsonSplitter[0];
+        for(int i = 0; i < m_CharacterClassRarities.Length; i++)
+        {
+            jsonString += m_CharacterClassRarities[i].name + jsonSplitter[0];
+        }
 
         return jsonString;
     }
@@ -65,8 +61,12 @@ public class RarityPerCharacterClassPerSpellContainer : Saveable<RarityPerCharac
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        m_PotionPerCreatorRarity = RarityPerCharacterClass.Load(splitJsonString[1]);
-        m_ScrollPerCreatorRarity = RarityPerCharacterClass.Load(splitJsonString[2]);
-        m_WandPerCreatorRarity = RarityPerCharacterClass.Load(splitJsonString[3]);
+        m_SpellContainerEnum = EnumSetting.Load(splitJsonString[1]);
+
+        m_CharacterClassRarities = new RarityPerCharacterClass[splitJsonString.Length - 2];
+        for(int i = 0; i < m_CharacterClassRarities.Length; i++)
+        {
+            m_CharacterClassRarities[i] = RarityPerCharacterClass.Load(splitJsonString[i + 2]);
+        }
     }
 }

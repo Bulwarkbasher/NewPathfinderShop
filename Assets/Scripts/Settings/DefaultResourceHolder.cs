@@ -27,7 +27,7 @@ public class DefaultResourceHolder : MonoBehaviour
     [SerializeField]
     protected FloatRangePerPowerLevelPerStockType m_BudgetRangePerPowerLevelPerStockType;
     [SerializeField]
-    protected CasterTypesPerCharacterClass m_CasterTypesPerCharacterClass;
+    protected SaveableSelectedEnumPerEnum m_CasterTypesPerCharacterClass;
 
     [Header ("Items")]
     [SerializeField]
@@ -83,7 +83,7 @@ public class DefaultResourceHolder : MonoBehaviour
         get { return Instance.m_WeightingPerRarity; }
     }
 
-    public static CasterTypesPerCharacterClass CasterTypesPerCharacterClass
+    public static SaveableSelectedEnumPerEnum CasterTypesPerCharacterClass
     {
         get { return Instance.m_CasterTypesPerCharacterClass; }
     }

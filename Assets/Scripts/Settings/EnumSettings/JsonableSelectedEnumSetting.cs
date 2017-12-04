@@ -3,20 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectedEnumSetting : Jsonable<SelectedEnumSetting>
+public class JsonableSelectedEnumSetting : Jsonable<JsonableSelectedEnumSetting>
 {
     public EnumSetting enumSetting;
     public int index;
 
-    public static SelectedEnumSetting Create (EnumSetting enumSetting, int index)
+    public static JsonableSelectedEnumSetting Create (EnumSetting enumSetting, int index)
     {
-        SelectedEnumSetting newSelectedEnumSetting = CreateInstance<SelectedEnumSetting>();
+        JsonableSelectedEnumSetting newSelectedEnumSetting = CreateInstance<JsonableSelectedEnumSetting>();
         newSelectedEnumSetting.enumSetting = enumSetting;
         newSelectedEnumSetting.index = index;
         return newSelectedEnumSetting;
     }
 
-    public static SelectedEnumSetting CreateBlank (EnumSetting enumSetting)
+    public static JsonableSelectedEnumSetting CreateBlank (EnumSetting enumSetting)
     {
         return Create(enumSetting, 0);
     }
@@ -37,7 +37,7 @@ public class SelectedEnumSetting : Jsonable<SelectedEnumSetting>
         index = Wrapper<int>.CreateFromJsonString(splitJsonString[1]);
     }
 
-    public static implicit operator string (SelectedEnumSetting selectedEnumSetting)
+    public static implicit operator string (JsonableSelectedEnumSetting selectedEnumSetting)
     {
         return selectedEnumSetting.enumSetting[selectedEnumSetting.index];
     }

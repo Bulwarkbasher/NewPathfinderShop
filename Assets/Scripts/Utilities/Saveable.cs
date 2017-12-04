@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 // NOTE: all front end saving should just call SaveableHolder.Save
@@ -24,14 +25,115 @@ public abstract class Saveable<TChild> : ScriptableObject
 
         return NameCheckResult.Good;
     }
-    
-    public static TChild Duplicate(string duplicatesName, TChild original)
-    {
-        TChild duplicate = original.MemberwiseClone () as TChild;
-        duplicate.name = duplicatesName;
-        Save(duplicate);
+    // TODO: review all settingsd
+    // Base class settings
+    // params for create functions?
+    // TODO: duplicate filtered
+    // NOTE: created settings should be blank, duplicated settings should have original settings
 
-        duplicate = Load(duplicatesName);
+    public TChild Duplicate()
+    {
+        TChild duplicate = CreateInstance<TChild>();
+        duplicate.name = "New" + name;
+
+        Type jsonableType = typeof(Jsonable<>);
+        MethodInfo jsonableDuplicateMethod = jsonableType.GetMethod("Duplicate", BindingFlags.Public | BindingFlags.Instance);
+
+        FieldInfo[] allFieldInfos = typeof(TChild).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        for(int i = 0; i < allFieldInfos.Length; i++)
+        {
+            FieldInfo field = allFieldInfos[i];
+            Type fieldType = field.FieldType;
+            
+            if(fieldType.IsArray && fieldType.GetElementType().IsSubclassOf(jsonableType))
+            {
+                object[] array = (object[])field.GetValue(this);                
+                object[] duplicateArray = new object[array.Length];
+                for(int j = 0; j < array.Length; j++)
+                {
+                    duplicateArray[j] = jsonableDuplicateMethod.Invoke(array[j], null);                        
+                }
+                field.SetValue(duplicate, duplicateArray);                
+            }
+            else if (fieldType.IsSubclassOf(jsonableType))
+            {
+                object jsonableObject = field.GetValue(this);
+                object jsonableDuplicate = jsonableDuplicateMethod.Invoke(jsonableObject, null);
+                field.SetValue(duplicate, jsonableDuplicate);
+            }
+            else
+            {
+                object originalFieldObject = field.GetValue(this);
+                field.SetValue(duplicate, originalFieldObject);
+            }
+        }
+
+        return duplicate;
+    }
+
+    public TChild DeepDuplicate ()
+    {
+        TChild duplicate = CreateInstance<TChild>();
+        duplicate.name = "New" + name;
+
+        Type jsonableType = typeof(Jsonable<>);
+        MethodInfo jsonableDuplicateMethod = jsonableType.GetMethod("Duplicate", BindingFlags.Public | BindingFlags.Instance);
+
+        Type saveableType = typeof(Saveable<>);
+        MethodInfo saveableDeepDuplicateMethod = saveableType.GetMethod("DeepDuplicate", BindingFlags.Public | BindingFlags.Instance);
+
+        FieldInfo[] allFieldInfos = typeof(TChild).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        for (int i = 0; i < allFieldInfos.Length; i++)
+        {
+            FieldInfo field = allFieldInfos[i];
+            Type fieldType = field.FieldType;
+
+            if (fieldType.IsArray && fieldType.GetElementType().IsSubclassOf(jsonableType))
+            {
+                Type elementType = fieldType.GetElementType();
+
+                if(elementType.IsSubclassOf(jsonableType))
+                {
+                    object[] array = (object[])field.GetValue(this);
+                    object[] duplicateArray = new object[array.Length];
+                    for (int j = 0; j < array.Length; j++)
+                    {
+                        duplicateArray[j] = jsonableDuplicateMethod.Invoke(array[j], null);
+                    }
+                    field.SetValue(duplicate, duplicateArray);
+                }
+                else if (elementType.IsSubclassOf(saveableType))
+                {
+                    object[] array = (object[])field.GetValue(this);
+                    object[] duplicateArray = new object[array.Length];
+                    for (int j = 0; j < array.Length; j++)
+                    {
+                        duplicateArray[j] = saveableDeepDuplicateMethod.Invoke(array[j], null);
+                    }
+                    field.SetValue(duplicate, duplicateArray);
+                }
+                else
+                {
+                    object originalFieldObject = field.GetValue(this);
+                    field.SetValue(duplicate, originalFieldObject);
+                }
+                
+            }
+            else if (fieldType.IsSubclassOf(jsonableType))
+            {
+                object jsonableObject = field.GetValue(this);
+                object jsonableDuplicate = jsonableDuplicateMethod.Invoke(jsonableObject, null);
+                field.SetValue(duplicate, jsonableDuplicate);
+            }
+            else
+            {
+                object originalFieldObject = field.GetValue(this);
+                field.SetValue(duplicate, originalFieldObject);
+            }
+        }
+
         return duplicate;
     }
 

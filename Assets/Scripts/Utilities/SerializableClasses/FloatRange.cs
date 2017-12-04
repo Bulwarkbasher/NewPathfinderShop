@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FloatRange : Jsonable<FloatRange>
+public class FloatRange : DataPerEnumSetting<FloatRange>
 {
     public float min;
     public float max;
@@ -15,17 +15,16 @@ public class FloatRange : Jsonable<FloatRange>
         return UnityEngine.Random.Range(min, max + 1);
     }
 
-    public static FloatRange Create(float min, float max)
+    public void SetRange(float min, float max)
     {
-        FloatRange newFloatRange = CreateInstance<FloatRange>();
-        newFloatRange.min = min;
-        newFloatRange.max = max;
-        return newFloatRange;
+        this.min = min;
+        this.max = max;
     }
 
-    public static FloatRange CreateBlank ()
+    protected override void SetDefaults()
     {
-        return Create(0f, 0f);
+        min = 0;
+        max = 0;
     }
 
     protected override string ConvertToJsonString(string[] jsonSplitter)
