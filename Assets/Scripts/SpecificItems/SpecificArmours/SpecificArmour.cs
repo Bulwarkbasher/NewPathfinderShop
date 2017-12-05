@@ -9,7 +9,7 @@ public class SpecificArmour : SpecificItem<SpecificArmour>
     public ArmourQuality specialMaterial;
     public ArmourQuality[] specialAbilities = new ArmourQuality[0];
 
-    public static SpecificArmour CreateRandom(JsonableSelectedEnumSetting powerLevel, ArmourQualityConstraintsMatrix matrix, FloatRange budgetRange)
+    public static SpecificArmour CreateRandom(EnumValue powerLevel, ArmourQualityConstraintsMatrix matrix, FloatRange budgetRange)
     {
         SpecificArmour newSpecificArmour = CreateInstance<SpecificArmour>();
 
@@ -132,7 +132,7 @@ public class SpecificArmour : SpecificItem<SpecificArmour>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += JsonableSelectedEnumSetting.GetJsonString(powerLevel) + jsonSplitter[0];
+        jsonString += EnumValue.GetJsonString(powerLevel) + jsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString(cost) + jsonSplitter[0];
         jsonString += GetSafeJsonFromString(notes) + jsonSplitter[0];
         jsonString += Armour.GetJsonString(armour) + jsonSplitter[0];
@@ -150,7 +150,7 @@ public class SpecificArmour : SpecificItem<SpecificArmour>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        powerLevel = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[1]);
+        powerLevel = EnumValue.CreateFromJsonString(splitJsonString[1]);
         cost = Wrapper<float>.CreateFromJsonString(splitJsonString[2]);
         notes = CreateStringFromSafeJson(splitJsonString[3]);
         armour = Armour.CreateFromJsonString(splitJsonString[4]);

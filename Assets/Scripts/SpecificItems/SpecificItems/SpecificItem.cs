@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class SpecificItem<TChild> : Jsonable<TChild>
     where TChild : Jsonable<TChild>
 {
-    public JsonableSelectedEnumSetting powerLevel;
+    public EnumValue powerLevel;
     public float cost;
     public string notes;
 }

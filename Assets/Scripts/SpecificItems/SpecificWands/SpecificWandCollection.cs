@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificWandCollection : SpecificItemCollection<SpecificWand, SpecificWandCollection, SpellCollection>
 {
-    protected override SpecificWand CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budget)
+    protected override SpecificWand CreateRandomSpecificItem(EnumValue powerLevel, FloatRange budget)
     {
         return SpecificWand.CreateRandom(powerLevel, ingredient, budget);
     }

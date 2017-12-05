@@ -60,7 +60,7 @@ public class Shop : Jsonable<Shop>
     public string size;
     public float frequencyModifier;
     public float readyCash;
-    public JsonableBoolPerEnumSetting stockTypes;
+    public FlagsEnumSetting stockTypes;
     public int daysSinceLastRestock;
     public float totalCash;
 
@@ -229,7 +229,7 @@ public class Shop : Jsonable<Shop>
         jsonString += size + jsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString(frequencyModifier) + jsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString(readyCash) + jsonSplitter[0];
-        jsonString += JsonableBoolPerEnumSetting.GetJsonString(stockTypes) + jsonSplitter[0];
+        jsonString += FlagsEnumSetting.GetJsonString(stockTypes) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(daysSinceLastRestock) + jsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString(totalCash) + jsonSplitter[0];
 
@@ -267,7 +267,7 @@ public class Shop : Jsonable<Shop>
         size = splitJsonString[2];
         frequencyModifier = Wrapper<float>.CreateFromJsonString(splitJsonString[3]);
         readyCash = Wrapper<float>.CreateFromJsonString(splitJsonString[4]);
-        stockTypes = JsonableBoolPerEnumSetting.CreateFromJsonString(splitJsonString[5]);
+        stockTypes = FlagsEnumSetting.CreateFromJsonString(splitJsonString[5]);
         daysSinceLastRestock = Wrapper<int>.CreateFromJsonString(splitJsonString[6]);
         totalCash = Wrapper<float>.CreateFromJsonString(splitJsonString[7]);
 

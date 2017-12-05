@@ -25,7 +25,6 @@ public abstract class Saveable<TChild> : ScriptableObject
 
         return NameCheckResult.Good;
     }
-    // TODO: review all settingsd
     // Base class settings
     // params for create functions?
     // TODO: duplicate filtered

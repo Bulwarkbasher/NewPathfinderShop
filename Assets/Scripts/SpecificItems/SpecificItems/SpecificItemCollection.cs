@@ -170,7 +170,7 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
         {
             newSpecificItems[i] = specificItems[i];
         }
-        JsonableSelectedEnumSetting itemPowerLevel = JsonableSelectedEnumSetting.Create(powerLevelEnum, powerLevelEnum[powerLevel]);
+        EnumValue itemPowerLevel = EnumValue.Create(powerLevelEnum, powerLevelEnum[powerLevel]);
         newSpecificItems[specificItems.Length] = CreateRandomSpecificItem (itemPowerLevel, perPowerLevelItemBudgetRange[powerLevel]);
         specificItems = newSpecificItems;
     }
@@ -195,7 +195,7 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
 
     public void ReplaceWithRandom(int index, string powerLevel, FloatRangePerPowerLevel perPowerLevelItemBudgetRange)
     {
-        JsonableSelectedEnumSetting itemPowerLevel = JsonableSelectedEnumSetting.Create(powerLevelEnum, powerLevelEnum[powerLevel]);
+        EnumValue itemPowerLevel = EnumValue.Create(powerLevelEnum, powerLevelEnum[powerLevel]);
         specificItems[index] = CreateRandomSpecificItem (itemPowerLevel, perPowerLevelItemBudgetRange[itemPowerLevel]);
     }
 
@@ -240,12 +240,12 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
     {
         for(int i = 0; i < powerLevelEnum.Length; i++)
         {
-            JsonableSelectedEnumSetting powerLevel = JsonableSelectedEnumSetting.Create(powerLevelEnum, i);
+            EnumValue powerLevel = EnumValue.Create(powerLevelEnum, i);
             BuyStockAtPowerLevel(powerLevel, stockAvailability[powerLevel], perPowerLevelItemBudgetRange[powerLevel]);
         }
     }
 
-    protected void BuyStockAtPowerLevel(JsonableSelectedEnumSetting powerLevel, IntRange stockRange, FloatRange itemBudgetRange)
+    protected void BuyStockAtPowerLevel(EnumValue powerLevel, IntRange stockRange, FloatRange itemBudgetRange)
     {
         int desiredCount = stockRange.Random();
         int currentCount = GetTotalCount(powerLevel);
@@ -262,7 +262,7 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
             {
                 for (int i = 0; i < requiredStockCount; i++)
                 {
-                    JsonableSelectedEnumSetting itemPowerLevel = JsonableSelectedEnumSetting.Create(powerLevelEnum, powerLevel.index);
+                    EnumValue itemPowerLevel = EnumValue.Create(powerLevelEnum, powerLevelEnum[powerLevel]);
                     TSpecificItem randomSpecificItem = CreateRandomSpecificItem(itemPowerLevel, itemBudgetRange);
                     Add(randomSpecificItem);
                 }
@@ -270,7 +270,7 @@ public abstract class SpecificItemCollection<TSpecificItem, TChild, TIngredient>
         }
     }
 
-    protected abstract TSpecificItem CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange);
+    protected abstract TSpecificItem CreateRandomSpecificItem(EnumValue powerLevel, FloatRange budgetRange);
     
     protected override string ConvertToJsonString(string[] jsonSplitter)
     {

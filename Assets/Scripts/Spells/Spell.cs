@@ -24,13 +24,13 @@ public class Spell : Jsonable<Spell>
 
     public JsonableSelectedEnumPerEnum containerAllowances;      // containers, allowance
     public JsonableSelectedEnumPerEnum containerRarities;        // containers, rarities
-    public JsonableIntPerEnumSetting creatorLevels;              // int (level), characterClasses
-    public JsonableSelectedEnumSetting book;
+    public IntValuedEnum creatorLevels;              // int (level), characterClasses
+    public EnumValue book;
     public int page;
     public int materialCost;
 
     public static Spell Create(string name, JsonableSelectedEnumPerEnum containerAllowances, JsonableSelectedEnumPerEnum containerRarities,
-        JsonableIntPerEnumSetting creatorLevels, JsonableSelectedEnumSetting book, int page, int materialCost)
+        IntValuedEnum creatorLevels, EnumValue book, int page, int materialCost)
     {
         Spell newSpell = CreateInstance<Spell> ();
         newSpell.name = name;
@@ -48,8 +48,8 @@ public class Spell : Jsonable<Spell>
     {
         JsonableSelectedEnumPerEnum containerAllowances = JsonableSelectedEnumPerEnum.CreateBlank(spellContainers, allowances);
         JsonableSelectedEnumPerEnum containerRarities = JsonableSelectedEnumPerEnum.CreateBlank(spellContainers, rarities);
-        JsonableIntPerEnumSetting creatorLevels = JsonableIntPerEnumSetting.CreateBlank(characterClasses);
-        JsonableSelectedEnumSetting book = JsonableSelectedEnumSetting.CreateBlank(books);
+        IntValuedEnum creatorLevels = IntValuedEnum.CreateBlank(characterClasses);
+        EnumValue book = EnumValue.CreateBlank(books);
 
         return Create ("NAME", containerAllowances, containerRarities, creatorLevels, book, 239, 0);
     }
@@ -125,7 +125,7 @@ public class Spell : Jsonable<Spell>
 
         for (int i = 0; i < spells.Count; i++)
         {
-            JsonableSelectedEnumSetting rarity = spells[i].containerRarities[container];
+            EnumValue rarity = spells[i].containerRarities[container];
             weightSum += Campaign.WeightingPerRarity[rarity];
         }
 
@@ -134,7 +134,7 @@ public class Spell : Jsonable<Spell>
 
         for (int i = 0; i < spells.Count; i++)
         {
-            JsonableSelectedEnumSetting rarity = spells[i].containerRarities[container];
+            EnumValue rarity = spells[i].containerRarities[container];
             weightCounter -= Campaign.WeightingPerRarity[rarity];
 
             if (weightCounter <= 0f)
@@ -153,8 +153,8 @@ public class Spell : Jsonable<Spell>
         jsonString += name + jsonSplitter[0];
         jsonString += JsonableSelectedEnumPerEnum.GetJsonString(containerAllowances) + jsonSplitter[0];
         jsonString += JsonableSelectedEnumPerEnum.GetJsonString(containerRarities) + jsonSplitter[0];
-        jsonString += JsonableIntPerEnumSetting.GetJsonString(creatorLevels) + jsonSplitter[0];
-        jsonString += JsonableSelectedEnumSetting.GetJsonString(book) + jsonSplitter[0];
+        jsonString += IntValuedEnum.GetJsonString(creatorLevels) + jsonSplitter[0];
+        jsonString += EnumValue.GetJsonString(book) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(page) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(materialCost) + jsonSplitter[0];
 
@@ -166,8 +166,8 @@ public class Spell : Jsonable<Spell>
         name = splitJsonString[0];
         containerAllowances = JsonableSelectedEnumPerEnum.CreateFromJsonString(splitJsonString[1]);
         containerRarities = JsonableSelectedEnumPerEnum.CreateFromJsonString(splitJsonString[2]);
-        creatorLevels = JsonableIntPerEnumSetting.CreateFromJsonString(splitJsonString[4]);
-        book = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[5]);
+        creatorLevels = IntValuedEnum.CreateFromJsonString(splitJsonString[4]);
+        book = EnumValue.CreateFromJsonString(splitJsonString[5]);
         page = Wrapper<int>.CreateFromJsonString (splitJsonString[6]);
         materialCost = Wrapper<int>.CreateFromJsonString (splitJsonString[7]);
     }

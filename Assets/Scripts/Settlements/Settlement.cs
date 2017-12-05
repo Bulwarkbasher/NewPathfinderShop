@@ -98,7 +98,7 @@ public class Settlement : Jsonable<Settlement>
     }
 
     public string notes;
-    public JsonableSelectedEnumSetting size;
+    public EnumValue size;
     public RestockSettings restockSettings;
     public Shop[] shops = new Shop[0];
 
@@ -119,7 +119,7 @@ public class Settlement : Jsonable<Settlement>
     protected WeaponQualityConstraintsMatrix m_WeaponQualityConstraintsMatrix;
     protected ArmourQualityConstraintsMatrix m_ArmourQualityConstraintsMatrix;
 
-    public static Settlement Create (string name, string notes, JsonableSelectedEnumSetting size)
+    public static Settlement Create (string name, string notes, EnumValue size)
     {
         Settlement newSettlement = CreateInstance<Settlement>();
         newSettlement.name = name;
@@ -171,7 +171,7 @@ public class Settlement : Jsonable<Settlement>
 
         jsonString += name + jsonSplitter[0];
         jsonString += notes + jsonSplitter[0];
-        jsonString += JsonableSelectedEnumSetting.GetJsonString(size) + jsonSplitter[0];
+        jsonString += EnumValue.GetJsonString(size) + jsonSplitter[0];
         jsonString += RestockSettings.GetJsonString(restockSettings) + jsonSplitter[0];
 
         jsonString += m_AvailabilityPerShopSizePerStockType.name + jsonSplitter[0];
@@ -204,7 +204,7 @@ public class Settlement : Jsonable<Settlement>
     {
         name = splitJsonString[0];
         notes = splitJsonString[1];
-        size = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[2]);
+        size = EnumValue.CreateFromJsonString(splitJsonString[2]);
         restockSettings = RestockSettings.CreateFromJsonString(splitJsonString[3]);
 
         m_AvailabilityPerShopSizePerStockType = AvailabilityPerStockTypePerShopSize.Load(splitJsonString[4]);

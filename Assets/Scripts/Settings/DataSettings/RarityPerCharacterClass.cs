@@ -5,48 +5,22 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 [CreateAssetMenu]
-public class RarityPerCharacterClass : Saveable<RarityPerCharacterClass>
+public class RarityPerCharacterClass : SaveableWithEnumJsonables<RarityPerCharacterClass, EnumValue>
 {
-    public EnumSetting characterClassEnum;
-    public JsonableSelectedEnumSetting[] selectedRarityEnums;
-
-    public JsonableSelectedEnumSetting this[string characterClass]
+    public static RarityPerCharacterClass Create(string name, EnumSetting containers, EnumValue[] containerRarities)
     {
-        get
-        {
-            for (int i = 0; i < characterClassEnum.Length; i++)
-            {
-                if (characterClassEnum[i] == characterClass)
-                {
-                    return selectedRarityEnums[i];
-                }
-            }
-            throw new ArgumentOutOfRangeException(nameof(characterClass), characterClass, null);
-        }
-    }
-
-    public JsonableSelectedEnumSetting this[int index]
-    {
-        get
-        {
-            return selectedRarityEnums[index];
-        }
-    }
-
-    public static JsonableSelectedEnumPerEnum Create(string name, EnumSetting containers, JsonableSelectedEnumSetting[] containerRarities)
-    {
-        JsonableSelectedEnumPerEnum newSpellContainerRarities = CreateInstance<JsonableSelectedEnumPerEnum>();
-        newSpellContainerRarities.enumSetting = containers;
-        newSpellContainerRarities.selectedEnumSettings = new JsonableSelectedEnumSetting[containers.Length];
+        RarityPerCharacterClass newSpellContainerRarities = CreateInstance<RarityPerCharacterClass>();
+        newSpellContainerRarities.m_EnumSetting = containers;
+        newSpellContainerRarities.m_EnumedJsonables = new EnumValue[containers.Length];
         return newSpellContainerRarities;
     }
 
-    public static JsonableSelectedEnumPerEnum CreateBlank(EnumSetting containers, EnumSetting rarities)
+    public static RarityPerCharacterClass CreateBlank(EnumSetting containers, EnumSetting rarities)
     {
-        JsonableSelectedEnumSetting[] containerRarities = new JsonableSelectedEnumSetting[containers.Length];
+        EnumValue[] containerRarities = new EnumValue[containers.Length];
         for (int i = 0; i < containerRarities.Length; i++)
         {
-            containerRarities[i] = JsonableSelectedEnumSetting.CreateBlank(rarities);
+            containerRarities[i] = EnumValue.CreateBlank(rarities);
         }
         return Create("NAME", containers, containerRarities);
     }
@@ -55,11 +29,11 @@ public class RarityPerCharacterClass : Saveable<RarityPerCharacterClass>
     {
         string jsonString = "";
 
-        jsonString += characterClassEnum.name + jsonSplitter[0];
-
-        for (int i = 0; i < selectedRarityEnums.Length; i++)
+        jsonString += name + jsonSplitter[0];
+        jsonString += m_EnumSetting.name + jsonSplitter[0];
+        for (int i = 0; i < m_EnumedJsonables.Length; i++)
         {
-            jsonString += JsonableSelectedEnumSetting.GetJsonString(selectedRarityEnums[i]) + jsonSplitter[0];
+            jsonString += EnumValue.GetJsonString(m_EnumedJsonables[i]) + jsonSplitter[0];
         }
 
         return jsonString;
@@ -67,12 +41,13 @@ public class RarityPerCharacterClass : Saveable<RarityPerCharacterClass>
 
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
-        characterClassEnum = EnumSetting.Load(splitJsonString[0]);
+        name = splitJsonString[0];
+        m_EnumSetting = EnumSetting.Load(splitJsonString[1]);
 
-        selectedRarityEnums = new JsonableSelectedEnumSetting[splitJsonString.Length - 1];
-        for (int i = 0; i < selectedRarityEnums.Length; i++)
+        m_EnumedJsonables = new EnumValue[splitJsonString.Length - 2];
+        for (int i = 0; i < m_EnumedJsonables.Length; i++)
         {
-            selectedRarityEnums[i] = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[i + 1]);
+            m_EnumedJsonables[i] = EnumValue.CreateFromJsonString(splitJsonString[i + 2]);
         }
     }
 
@@ -80,21 +55,21 @@ public class RarityPerCharacterClass : Saveable<RarityPerCharacterClass>
     {
         float weightSum = 0f;
 
-        for (int i = 0; i < selectedRarityEnums.Length; i++)
+        for (int i = 0; i < m_EnumedJsonables.Length; i++)
         {
-            weightSum += Campaign.WeightingPerRarity[selectedRarityEnums[i]];
+            weightSum += Campaign.WeightingPerRarity[m_EnumedJsonables[i]];
         }
 
         float randomWeightSum = Random.Range(0f, weightSum);
         float weightCounter = randomWeightSum;
 
-        for (int i = 0; i < selectedRarityEnums.Length; i++)
+        for (int i = 0; i < m_EnumedJsonables.Length; i++)
         {
-            weightCounter -= Campaign.WeightingPerRarity[selectedRarityEnums[i]];
+            weightCounter -= Campaign.WeightingPerRarity[m_EnumedJsonables[i]];
 
             if (weightCounter <= 0f)
             {
-                return characterClassEnum[i];
+                return m_EnumSetting[i];
             }
         }
 
@@ -105,27 +80,27 @@ public class RarityPerCharacterClass : Saveable<RarityPerCharacterClass>
     {
         float weightSum = 0f;
 
-        for (int i = 0; i < selectedRarityEnums.Length; i++)
+        for (int i = 0; i < m_EnumedJsonables.Length; i++)
         {
             if (characterCasterTypes[i] == "NoSpells")
                 continue;
 
-            weightSum += Campaign.WeightingPerRarity[selectedRarityEnums[i]];
+            weightSum += Campaign.WeightingPerRarity[m_EnumedJsonables[i]];
         }
 
         float randomWeightSum = Random.Range(0f, weightSum);
         float weightCounter = randomWeightSum;
 
-        for (int i = 0; i < selectedRarityEnums.Length; i++)
+        for (int i = 0; i < m_EnumedJsonables.Length; i++)
         {
             if (characterCasterTypes[i] == "NoSpells")
                 continue;
 
-            weightCounter -= Campaign.WeightingPerRarity[selectedRarityEnums[i]];
+            weightCounter -= Campaign.WeightingPerRarity[m_EnumedJsonables[i]];
 
             if (weightCounter <= 0f)
             {
-                return characterClassEnum[i];
+                return m_EnumSetting[i];
             }
         }
 

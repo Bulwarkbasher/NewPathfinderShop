@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificWondrousCollection : SpecificItemCollection<SpecificWondrous, SpecificWondrousCollection, WondrousCollection>
 {
-    protected override SpecificWondrous CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange)
+    protected override SpecificWondrous CreateRandomSpecificItem(EnumValue powerLevel, FloatRange budgetRange)
     {
         return SpecificWondrous.CreateRandom(powerLevel, budgetRange, ingredient);
     }

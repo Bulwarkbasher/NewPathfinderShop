@@ -48,9 +48,9 @@ public class SpellCollection : Saveable<SpellCollection>
 
             // Check the spell can be cast by selected creator.
             bool canBeCreatedByCreator = false;
-            for (int j = 0; j < currentSpell.creatorLevels.pairings.Length; j++)
+            for (int j = 0; j < currentSpell.creatorLevels.Length; j++)
             {
-                if (currentSpell.creatorLevels.enumSetting[j] == specificPotion.creator && currentSpell.creatorLevels.pairings[j] >= 0)
+                if (currentSpell.creatorLevels.enumSetting[j] == specificPotion.creator && currentSpell.creatorLevels[j] >= 0)
                     canBeCreatedByCreator = true;
             }
             if (!canBeCreatedByCreator)
@@ -120,9 +120,9 @@ public class SpellCollection : Saveable<SpellCollection>
 
             // Check the spell can be cast by selected creator.
             bool canBeCreatedByCreator = false;
-            for (int j = 0; j < currentSpell.creatorLevels.pairings.Length; j++)
+            for (int j = 0; j < currentSpell.creatorLevels.Length; j++)
             {
-                if (currentSpell.creatorLevels.enumSetting[j] == specificScroll.creator && currentSpell.creatorLevels.pairings[j] >= 0)
+                if (currentSpell.creatorLevels.enumSetting[j] == specificScroll.creator && currentSpell.creatorLevels[j] >= 0)
                     canBeCreatedByCreator = true;
             }
             if (!canBeCreatedByCreator)
@@ -192,9 +192,9 @@ public class SpellCollection : Saveable<SpellCollection>
 
             // Check the spell can be cast by selected creator.
             bool canBeCreatedByCreator = false;
-            for (int j = 0; j < currentSpell.creatorLevels.pairings.Length; j++)
+            for (int j = 0; j < currentSpell.creatorLevels.Length; j++)
             {
-                if (currentSpell.creatorLevels.enumSetting[j] == specificWand.creator && currentSpell.creatorLevels.pairings[j] >= 0)
+                if (currentSpell.creatorLevels.enumSetting[j] == specificWand.creator && currentSpell.creatorLevels[j] >= 0)
                     canBeCreatedByCreator = true;
             }
             if (!canBeCreatedByCreator)

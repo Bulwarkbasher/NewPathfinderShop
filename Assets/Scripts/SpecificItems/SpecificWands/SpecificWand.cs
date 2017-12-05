@@ -9,7 +9,7 @@ public class SpecificWand : SpecificItem<SpecificWand>
     public int casterLevel;
     public int charges;
 
-    public static SpecificWand CreateRandom(JsonableSelectedEnumSetting powerLevel, SpellCollection availableSpells, FloatRange budgetRange)
+    public static SpecificWand CreateRandom(EnumValue powerLevel, SpellCollection availableSpells, FloatRange budgetRange)
     {
         SpecificWand newSpecificWand = CreateInstance<SpecificWand> ();
         newSpecificWand.powerLevel = powerLevel;
@@ -23,7 +23,7 @@ public class SpecificWand : SpecificItem<SpecificWand>
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
-        jsonString += JsonableSelectedEnumSetting.GetJsonString(powerLevel) + jsonSplitter[0];
+        jsonString += EnumValue.GetJsonString(powerLevel) + jsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString(cost) + jsonSplitter[0];
         jsonString += GetSafeJsonFromString(notes) + jsonSplitter[0];
         jsonString += Spell.GetJsonString(spell) + jsonSplitter[0];
@@ -37,7 +37,7 @@ public class SpecificWand : SpecificItem<SpecificWand>
     protected override void SetupFromSplitJsonString (string[] splitJsonString)
     {
         name = splitJsonString[0];
-        powerLevel = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[1]);
+        powerLevel = EnumValue.CreateFromJsonString(splitJsonString[1]);
         cost = Wrapper<float>.CreateFromJsonString(splitJsonString[2]);
         notes = CreateStringFromSafeJson(splitJsonString[3]);
         spell = Spell.CreateFromJsonString(splitJsonString[4]);

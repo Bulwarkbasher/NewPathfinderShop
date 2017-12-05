@@ -4,11 +4,11 @@ using UnityEngine;
 public abstract class Quality<TQuality> : Item<TQuality>
     where TQuality : Quality<TQuality>
 {
-    public JsonableSelectedEnumSetting qualityType;
+    public EnumValue qualityType;
     public int bonusEquivalent;
 
-    public static TQuality Create(string name, int cost, JsonableSelectedEnumSetting rarity, JsonableSelectedEnumSetting book, int page,
-        JsonableSelectedEnumSetting qualityType, int bonusEquivalent)
+    public static TQuality Create(string name, int cost, EnumValue rarity, EnumValue book, int page,
+        EnumValue qualityType, int bonusEquivalent)
     {
         TQuality newWeaponQuality = CreateInstance<TQuality>();
         newWeaponQuality.name = name;
@@ -22,8 +22,8 @@ public abstract class Quality<TQuality> : Item<TQuality>
 
     public static TQuality CreateBlank(EnumSetting rarities, EnumSetting books, EnumSetting qualityTypes)
     {
-        return Create("NAME", 0, JsonableSelectedEnumSetting.CreateBlank(rarities), JsonableSelectedEnumSetting.CreateBlank(books), 999,
-            JsonableSelectedEnumSetting.CreateBlank(qualityTypes), 0);
+        return Create("NAME", 0, EnumValue.CreateBlank(rarities), EnumValue.CreateBlank(books), 999,
+            EnumValue.CreateBlank(qualityTypes), 0);
     }
 
     public static int BonusToCost (int bonus)
@@ -72,10 +72,10 @@ public abstract class Quality<TQuality> : Item<TQuality>
 
         jsonString += name + jsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString(cost) + jsonSplitter[0];
-        jsonString += JsonableSelectedEnumSetting.GetJsonString(rarity) + jsonSplitter[0];
-        jsonString += JsonableSelectedEnumSetting.GetJsonString(book) + jsonSplitter[0];
+        jsonString += EnumValue.GetJsonString(rarity) + jsonSplitter[0];
+        jsonString += EnumValue.GetJsonString(book) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(page) + jsonSplitter[0];
-        jsonString += JsonableSelectedEnumSetting.GetJsonString(qualityType) + jsonSplitter[0];
+        jsonString += EnumValue.GetJsonString(qualityType) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(bonusEquivalent) + jsonSplitter[0];
 
         return jsonString;
@@ -85,10 +85,10 @@ public abstract class Quality<TQuality> : Item<TQuality>
     {
         name = splitJsonString[0];
         cost = Wrapper<float>.CreateFromJsonString(splitJsonString[1]);
-        rarity = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[2]);
-        book = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[3]);
+        rarity = EnumValue.CreateFromJsonString(splitJsonString[2]);
+        book = EnumValue.CreateFromJsonString(splitJsonString[3]);
         page = Wrapper<int>.CreateFromJsonString(splitJsonString[4]);
-        qualityType = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[5]);
+        qualityType = EnumValue.CreateFromJsonString(splitJsonString[5]);
         bonusEquivalent = Wrapper<int>.CreateFromJsonString(splitJsonString[6]);
     }
 }

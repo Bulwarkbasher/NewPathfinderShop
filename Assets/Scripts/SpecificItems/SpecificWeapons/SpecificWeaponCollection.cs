@@ -3,7 +3,7 @@ using System;
 
 public class SpecificWeaponCollection : SpecificItemCollection<SpecificWeapon, SpecificWeaponCollection, WeaponQualityConstraintsMatrix>
 {
-    protected override SpecificWeapon CreateRandomSpecificItem (JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange)
+    protected override SpecificWeapon CreateRandomSpecificItem (EnumValue powerLevel, FloatRange budgetRange)
     {
         return SpecificWeapon.CreateRandom(powerLevel, ingredient, budgetRange);
     }

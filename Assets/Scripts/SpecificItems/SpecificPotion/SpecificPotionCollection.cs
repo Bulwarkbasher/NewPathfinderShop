@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificPotionCollection : SpecificItemCollection<SpecificPotion, SpecificPotionCollection, SpellCollection>
 {
-    protected override SpecificPotion CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budget)
+    protected override SpecificPotion CreateRandomSpecificItem(EnumValue powerLevel, FloatRange budget)
     {
         return SpecificPotion.CreateRandom(powerLevel, ingredient, budget);
     }

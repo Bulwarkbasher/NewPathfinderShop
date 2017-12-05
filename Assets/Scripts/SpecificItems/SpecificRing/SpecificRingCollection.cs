@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificRingCollection : SpecificItemCollection<SpecificRing, SpecificRingCollection, RingCollection>
 {
-    protected override SpecificRing CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange)
+    protected override SpecificRing CreateRandomSpecificItem(EnumValue powerLevel, FloatRange budgetRange)
     {
         return SpecificRing.CreateRandom(powerLevel, budgetRange, ingredient);
     }

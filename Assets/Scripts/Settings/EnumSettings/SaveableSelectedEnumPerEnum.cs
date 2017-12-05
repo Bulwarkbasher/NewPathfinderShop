@@ -7,9 +7,9 @@ using UnityEngine;
 public class SaveableSelectedEnumPerEnum : Saveable<SaveableSelectedEnumPerEnum>
 {
     public EnumSetting enumSetting;
-    public JsonableSelectedEnumSetting[] selectedEnumSettings;
+    public EnumValue[] selectedEnumSettings;
 
-    public JsonableSelectedEnumSetting this[string selectedEnum]
+    public EnumValue this[string selectedEnum]
     {
         get
         {
@@ -24,7 +24,7 @@ public class SaveableSelectedEnumPerEnum : Saveable<SaveableSelectedEnumPerEnum>
         }
     }
 
-    public JsonableSelectedEnumSetting this [int index]
+    public EnumValue this [int index]
     {
         get
         {
@@ -32,20 +32,20 @@ public class SaveableSelectedEnumPerEnum : Saveable<SaveableSelectedEnumPerEnum>
         }
     }
 
-    public static SaveableSelectedEnumPerEnum Create(string name, EnumSetting enumSetting, JsonableSelectedEnumSetting[] selectedEnumSettings)
+    public static SaveableSelectedEnumPerEnum Create(string name, EnumSetting enumSetting, EnumValue[] selectedEnumSettings)
     {
         SaveableSelectedEnumPerEnum newSelectedEnumPerEnum = CreateInstance<SaveableSelectedEnumPerEnum>();
         newSelectedEnumPerEnum.enumSetting = enumSetting;
-        newSelectedEnumPerEnum.selectedEnumSettings = new JsonableSelectedEnumSetting[enumSetting.Length];
+        newSelectedEnumPerEnum.selectedEnumSettings = new EnumValue[enumSetting.Length];
         return newSelectedEnumPerEnum;
     }
 
     public static SaveableSelectedEnumPerEnum CreateBlank(EnumSetting enumSetting, EnumSetting enumSettings)
     {
-        JsonableSelectedEnumSetting[] selectedEnumSettings = new JsonableSelectedEnumSetting[enumSetting.Length];
+        EnumValue[] selectedEnumSettings = new EnumValue[enumSetting.Length];
         for (int i = 0; i < selectedEnumSettings.Length; i++)
         {
-            selectedEnumSettings[i] = JsonableSelectedEnumSetting.CreateBlank(enumSettings);
+            selectedEnumSettings[i] = EnumValue.CreateBlank(enumSettings);
         }
         return Create("NAME", enumSetting, selectedEnumSettings);
     }
@@ -58,7 +58,7 @@ public class SaveableSelectedEnumPerEnum : Saveable<SaveableSelectedEnumPerEnum>
 
         for (int i = 0; i < selectedEnumSettings.Length; i++)
         {
-            jsonString += JsonableSelectedEnumSetting.GetJsonString(selectedEnumSettings[i]) + jsonSplitter[0];
+            jsonString += EnumValue.GetJsonString(selectedEnumSettings[i]) + jsonSplitter[0];
         }
 
         return jsonString;
@@ -68,10 +68,10 @@ public class SaveableSelectedEnumPerEnum : Saveable<SaveableSelectedEnumPerEnum>
     {
         enumSetting = EnumSetting.Load(splitJsonString[0]);
 
-        selectedEnumSettings = new JsonableSelectedEnumSetting[splitJsonString.Length - 1];
+        selectedEnumSettings = new EnumValue[splitJsonString.Length - 1];
         for (int i = 0; i < selectedEnumSettings.Length; i++)
         {
-            selectedEnumSettings[i] = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[i + 1]);
+            selectedEnumSettings[i] = EnumValue.CreateFromJsonString(splitJsonString[i + 1]);
         }
     }
 }

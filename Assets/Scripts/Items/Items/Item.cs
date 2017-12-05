@@ -7,11 +7,11 @@ public abstract class Item<TItem> : Jsonable<TItem>
 {
     public float cost;
     //public Item.Rarity rarity;
-    public JsonableSelectedEnumSetting rarity;
-    public JsonableSelectedEnumSetting book;
+    public EnumValue rarity;
+    public EnumValue book;
     public int page;
 
-    public static TItem Create(string name, int cost, JsonableSelectedEnumSetting rarity, JsonableSelectedEnumSetting book,
+    public static TItem Create(string name, int cost, EnumValue rarity, EnumValue book,
         int page)
     {
         TItem newItem = CreateInstance<TItem>();
@@ -25,7 +25,7 @@ public abstract class Item<TItem> : Jsonable<TItem>
 
     public static TItem CreateBlank(EnumSetting rarities, EnumSetting books)
     {
-        return Create("NAME", 0, JsonableSelectedEnumSetting.CreateBlank(rarities), JsonableSelectedEnumSetting.CreateBlank(books), 0);
+        return Create("NAME", 0, EnumValue.CreateBlank(rarities), EnumValue.CreateBlank(books), 0);
     }
 
     public static TItem PickItem (TItem[] items)
@@ -59,8 +59,8 @@ public abstract class Item<TItem> : Jsonable<TItem>
 
         jsonString += name + jsonSplitter[0];
         jsonString += Wrapper<float>.GetJsonString(cost) + jsonSplitter[0];
-        jsonString += JsonableSelectedEnumSetting.GetJsonString(rarity) + jsonSplitter[0];
-        jsonString += JsonableSelectedEnumSetting.GetJsonString(book) + jsonSplitter[0];
+        jsonString += EnumValue.GetJsonString(rarity) + jsonSplitter[0];
+        jsonString += EnumValue.GetJsonString(book) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(page) + jsonSplitter[0];
 
         return jsonString;
@@ -70,8 +70,8 @@ public abstract class Item<TItem> : Jsonable<TItem>
     {
         name = splitJsonString[0];
         cost = Wrapper<float>.CreateFromJsonString(splitJsonString[1]);
-        rarity = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[2]);
-        book = JsonableSelectedEnumSetting.CreateFromJsonString(splitJsonString[3]);
+        rarity = EnumValue.CreateFromJsonString(splitJsonString[2]);
+        book = EnumValue.CreateFromJsonString(splitJsonString[3]);
         page = Wrapper<int>.CreateFromJsonString(splitJsonString[4]);
     }
 }

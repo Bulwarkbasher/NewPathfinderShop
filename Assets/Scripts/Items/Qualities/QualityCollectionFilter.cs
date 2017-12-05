@@ -7,12 +7,12 @@ public abstract class QualityCollectionFilter<TQualityCollectionFilter, TQuality
     where TQualityCollection : QualityCollection<TQualityCollectionFilter, TQualityCollection, TQuality>
     where TQuality : Quality<TQuality>
 {
-    public JsonableBoolPerEnumSetting allowedQualityTypes;
+    public FlagsEnumSetting allowedQualityTypes;
     public IntRange bonusEquivalencyRange;
 
     public static TQualityCollectionFilter Create (string nameSearch, string nameStartingLetter,
-        FloatRange costRange, JsonableBoolPerEnumSetting allowedRarities, JsonableBoolPerEnumSetting allowedBooks,
-        JsonableBoolPerEnumSetting allowedQualityTypes, IntRange bonusEquivalencyRange)
+        FloatRange costRange, FlagsEnumSetting allowedRarities, FlagsEnumSetting allowedBooks,
+        FlagsEnumSetting allowedQualityTypes, IntRange bonusEquivalencyRange)
     {
         TQualityCollectionFilter newItemCollectionFilter = CreateInstance<TQualityCollectionFilter>();
         newItemCollectionFilter.nameSearch = nameSearch;
@@ -29,9 +29,9 @@ public abstract class QualityCollectionFilter<TQualityCollectionFilter, TQuality
     {
         FloatRange costRange = FloatRange.Create();
         costRange.SetRange(float.NegativeInfinity, float.PositiveInfinity);
-        JsonableBoolPerEnumSetting allowedRarities = JsonableBoolPerEnumSetting.CreateBlank(rarities, true);
-        JsonableBoolPerEnumSetting allowedBooks = JsonableBoolPerEnumSetting.CreateBlank(books, true);
-        JsonableBoolPerEnumSetting allowedQualityTypes = JsonableBoolPerEnumSetting.CreateBlank(qualityTypes, true);
+        FlagsEnumSetting allowedRarities = FlagsEnumSetting.CreateBlank(rarities, true);
+        FlagsEnumSetting allowedBooks = FlagsEnumSetting.CreateBlank(books, true);
+        FlagsEnumSetting allowedQualityTypes = FlagsEnumSetting.CreateBlank(qualityTypes, true);
         IntRange bonusEquivalencyRange = IntRange.Create();
         bonusEquivalencyRange.SetRange(int.MinValue, int.MaxValue);
         return Create("", "", costRange, allowedRarities, allowedBooks, allowedQualityTypes, bonusEquivalencyRange);
@@ -67,9 +67,9 @@ public abstract class QualityCollectionFilter<TQualityCollectionFilter, TQuality
         jsonString += GetSafeJsonFromString(nameSearch) + jsonSplitter[0];
         jsonString += GetSafeJsonFromString(nameStartsWith) + jsonSplitter[0];
         jsonString += FloatRange.GetJsonString(costRange) + jsonSplitter[0];
-        jsonString += JsonableBoolPerEnumSetting.GetJsonString(allowedRarities) + jsonSplitter[0];
-        jsonString += JsonableBoolPerEnumSetting.GetJsonString(allowedBooks) + jsonString[0];
-        jsonString += JsonableBoolPerEnumSetting.GetJsonString(allowedQualityTypes) + jsonSplitter[0];
+        jsonString += FlagsEnumSetting.GetJsonString(allowedRarities) + jsonSplitter[0];
+        jsonString += FlagsEnumSetting.GetJsonString(allowedBooks) + jsonString[0];
+        jsonString += FlagsEnumSetting.GetJsonString(allowedQualityTypes) + jsonSplitter[0];
         jsonString += IntRange.GetJsonString(bonusEquivalencyRange) + jsonSplitter[0];
 
         return jsonString;
@@ -81,9 +81,9 @@ public abstract class QualityCollectionFilter<TQualityCollectionFilter, TQuality
         nameSearch = CreateStringFromSafeJson(splitJsonString[0]);
         nameStartsWith = CreateStringFromSafeJson(splitJsonString[1]);
         costRange = FloatRange.CreateFromJsonString(splitJsonString[2]);
-        allowedRarities = JsonableBoolPerEnumSetting.CreateFromJsonString(splitJsonString[3]);
-        allowedBooks = JsonableBoolPerEnumSetting.CreateFromJsonString(splitJsonString[4]);
-        allowedQualityTypes = JsonableBoolPerEnumSetting.CreateFromJsonString(splitJsonString[5]);
+        allowedRarities = FlagsEnumSetting.CreateFromJsonString(splitJsonString[3]);
+        allowedBooks = FlagsEnumSetting.CreateFromJsonString(splitJsonString[4]);
+        allowedQualityTypes = FlagsEnumSetting.CreateFromJsonString(splitJsonString[5]);
         bonusEquivalencyRange = IntRange.CreateFromJsonString(splitJsonString[6]);
     }
 }

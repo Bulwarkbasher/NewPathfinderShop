@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificRodCollection : SpecificItemCollection<SpecificRod, SpecificRodCollection, RodCollection>
 {
-    protected override SpecificRod CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange)
+    protected override SpecificRod CreateRandomSpecificItem(EnumValue powerLevel, FloatRange budgetRange)
     {
         return SpecificRod.CreateRandom(powerLevel, budgetRange, ingredient);
     }

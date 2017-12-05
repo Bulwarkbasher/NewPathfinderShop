@@ -11,10 +11,10 @@ public abstract class ItemCollectionFilter<TItemCollectionFilter, TItemCollectio
     public string nameSearch;
     public string nameStartsWith;
     public FloatRange costRange;
-    public JsonableBoolPerEnumSetting allowedRarities;
-    public JsonableBoolPerEnumSetting allowedBooks;
+    public FlagsEnumSetting allowedRarities;
+    public FlagsEnumSetting allowedBooks;
 
-    public static TItemCollectionFilter Create(string nameSearch, string nameStartingLetter, FloatRange costRange, JsonableBoolPerEnumSetting allowedRarities, JsonableBoolPerEnumSetting allowedBooks)
+    public static TItemCollectionFilter Create(string nameSearch, string nameStartingLetter, FloatRange costRange, FlagsEnumSetting allowedRarities, FlagsEnumSetting allowedBooks)
     {
         TItemCollectionFilter newItemCollectionFilter = CreateInstance<TItemCollectionFilter>();
         newItemCollectionFilter.nameSearch = nameSearch;
@@ -29,8 +29,8 @@ public abstract class ItemCollectionFilter<TItemCollectionFilter, TItemCollectio
     {
         FloatRange costRange = FloatRange.Create();
         costRange.SetRange(float.NegativeInfinity, float.PositiveInfinity);
-        JsonableBoolPerEnumSetting allowedRarities = JsonableBoolPerEnumSetting.CreateBlank(rarities, true);
-        JsonableBoolPerEnumSetting allowedBooks = JsonableBoolPerEnumSetting.CreateBlank(books, true);
+        FlagsEnumSetting allowedRarities = FlagsEnumSetting.CreateBlank(rarities, true);
+        FlagsEnumSetting allowedBooks = FlagsEnumSetting.CreateBlank(books, true);
         return Create("", "", costRange, allowedRarities, allowedBooks);
     }
 
@@ -68,8 +68,8 @@ public abstract class ItemCollectionFilter<TItemCollectionFilter, TItemCollectio
         jsonString += GetSafeJsonFromString(nameSearch) + jsonSplitter[0];
         jsonString += GetSafeJsonFromString(nameStartsWith) + jsonSplitter[0];
         jsonString += FloatRange.GetJsonString(costRange) + jsonSplitter[0];
-        jsonString += JsonableBoolPerEnumSetting.GetJsonString(allowedRarities) + jsonSplitter[0];
-        jsonString += JsonableBoolPerEnumSetting.GetJsonString(allowedBooks) + jsonString[0];
+        jsonString += FlagsEnumSetting.GetJsonString(allowedRarities) + jsonSplitter[0];
+        jsonString += FlagsEnumSetting.GetJsonString(allowedBooks) + jsonString[0];
 
         return jsonString;
     }
@@ -80,7 +80,7 @@ public abstract class ItemCollectionFilter<TItemCollectionFilter, TItemCollectio
         nameSearch = CreateStringFromSafeJson(splitJsonString[0]);
         nameStartsWith = CreateStringFromSafeJson(splitJsonString[1]);
         costRange = FloatRange.CreateFromJsonString(splitJsonString[2]);
-        allowedRarities = JsonableBoolPerEnumSetting.CreateFromJsonString(splitJsonString[3]);
-        allowedBooks = JsonableBoolPerEnumSetting.CreateFromJsonString(splitJsonString[4]);
+        allowedRarities = FlagsEnumSetting.CreateFromJsonString(splitJsonString[3]);
+        allowedBooks = FlagsEnumSetting.CreateFromJsonString(splitJsonString[4]);
     }
 }

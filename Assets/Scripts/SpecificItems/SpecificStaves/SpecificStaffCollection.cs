@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificStaffCollection : SpecificItemCollection<SpecificStaff, SpecificStaffCollection, StaffCollection>
 {
-    protected override SpecificStaff CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budgetRange)
+    protected override SpecificStaff CreateRandomSpecificItem(EnumValue powerLevel, FloatRange budgetRange)
     {
         return SpecificStaff.CreateRandom(powerLevel, budgetRange, ingredient);
     }

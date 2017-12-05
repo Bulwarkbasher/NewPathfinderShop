@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpecificScrollCollection : SpecificItemCollection<SpecificScroll, SpecificScrollCollection, SpellCollection>
 {
-    protected override SpecificScroll CreateRandomSpecificItem(JsonableSelectedEnumSetting powerLevel, FloatRange budget)
+    protected override SpecificScroll CreateRandomSpecificItem(EnumValue powerLevel, FloatRange budget)
     {
         return SpecificScroll.CreateRandom(powerLevel, ingredient, budget);
     }
