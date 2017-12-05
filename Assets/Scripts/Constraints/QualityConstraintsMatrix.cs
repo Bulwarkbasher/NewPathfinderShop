@@ -35,6 +35,23 @@ public class QualityConstraintsMatrix<TConstraintsMatrix, TItemCollectionFilter,
         return newMatrix;
     }
 
+    public TConstraintsMatrix CreateCopyFromFilter ()
+    {
+        ApplyFilter();
+        TConstraintsMatrix newConstraintsMatrix = Create("CopyOf" + name, itemCollection.CreateCopyFromFilter(), qualityCollection.CreateCopyFromFilter());
+        for(int i = 0; i < newConstraintsMatrix.itemCollection.Length; i++)
+        {
+            for(int j = 0; j < newConstraintsMatrix.qualityCollection.Length; j++)
+            {
+                newConstraintsMatrix.matrix[i, j] = CanItemUseQuality(newConstraintsMatrix.itemCollection[i], newConstraintsMatrix.qualityCollection[j]);
+            }
+        }
+
+        SaveableHolder.AddSaveable(newConstraintsMatrix);
+
+        return newConstraintsMatrix;
+    }
+
     public void ApplyFilter ()
     {
         itemCollection.ApplyFilter();

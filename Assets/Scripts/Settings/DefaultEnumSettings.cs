@@ -13,25 +13,60 @@ public class DefaultEnumSettings : MonoBehaviour
     static DefaultEnumSettings s_Instance;
 
     [SerializeField]
-    protected EnumSetting m_DefaultBooks;
+    protected EnumSetting m_Books;
     [SerializeField]
-    protected EnumSetting m_DefaultCharacterClasses;
+    protected EnumSetting m_CharacterClasses;
     [SerializeField]
-    protected EnumSetting m_DefaultShopSizes;
+    protected EnumSetting m_ShopSizes;
+    [SerializeField]
+    protected EnumSetting m_SettlementSizes;
+    [SerializeField]
+    protected EnumSetting m_StockTypes;
+    [SerializeField]
+    protected EnumSetting m_Rarities;
+    [SerializeField]
+    protected EnumSetting m_SpellContainers;
+    [SerializeField]
+    protected EnumSetting m_CasterTypes;
 
-    public static EnumSetting DefaultBooks
+    public static EnumSetting Books
     {
-        get { return Instance.m_DefaultBooks; }
+        get { return Instance.m_Books; }
     }
 
-    public static EnumSetting DefaultCharacterClasses
+    public static EnumSetting CharacterClasses
     {
-        get { return Instance.m_DefaultCharacterClasses; }
+        get { return Instance.m_CharacterClasses; }
     }
 
-    public static EnumSetting DefaultShopSizes
+    public static EnumSetting ShopSizes
     {
-        get { return Instance.m_DefaultShopSizes; }
+        get { return Instance.m_ShopSizes; }
+    }
+
+    public static EnumSetting SettlementSizes
+    {
+        get { return Instance.m_SettlementSizes; }
+    }
+
+    public static EnumSetting StockTypes
+    {
+        get { return Instance.m_StockTypes; }
+    }
+
+    public static EnumSetting Rarities
+    {
+        get { return Instance.m_Rarities; }
+    }
+
+    public static EnumSetting SpellContainers
+    {
+        get { return Instance.m_SpellContainers; }
+    }
+
+    public static EnumSetting CasterTypes
+    {
+        get { return Instance.m_CasterTypes; }
     }
 
     void Awake()

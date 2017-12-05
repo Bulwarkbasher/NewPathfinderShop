@@ -25,10 +25,6 @@ public abstract class Saveable<TChild> : ScriptableObject
 
         return NameCheckResult.Good;
     }
-    // Base class settings
-    // params for create functions?
-    // TODO: duplicate filtered
-    // NOTE: created settings should be blank, duplicated settings should have original settings
 
     public TChild Duplicate()
     {

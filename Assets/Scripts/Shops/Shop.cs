@@ -6,54 +6,67 @@ public class Shop : Jsonable<Shop>
     public RarityPerCharacterClassPerSpellContainer RarityPerCharacterClassPerSpellContainer
     {
         get { return m_RarityPerCharacterClassPerSpellContainer; }
+        set { if (!SettingsAreLocked) m_RarityPerCharacterClassPerSpellContainer = value; }
     }
     public FloatRangePerPowerLevelPerStockType BudgetRangePerPowerLevelPerStockType
     {
         get { return m_BudgetRangePerPowerLevelPerStockType; }
+        set { if (!SettingsAreLocked) m_BudgetRangePerPowerLevelPerStockType = value; }
     }
     public ArmourCollection ArmourCollection
     {
         get { return m_ArmourCollection; }
+        set { if (!SettingsAreLocked) m_ArmourCollection = value; }
     }
     public SpellCollection SpellCollection
     {
         get { return m_SpellCollection; }
+        set { if (!SettingsAreLocked) m_SpellCollection = value; }
     }
     public WeaponCollection WeaponCollection
     {
         get { return m_WeaponCollection; }
+        set { if (!SettingsAreLocked) m_WeaponCollection = value; }
     }
     public RingCollection RingCollection
     {
         get { return m_RingCollection; }
+        set { if (!SettingsAreLocked) m_RingCollection = value; }
     }
     public RodCollection RodCollection
     {
         get { return m_RodCollection; }
+        set { if (!SettingsAreLocked) m_RodCollection = value; }
     }
     public StaffCollection StaffCollection
     {
         get { return m_StaffCollection; }
+        set { if (!SettingsAreLocked) m_StaffCollection = value; }
     }
     public WondrousCollection WondrousCollection
     {
         get { return m_WondrousCollection; }
+        set { if (!SettingsAreLocked) m_WondrousCollection = value; }
     }
     public ArmourQualityCollection ArmourQualityCollection
     {
         get { return m_ArmourQualityCollection; }
+        set { if (!SettingsAreLocked) m_ArmourQualityCollection = value; }
     }
     public WeaponQualityCollection WeaponQualityCollection
     {
         get { return m_WeaponQualityCollection; }
+        set { if (!SettingsAreLocked) m_WeaponQualityCollection = value; }
     }
     public WeaponQualityConstraintsMatrix WeaponQualityConstraintsMatrix
     {
         get { return m_WeaponQualityConstraintsMatrix; }
+        set { if (!SettingsAreLocked) m_WeaponQualityConstraintsMatrix = value; }
     }
     public ArmourQualityConstraintsMatrix ArmourQualityConstraintsMatrix
     {
         get { return m_ArmourQualityConstraintsMatrix; }
+        set { if (!SettingsAreLocked) m_ArmourQualityConstraintsMatrix = value; }
     }
 
     public string notes;
@@ -87,6 +100,11 @@ public class Shop : Jsonable<Shop>
     protected WeaponQualityCollection m_WeaponQualityCollection;
     protected WeaponQualityConstraintsMatrix m_WeaponQualityConstraintsMatrix;
     protected ArmourQualityConstraintsMatrix m_ArmourQualityConstraintsMatrix;
+
+    public bool SettingsAreLocked
+    {
+        get { return stockTypes.AnyFlag; }
+    }
 
     public static Shop Create(string name, Settlement settlement, string shopSize)
     {

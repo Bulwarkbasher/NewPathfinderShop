@@ -17,6 +17,17 @@ public class FlagsEnumSetting : JsonableWithEnumValues<FlagsEnumSetting, bool>
         set { enumedValues[enumSetting[selectedEnum]] = value; }
     }
 
+    public bool AnyFlag
+    {
+        get
+        {
+            bool anyFlag = false;
+            for (int i = 0; i < enumedValues.Length; i++)
+                anyFlag |= enumedValues[i];
+            return anyFlag;
+        }
+    }
+
     public static FlagsEnumSetting Create(EnumSetting enumSetting, bool[] enumedValues)
     {
         FlagsEnumSetting newFlagEnumSetting = CreateInstance<FlagsEnumSetting>();

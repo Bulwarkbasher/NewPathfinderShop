@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public abstract class ItemCollection<TItemCollectionFilter, TItemCollection, TItem> : Saveable<TItemCollection>
     where TItemCollectionFilter : ItemCollectionFilter<TItemCollectionFilter, TItemCollection, TItem>
@@ -23,20 +24,43 @@ public abstract class ItemCollection<TItemCollectionFilter, TItemCollection, TIt
 
     public static TItemCollection Create(string name, EnumSetting books)
     {
-        TItemCollection newArmourCollection = CreateInstance<TItemCollection>();
+        TItemCollection newItemCollection = CreateInstance<TItemCollection>();
 
         if (CheckName(name) == NameCheckResult.Bad)
             throw new UnityException("Collection name invalid, contains invalid characters.");
         if (CheckName(name) == NameCheckResult.IsDefault)
             throw new UnityException("Collection name invalid, name cannot start with Default");
 
-        newArmourCollection.name = name;
-        newArmourCollection.items = new TItem[0];
-        newArmourCollection.books = books;
+        newItemCollection.name = name;
+        newItemCollection.items = new TItem[0];
+        newItemCollection.books = books;
 
-        SaveableHolder.AddSaveable(newArmourCollection);
+        SaveableHolder.AddSaveable(newItemCollection);
 
-        return newArmourCollection;
+        return newItemCollection;
+    }
+
+    public TItemCollection CreateCopyFromFilter ()
+    {
+        itemCollectionFilter.ApplyFilter(this as TItemCollection);
+        TItemCollection newItemCollection = CreateInstance<TItemCollection>();
+        newItemCollection.name = "CopyOf" + name;
+        newItemCollection.rarities = rarities;
+        newItemCollection.books = books;
+        newItemCollection.itemCollectionFilter = itemCollectionFilter.Duplicate();
+
+        List<TItem> filteredItems = new List<TItem>();
+        for(int i = 0; i < items.Length; i++)
+        {
+            if (doesItemPassFilter[i])
+                filteredItems.Add(items[i]);
+        }
+        newItemCollection.items = filteredItems.ToArray();
+        newItemCollection.doesItemPassFilter = new bool[newItemCollection.items.Length];
+
+        SaveableHolder.AddSaveable(newItemCollection);
+
+        return newItemCollection;
     }
 
     public void ApplyFilter ()
