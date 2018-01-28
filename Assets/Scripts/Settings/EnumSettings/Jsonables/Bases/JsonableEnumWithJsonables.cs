@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class JsonableWithEnumJsonables<TSaveable, TEnumedJsonables> : Jsonable<TSaveable>
-    where TSaveable : JsonableWithEnumJsonables<TSaveable, TEnumedJsonables>
+public abstract class JsonableEnumWithJsonables<TSaveable, TEnumedJsonables> : Jsonable<TSaveable>
+    where TSaveable : JsonableEnumWithJsonables<TSaveable, TEnumedJsonables>
     where TEnumedJsonables : Jsonable<TEnumedJsonables>
 {
     public EnumSetting enumSetting;

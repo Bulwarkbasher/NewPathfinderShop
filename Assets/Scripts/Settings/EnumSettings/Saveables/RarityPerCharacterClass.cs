@@ -7,22 +7,22 @@ using Random = UnityEngine.Random;
 [CreateAssetMenu]
 public class RarityPerCharacterClass : SaveableWithEnumJsonables<RarityPerCharacterClass, EnumValue>
 {
-    public static RarityPerCharacterClass Create(string name, EnumSetting containers, EnumValue[] containerRarities)
+    public static RarityPerCharacterClass Create(string name, EnumSetting characterClasses, EnumValue[] containerRarities)
     {
-        RarityPerCharacterClass newSpellContainerRarities = CreateInstance<RarityPerCharacterClass>();
-        newSpellContainerRarities.m_EnumSetting = containers;
-        newSpellContainerRarities.m_EnumedJsonables = new EnumValue[containers.Length];
-        return newSpellContainerRarities;
+        RarityPerCharacterClass newRarityPerCharacterClass = CreateInstance<RarityPerCharacterClass>();
+        newRarityPerCharacterClass.m_EnumSetting = characterClasses;
+        newRarityPerCharacterClass.m_EnumedJsonables = new EnumValue[characterClasses.Length];
+        return newRarityPerCharacterClass;
     }
 
-    public static RarityPerCharacterClass CreateBlank(EnumSetting containers, EnumSetting rarities)
+    public static RarityPerCharacterClass CreateBlank(EnumSetting characterClasses, EnumSetting rarities)
     {
-        EnumValue[] containerRarities = new EnumValue[containers.Length];
-        for (int i = 0; i < containerRarities.Length; i++)
+        EnumValue[] classRarities = new EnumValue[characterClasses.Length];
+        for (int i = 0; i < classRarities.Length; i++)
         {
-            containerRarities[i] = EnumValue.CreateBlank(rarities);
+            classRarities[i] = EnumValue.CreateBlank(rarities);
         }
-        return Create("NAME", containers, containerRarities);
+        return Create("NAME", characterClasses, classRarities);
     }
 
     protected override string ConvertToJsonString(string[] jsonSplitter)

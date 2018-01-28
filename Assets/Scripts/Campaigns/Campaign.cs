@@ -40,6 +40,13 @@ public class Campaign : Saveable<Campaign>
         set { if (!Current.SettingsAreLocked) Current.m_Rarities = value; }
     }
 
+    public static EnumSetting Allowances
+    {
+        get { return Current.m_Allowances; }
+        set { if (!Current.SettingsAreLocked) Current.m_Allowances = value; }
+    }
+    // TODO: container rarities setting(s)?
+
     public static bool UsesAutomaticBonusProgressionRules
     {
         get { return Current.m_UsesAutomaticBonusProgressionRules; }
@@ -172,6 +179,7 @@ public class Campaign : Saveable<Campaign>
     protected EnumSetting m_ShopSizes;
     protected EnumSetting m_SettlementSizes;
     protected EnumSetting m_Rarities;
+    protected EnumSetting m_Allowances;
     protected bool m_UsesAutomaticBonusProgressionRules;
     protected bool m_UsesMinimumCasterLevelForSpellContainerItems;
     protected SaveableSelectedEnumPerEnum m_CasterTypesPerCharacterClass;
@@ -217,6 +225,7 @@ public class Campaign : Saveable<Campaign>
         campaign.m_ShopSizes = DefaultEnumSettings.ShopSizes;
         campaign.m_SettlementSizes = DefaultEnumSettings.SettlementSizes;
         campaign.m_Rarities = DefaultEnumSettings.Rarities;
+        campaign.m_Allowances = DefaultEnumSettings.Allowances;
         campaign.m_UsesAutomaticBonusProgressionRules = usesAutomaticBonusProgressionRules;
         campaign.m_UsesMinimumCasterLevelForSpellContainerItems = useMinimumCasterLevel;
         campaign.m_CasterTypesPerCharacterClass = DefaultResourceHolder.CasterTypesPerCharacterClass;
@@ -275,6 +284,7 @@ public class Campaign : Saveable<Campaign>
         jsonString += m_ShopSizes.name + jsonSplitter[0];
         jsonString += m_SettlementSizes.name + jsonSplitter[0];
         jsonString += m_Rarities.name + jsonSplitter[0];
+        jsonString += m_Allowances.name + jsonSplitter[0];
         jsonString += Wrapper<bool>.GetJsonString(m_UsesAutomaticBonusProgressionRules) + jsonSplitter[0];
         jsonString += Wrapper<bool>.GetJsonString(m_UsesMinimumCasterLevelForSpellContainerItems) + jsonString[0];
         jsonString += m_CasterTypesPerCharacterClass.name + jsonSplitter[0];
@@ -314,32 +324,33 @@ public class Campaign : Saveable<Campaign>
         m_ShopSizes = EnumSetting.Load(splitJsonString[4]);
         m_SettlementSizes = EnumSetting.Load(splitJsonString[5]);
         m_Rarities = EnumSetting.Load(splitJsonString[6]);
-        m_UsesAutomaticBonusProgressionRules = Wrapper<bool>.CreateFromJsonString(splitJsonString[7]);
-        m_UsesMinimumCasterLevelForSpellContainerItems = Wrapper<bool>.CreateFromJsonString(splitJsonString[8]);
-        m_CasterTypesPerCharacterClass = SaveableSelectedEnumPerEnum.Load(splitJsonString[9]);
-        m_WeightingPerRarity = WeightingPerRarity.Load(splitJsonString[10]);
-        m_RestockSettingsPerSettlementSize = RestockSettingsPerSettlementSize.Load(splitJsonString[11]);
-        m_AvailabilityPerShopSizePerStockType = AvailabilityPerStockTypePerShopSize.Load(splitJsonString[12]);
-        m_RestockFrequencyModifiersPerShopSize = RestockFrequencyModifiersPerShopSize.Load(splitJsonString[13]);
-        m_ReadyCashPerShopSize = ReadyCashPerShopSize.Load(splitJsonString[14]);
-        m_RarityPerCharacterClassPerSpellContainer = RarityPerCharacterClassPerSpellContainer.Load(splitJsonString[15]);
-        m_BudgetRangePerPowerLevelPerStockType = FloatRangePerPowerLevelPerStockType.Load(splitJsonString[16]);
-        m_ArmourCollection = ArmourCollection.Load(splitJsonString[17]);
-        m_SpellCollection = SpellCollection.Load(splitJsonString[18]);
-        m_WeaponCollection = WeaponCollection.Load(splitJsonString[19]);
-        m_RingCollection = RingCollection.Load(splitJsonString[20]);
-        m_RodCollection = RodCollection.Load(splitJsonString[21]);
-        m_StaffCollection = StaffCollection.Load(splitJsonString[22]);
-        m_WondrousCollection = WondrousCollection.Load(splitJsonString[23]);
-        m_ArmourQualityCollection = ArmourQualityCollection.Load(splitJsonString[24]);
-        m_WeaponQualityCollection = WeaponQualityCollection.Load(splitJsonString[25]);
-        m_WeaponQualityConstraintsMatrix = WeaponQualityConstraintsMatrix.Load(splitJsonString[26]);
-        m_ArmourQualityConstraintsMatrix = ArmourQualityConstraintsMatrix.Load(splitJsonString[27]);
+        m_Allowances = EnumSetting.Load(splitJsonString[7]);
+        m_UsesAutomaticBonusProgressionRules = Wrapper<bool>.CreateFromJsonString(splitJsonString[8]);
+        m_UsesMinimumCasterLevelForSpellContainerItems = Wrapper<bool>.CreateFromJsonString(splitJsonString[9]);
+        m_CasterTypesPerCharacterClass = SaveableSelectedEnumPerEnum.Load(splitJsonString[10]);
+        m_WeightingPerRarity = WeightingPerRarity.Load(splitJsonString[11]);
+        m_RestockSettingsPerSettlementSize = RestockSettingsPerSettlementSize.Load(splitJsonString[12]);
+        m_AvailabilityPerShopSizePerStockType = AvailabilityPerStockTypePerShopSize.Load(splitJsonString[13]);
+        m_RestockFrequencyModifiersPerShopSize = RestockFrequencyModifiersPerShopSize.Load(splitJsonString[14]);
+        m_ReadyCashPerShopSize = ReadyCashPerShopSize.Load(splitJsonString[15]);
+        m_RarityPerCharacterClassPerSpellContainer = RarityPerCharacterClassPerSpellContainer.Load(splitJsonString[16]);
+        m_BudgetRangePerPowerLevelPerStockType = FloatRangePerPowerLevelPerStockType.Load(splitJsonString[17]);
+        m_ArmourCollection = ArmourCollection.Load(splitJsonString[18]);
+        m_SpellCollection = SpellCollection.Load(splitJsonString[19]);
+        m_WeaponCollection = WeaponCollection.Load(splitJsonString[20]);
+        m_RingCollection = RingCollection.Load(splitJsonString[21]);
+        m_RodCollection = RodCollection.Load(splitJsonString[22]);
+        m_StaffCollection = StaffCollection.Load(splitJsonString[23]);
+        m_WondrousCollection = WondrousCollection.Load(splitJsonString[24]);
+        m_ArmourQualityCollection = ArmourQualityCollection.Load(splitJsonString[25]);
+        m_WeaponQualityCollection = WeaponQualityCollection.Load(splitJsonString[26]);
+        m_WeaponQualityConstraintsMatrix = WeaponQualityConstraintsMatrix.Load(splitJsonString[27]);
+        m_ArmourQualityConstraintsMatrix = ArmourQualityConstraintsMatrix.Load(splitJsonString[28]);
         
-        settlements = new Settlement[splitJsonString.Length - 28];
+        settlements = new Settlement[splitJsonString.Length - 29];
         for (int i = 0; i < settlements.Length; i++)
         {
-            settlements[i] = Settlement.CreateFromJsonString(splitJsonString[i + 28]);
+            settlements[i] = Settlement.CreateFromJsonString(splitJsonString[i + 29]);
         }
 
         current = this;

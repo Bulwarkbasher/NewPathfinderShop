@@ -1,17 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [CreateAssetMenu]
 public class SpellCollection : Saveable<SpellCollection>
 {
+    public EnumSetting spellContainers;
+    public EnumSetting allowances;
+    public EnumSetting rarities;
     public EnumSetting characterClasses;
     public SaveableSelectedEnumPerEnum characterCasterTypes;
     public EnumSetting books;
-    public RarityPerCharacterClassPerSpellContainer perContainerPerCreatorRarity;
+    public RarityPerCharacterClassPerSpellContainer rarityPerCharacterClassPerSpellContainer;
+    public SpellCollectionFilter spellCollectionFilter;
     public Spell[] spells = new Spell[0];
+    public bool[] doesSpellPassFilter = new bool[0];
 
-    public static SpellCollection Create (string name, EnumSetting books, RarityPerCharacterClassPerSpellContainer perContrainerPerCreatorRarity)
+    public static SpellCollection Create (string name, EnumSetting spellContainers, EnumSetting allowances,
+        EnumSetting rarities, EnumSetting characterClasses, SaveableSelectedEnumPerEnum characterCasterTypes,
+        EnumSetting books, RarityPerCharacterClassPerSpellContainer rarityPerCharacterClassPerSpellContainer)
     {
         SpellCollection newSpellCollection = CreateInstance<SpellCollection> ();
 
@@ -21,8 +29,13 @@ public class SpellCollection : Saveable<SpellCollection>
             throw new UnityException("Spell Collection name invalid, name cannot start with Default");
 
         newSpellCollection.name = name;
+        newSpellCollection.spellContainers = spellContainers;
+        newSpellCollection.allowances = allowances;
+        newSpellCollection.rarities = rarities;
+        newSpellCollection.characterClasses = characterClasses;
+        newSpellCollection.characterCasterTypes = characterCasterTypes;
         newSpellCollection.books = books;
-        newSpellCollection.perContainerPerCreatorRarity = perContrainerPerCreatorRarity;
+        newSpellCollection.spellCollectionFilter = SpellCollectionFilter.CreateBlank(allowances, rarities, characterClasses, books);
         newSpellCollection.spells = new Spell[0];
 
         SaveableHolder.AddSaveable(newSpellCollection);
@@ -35,7 +48,7 @@ public class SpellCollection : Saveable<SpellCollection>
         if (spells.Length == 0)
             return;
 
-        RarityPerCharacterClass perCreatorRarity = perContainerPerCreatorRarity["Potion"];
+        RarityPerCharacterClass perCreatorRarity = rarityPerCharacterClassPerSpellContainer["Potion"];
         specificPotion.creator = perCreatorRarity.PickSpellCastingClass(characterCasterTypes);
         string creatorCasterType = characterCasterTypes[specificPotion.creator];
 
@@ -107,7 +120,7 @@ public class SpellCollection : Saveable<SpellCollection>
         if (spells.Length == 0)
             return;
 
-        RarityPerCharacterClass perCreatorRarity = perContainerPerCreatorRarity["Scroll"];
+        RarityPerCharacterClass perCreatorRarity = rarityPerCharacterClassPerSpellContainer["Scroll"];
         specificScroll.creator = perCreatorRarity.PickSpellCastingClass(characterCasterTypes);
         string creatorCasterType = characterCasterTypes[specificScroll.creator];
 
@@ -179,7 +192,7 @@ public class SpellCollection : Saveable<SpellCollection>
         if (spells.Length == 0)
             return;
 
-        RarityPerCharacterClass perCreatorRarity = perContainerPerCreatorRarity["Wand"];
+        RarityPerCharacterClass perCreatorRarity = rarityPerCharacterClassPerSpellContainer["Wand"];
         specificWand.creator = perCreatorRarity.PickSpellCastingClass(characterCasterTypes);
         string creatorCasterType = characterCasterTypes[specificWand.creator];
 
@@ -246,6 +259,12 @@ public class SpellCollection : Saveable<SpellCollection>
         specificWand.cost = specificWand.spell.GetWandCost(specificWand.creator, randomCasterLevelsForSpells[spellIndex], specificWand.charges);        
     }
 
+    public void AddSpell ()
+    {
+        Spell newSpell = Spell.CreateBlank(spellContainers, allowances, rarities, characterClasses, characterCasterTypes, books);
+        AddSpell(newSpell);
+    }
+    
     public void AddSpell(Spell newSpell)
     {
         Spell[] newSpells = new Spell[spells.Length + 1];
@@ -266,15 +285,59 @@ public class SpellCollection : Saveable<SpellCollection>
         }
     }
 
+    public void SortByNameAssending()
+    {
+        spells = spells.OrderBy(spell => spell.name).ToArray();
+    }
+
+    public void SortByNameDecending()
+    {
+        spells = spells.OrderByDescending(spell => spell.name).ToArray();
+    }
+
+    public void SortByCostAssending()
+    {
+        spells = spells.OrderBy(spell => spell.materialCost).ToArray();
+    }
+
+    public void SortByCostDecending()
+    {
+        spells = spells.OrderByDescending(spell => spell.materialCost).ToArray();
+    }
+
+    public void SortByBookAssending()
+    {
+        spells = spells.OrderBy(spell => spell.book.GetIndex()).ToArray();
+    }
+
+    public void SortByBookDecending()
+    {
+        spells = spells.OrderByDescending(spell => spell.book.GetIndex()).ToArray();
+    }
+
+    public void SortByPageAssending()
+    {
+        spells = spells.OrderBy(spell => spell.page).ToArray();
+    }
+
+    public void SortByPageDecending()
+    {
+        spells = spells.OrderByDescending(spell => spell.page).ToArray();
+    }
+
     protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
 
         jsonString += name + jsonSplitter[0];
+        jsonString += spellContainers.name + jsonSplitter[0];
+        jsonString += allowances.name + jsonSplitter[0];
+        jsonString += rarities.name + jsonSplitter[0];
         jsonString += characterClasses.name + jsonSplitter[0];
         jsonString += characterCasterTypes.name + jsonSplitter[0];
         jsonString += books.name + jsonSplitter[0];
-        jsonString += perContainerPerCreatorRarity.name + jsonSplitter[0];
+        jsonString += rarityPerCharacterClassPerSpellContainer.name + jsonSplitter[0];
+        jsonString += SpellCollectionFilter.GetJsonString(spellCollectionFilter) + jsonSplitter[0];
 
         for (int i = 0; i < spells.Length; i++)
         {
@@ -287,15 +350,21 @@ public class SpellCollection : Saveable<SpellCollection>
     protected override void SetupFromSplitJsonString(string[] splitJsonString)
     {
         name = splitJsonString[0];
-        characterClasses = EnumSetting.Load(splitJsonString[1]);
-        characterCasterTypes = SaveableSelectedEnumPerEnum.Load(splitJsonString[2]);
-        books = EnumSetting.Load(splitJsonString[3]);
-        perContainerPerCreatorRarity = RarityPerCharacterClassPerSpellContainer.Load(splitJsonString[4]);
+        spellContainers = EnumSetting.Load(splitJsonString[1]);
+        allowances = EnumSetting.Load(splitJsonString[2]);
+        rarities = EnumSetting.Load(splitJsonString[3]);
+        characterClasses = EnumSetting.Load(splitJsonString[4]);
+        characterCasterTypes = SaveableSelectedEnumPerEnum.Load(splitJsonString[5]);
+        books = EnumSetting.Load(splitJsonString[6]);
+        rarityPerCharacterClassPerSpellContainer = RarityPerCharacterClassPerSpellContainer.Load(splitJsonString[7]);
+        spellCollectionFilter = SpellCollectionFilter.CreateFromJsonString(splitJsonString[8]);
 
-        spells = new Spell[splitJsonString.Length - 5];
+        spells = new Spell[splitJsonString.Length - 9];
         for (int i = 0; i < spells.Length; i++)
         {
-            spells[i] = Spell.CreateFromJsonString(splitJsonString[i + 5]);
+            spells[i] = Spell.CreateFromJsonString(splitJsonString[i + 9]);
         }
+
+        spellCollectionFilter.ApplyFilter(this);
     }
 }

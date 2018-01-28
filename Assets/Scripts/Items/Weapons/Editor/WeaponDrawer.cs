@@ -9,7 +9,7 @@ public class WeaponDrawer : JsonableDrawer
     SerializedProperty m_BookProp;
     SerializedProperty m_PageProp;
     
-    protected override int GetPropertyLineCount (SerializedProperty property, GUIContent label)
+    protected override float GetJsonablePropertyHeight (SerializedProperty property, GUIContent label)
     {
         int count = 5;
         return count;
@@ -23,21 +23,21 @@ public class WeaponDrawer : JsonableDrawer
         m_PageProp = m_SerializedObject.FindProperty("page");
     }
 
-    protected override void OnElementGUI (Rect totalPropertyRect, SerializedProperty property, GUIContent label, Rect nameFoldoutLineRect)
+    protected override void OnJsonableGUI (Rect totalPropertyRect, SerializedProperty property, GUIContent label)
     {
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EditorGUI.PropertyField(nameFoldoutLineRect, m_NameProp);
+        totalPropertyRect.y += totalPropertyRect.height;
+        EditorGUI.PropertyField(totalPropertyRect, m_NameProp);
 
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EditorGUI.PropertyField(nameFoldoutLineRect, m_CostProp);
+        totalPropertyRect.y += totalPropertyRect.height;
+        EditorGUI.PropertyField(totalPropertyRect, m_CostProp);
 
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EditorGUI.PropertyField(nameFoldoutLineRect, m_RarityProp);
+        totalPropertyRect.y += totalPropertyRect.height;
+        EditorGUI.PropertyField(totalPropertyRect, m_RarityProp);
 
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EnumSettingEditorHelpers.DrawEnumSettingIndexPopup(nameFoldoutLineRect, m_BookProp);
+        totalPropertyRect.y += totalPropertyRect.height;
+        EnumSettingEditorHelpers.DrawEnumSettingIndexPopup(totalPropertyRect, m_BookProp);
 
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EditorGUI.PropertyField(nameFoldoutLineRect, m_PageProp);
+        totalPropertyRect.y += totalPropertyRect.height;
+        EditorGUI.PropertyField(totalPropertyRect, m_PageProp);
     }
 }

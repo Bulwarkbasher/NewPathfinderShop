@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JsonableSelectedEnumPerEnum : JsonableWithEnumJsonables<JsonableSelectedEnumPerEnum, EnumValue>
+public class JsonableSelectedEnumPerEnum : JsonableEnumWithJsonables<JsonableSelectedEnumPerEnum, EnumValue>
 {
     public static JsonableSelectedEnumPerEnum Create (EnumSetting enumSetting, EnumValue[] selectedEnumSettings)
     {

@@ -5,29 +5,12 @@ using Random = UnityEngine.Random;
 
 public class Spell : Jsonable<Spell>
 {
-    /*[Flags]
-    public enum Allowance
-    {
-        Default,
-        CanBe,
-        CannotBe,
-    }
-
-    [Flags]
-    public enum Container
-    {
-        Potion,
-        Scroll,
-        Wand,
-    }*/
-
-
     public JsonableSelectedEnumPerEnum containerAllowances;      // containers, allowance
     public JsonableSelectedEnumPerEnum containerRarities;        // containers, rarities
     public IntValuedEnum creatorLevels;              // int (level), characterClasses
     public EnumValue book;
     public int page;
-    public int materialCost;
+    public float materialCost;
 
     public static Spell Create(string name, JsonableSelectedEnumPerEnum containerAllowances, JsonableSelectedEnumPerEnum containerRarities,
         IntValuedEnum creatorLevels, EnumValue book, int page, int materialCost)
@@ -56,11 +39,11 @@ public class Spell : Jsonable<Spell>
 
     public static int MinCasterLevel(string casterType, int spellLevel)
     {
-        if (casterType == "Level4Spells")
+        if (casterType == "Level 4 Spells")
             return spellLevel * 3 + 1;
-        if (casterType == "Level6Spells")
+        if (casterType == "Level 6 Spells")
             return spellLevel * 3 - 2;
-        if (casterType == "Level9Spells")
+        if (casterType == "Level 9 Spells")
             return spellLevel * 2 - 1;
         return -1;
     }
@@ -68,7 +51,7 @@ public class Spell : Jsonable<Spell>
     public float GetPotionCost(string creator, int creatorLevel)
     {
         string allowance = containerAllowances["Potion"];
-        if (allowance == "CannotBe")
+        if (allowance == "Cannot Be")
             return -1f;
 
         int creationLevel = creatorLevels[creator];
@@ -86,7 +69,7 @@ public class Spell : Jsonable<Spell>
     public float GetScrollCost(string creator, int creatorLevel)
     {
         string allowance = containerAllowances["Scroll"];
-        if (allowance == "CannotBe")
+        if (allowance == "Cannot Be")
             return -1f;
 
         int creationLevel = creatorLevels[creator];
@@ -104,7 +87,7 @@ public class Spell : Jsonable<Spell>
     public float GetWandCost(string creator, int creatorLevel, int charges)
     {
         string allowance = containerAllowances["Wand"];
-        if (allowance == "CannotBe")
+        if (allowance == "Cannot Be")
             return -1f;
 
         int creationLevel = creatorLevels[creator];
@@ -156,7 +139,7 @@ public class Spell : Jsonable<Spell>
         jsonString += IntValuedEnum.GetJsonString(creatorLevels) + jsonSplitter[0];
         jsonString += EnumValue.GetJsonString(book) + jsonSplitter[0];
         jsonString += Wrapper<int>.GetJsonString(page) + jsonSplitter[0];
-        jsonString += Wrapper<int>.GetJsonString(materialCost) + jsonSplitter[0];
+        jsonString += Wrapper<float>.GetJsonString(materialCost) + jsonSplitter[0];
 
         return jsonString;
     }
@@ -169,6 +152,6 @@ public class Spell : Jsonable<Spell>
         creatorLevels = IntValuedEnum.CreateFromJsonString(splitJsonString[4]);
         book = EnumValue.CreateFromJsonString(splitJsonString[5]);
         page = Wrapper<int>.CreateFromJsonString (splitJsonString[6]);
-        materialCost = Wrapper<int>.CreateFromJsonString (splitJsonString[7]);
+        materialCost = Wrapper<float>.CreateFromJsonString (splitJsonString[7]);
     }
 }

@@ -142,7 +142,7 @@ public class TableEditor<TElement>
     {
         if (GUILayout.Button("Add"))
         {
-            arrayProp.AddObjectAsSubAsset<TElement> (collectionAsset, true);
+            arrayProp.AddObjectToArrayAsSubAsset<TElement> (collectionAsset, true);
         }
     }
 }

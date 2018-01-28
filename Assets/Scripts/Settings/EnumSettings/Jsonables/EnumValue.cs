@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnumValue : JsonableWithEnumValues<EnumValue, bool>
+public class EnumValue : JsonableEnumWithValues<EnumValue, bool>
 {
     public static EnumValue Create (EnumSetting enumSetting, int index)
     {
@@ -39,5 +39,13 @@ public class EnumValue : JsonableWithEnumValues<EnumValue, bool>
         for (int i = 0; i < enumedValues.Length; i++)
             enumedValues[i] = false;
         enumedValues[enumSetting[selectedEnum]] = true;
+    }
+
+    public int GetIndex ()
+    {
+        for (int i = 0; i < enumedValues.Length; i++)
+            if (enumedValues[i])
+                return i;
+        return -1;
     }
 }

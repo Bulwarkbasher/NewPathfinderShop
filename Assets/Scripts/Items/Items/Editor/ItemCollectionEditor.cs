@@ -32,7 +32,7 @@ public abstract class ItemCollectionEditor<TCollectionFilter, TCollection, TItem
             {
                 if (GUILayout.Button("Remove"))
                 {
-                    m_ItemsProp.RemoveObjectAsSubAsset(i);
+                    m_ItemsProp.RemoveArrayElementObjectAsSubAsset(i);
                 }
             }
         }
@@ -91,7 +91,7 @@ public abstract class ItemCollectionEditor<TCollectionFilter, TCollection, TItem
             }
 
             TItem newElement = createBlankFunction();
-            m_ItemsProp.AddObjectAsSubAsset(m_Asset, true, newElement);
+            m_ItemsProp.AddObjectToArrayAsSubAsset(m_Asset, true, newElement);
             m_ItemsProp.GetArrayElementAtIndex(m_ItemsProp.arraySize - 1).isExpanded = true;
         }
     }
@@ -107,7 +107,7 @@ public abstract class ItemCollectionEditor<TCollectionFilter, TCollection, TItem
             }
 
             TItem newElement = createBlankFunction(arg0);
-            m_ItemsProp.AddObjectAsSubAsset(m_Asset, true, newElement);
+            m_ItemsProp.AddObjectToArrayAsSubAsset(m_Asset, true, newElement);
             m_ItemsProp.GetArrayElementAtIndex(m_ItemsProp.arraySize - 1).isExpanded = true;
         }
     }
@@ -123,7 +123,7 @@ public abstract class ItemCollectionEditor<TCollectionFilter, TCollection, TItem
             }
 
             TItem newElement = createBlankFunction(arg0, arg1);
-            m_ItemsProp.AddObjectAsSubAsset(m_Asset, true, newElement);
+            m_ItemsProp.AddObjectToArrayAsSubAsset(m_Asset, true, newElement);
             m_ItemsProp.GetArrayElementAtIndex(m_ItemsProp.arraySize - 1).isExpanded = true;
         }
     }
@@ -139,7 +139,7 @@ public abstract class ItemCollectionEditor<TCollectionFilter, TCollection, TItem
             }
 
             TItem newElement = createBlankFunction(arg0, arg1, arg2);
-            m_ItemsProp.AddObjectAsSubAsset(m_Asset, true, newElement);
+            m_ItemsProp.AddObjectToArrayAsSubAsset(m_Asset, true, newElement);
             m_ItemsProp.GetArrayElementAtIndex(m_ItemsProp.arraySize - 1).isExpanded = true;
         }
     }

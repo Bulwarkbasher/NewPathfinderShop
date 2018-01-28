@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class JsonableWithEnumValues<TSaveable, TEnumedValues> : Jsonable<TSaveable>
-    where TSaveable : JsonableWithEnumValues<TSaveable, TEnumedValues>
+public abstract class JsonableEnumWithValues<TSaveable, TEnumedValues> : Jsonable<TSaveable>
+    where TSaveable : JsonableEnumWithValues<TSaveable, TEnumedValues>
     where TEnumedValues : struct, IComparable, IConvertible, IComparable<TEnumedValues>, IEquatable<TEnumedValues>
 {
     public EnumSetting enumSetting;

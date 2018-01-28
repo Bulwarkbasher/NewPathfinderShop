@@ -12,7 +12,7 @@ public class WeaponQualityDrawer : JsonableDrawer
     SerializedProperty m_QualityTypeProp;
     SerializedProperty m_BonusEquivProp;
 
-    protected override int GetPropertyLineCount (SerializedProperty property, GUIContent label)
+    protected override float GetJsonablePropertyHeight (SerializedProperty property, GUIContent label)
     {
         int count = 6;
         //if ((Quality.QualityType)m_QualityTypeProp.intValue != Quality.QualityType.SpecialMaterial)
@@ -34,29 +34,29 @@ public class WeaponQualityDrawer : JsonableDrawer
         m_BonusEquivProp = m_SerializedObject.FindProperty("bonusEquivalent");
     }
 
-    protected override void OnElementGUI (Rect totalPropertyRect, SerializedProperty property, GUIContent label, Rect nameFoldoutLineRect)
+    protected override void OnJsonableGUI (Rect totalPropertyRect, SerializedProperty property, GUIContent label)
     {
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EditorGUI.PropertyField(nameFoldoutLineRect, m_NameProp);
+        totalPropertyRect.y += totalPropertyRect.height;
+        EditorGUI.PropertyField(totalPropertyRect, m_NameProp);
 
         //if ((Quality.BonusEquivalent)m_BonusEquivProp.intValue == Quality.BonusEquivalent.NA)
         {
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_CostProp);
+            totalPropertyRect.y += totalPropertyRect.height;
+            EditorGUI.PropertyField(totalPropertyRect, m_CostProp);
         }
 
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EditorGUI.PropertyField(nameFoldoutLineRect, m_RarityProp);
+        totalPropertyRect.y += totalPropertyRect.height;
+        EditorGUI.PropertyField(totalPropertyRect, m_RarityProp);
 
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EnumSettingEditorHelpers.DrawEnumSettingIndexPopup(nameFoldoutLineRect, m_BookProp);
+        totalPropertyRect.y += totalPropertyRect.height;
+        EnumSettingEditorHelpers.DrawEnumSettingIndexPopup(totalPropertyRect, m_BookProp);
 
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EditorGUI.PropertyField(nameFoldoutLineRect, m_PageProp);
+        totalPropertyRect.y += totalPropertyRect.height;
+        EditorGUI.PropertyField(totalPropertyRect, m_PageProp);
 
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
+        totalPropertyRect.y += totalPropertyRect.height;
         EditorGUI.BeginChangeCheck();
-        EditorGUI.PropertyField(nameFoldoutLineRect, m_QualityTypeProp);
+        EditorGUI.PropertyField(totalPropertyRect, m_QualityTypeProp);
         if (EditorGUI.EndChangeCheck())
         {
             /*switch ((Quality.QualityType)m_QualityTypeProp.intValue)
@@ -73,8 +73,8 @@ public class WeaponQualityDrawer : JsonableDrawer
 
         //if ((Quality.QualityType)m_QualityTypeProp.intValue != Quality.QualityType.SpecialMaterial)
         //{
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_BonusEquivProp);
+            totalPropertyRect.y += totalPropertyRect.height;
+            EditorGUI.PropertyField(totalPropertyRect, m_BonusEquivProp);
         //}
         //else
            // m_BonusEquivProp.enumValueIndex = (int)Quality.BonusEquivalent.NA;

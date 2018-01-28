@@ -55,7 +55,7 @@ public abstract class ItemCollectionFilter<TItemCollectionFilter, TItemCollectio
         if (item.cost > costRange.max || item.cost < costRange.min)
             return false;
 
-        if (allowedRarities[item.rarity])
+        if (!allowedRarities[item.rarity])
             return false;
 
         return allowedBooks[item.book];

@@ -28,6 +28,8 @@ public class DefaultEnumSettings : MonoBehaviour
     protected EnumSetting m_SpellContainers;
     [SerializeField]
     protected EnumSetting m_CasterTypes;
+    [SerializeField]
+    protected EnumSetting m_Allowances;
 
     public static EnumSetting Books
     {
@@ -67,6 +69,11 @@ public class DefaultEnumSettings : MonoBehaviour
     public static EnumSetting CasterTypes
     {
         get { return Instance.m_CasterTypes; }
+    }
+
+    public static EnumSetting Allowances
+    {
+        get { return Instance.m_Allowances; }
     }
 
     void Awake()

@@ -63,7 +63,15 @@ public static class SerializedPropertyExtensions
         throw new UnityException("Element " + elementToRemove.name + "was not found in property " + arrayProperty.name);
     }
 
-    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset)
+    public static void SetPropAsNewSubAsset<TProp>(this SerializedProperty objectProp, Object asset)
+        where TProp : ScriptableObject
+    {
+        TProp newObject = ScriptableObject.CreateInstance<TProp>();
+        AssetDatabase.AddObjectToAsset(newObject, asset);
+        objectProp.objectReferenceValue = newObject;
+    }
+
+    public static void AddObjectToArrayAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset)
         where TElement : ScriptableObject
     {
         TElement newElement = ScriptableObject.CreateInstance<TElement>();
@@ -72,7 +80,7 @@ public static class SerializedPropertyExtensions
         arrayProp.AddToObjectArray(newElement);
     }
 
-    public static void AddObjectAsSubAsset<TElement> (this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset)
+    public static void AddObjectToArrayAsSubAsset<TElement> (this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset)
         where TElement : ScriptableObject
     {
         TElement newElement = ScriptableObject.CreateInstance<TElement>();
@@ -83,7 +91,7 @@ public static class SerializedPropertyExtensions
         arrayProp.AddToObjectArray(newElement);
     }
 
-    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, string name)
+    public static void AddObjectToArrayAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, string name)
         where TElement : ScriptableObject
     {
         TElement newElement = ScriptableObject.CreateInstance<TElement>();
@@ -94,7 +102,7 @@ public static class SerializedPropertyExtensions
         arrayProp.AddToObjectArray(newElement);
     }
 
-    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, string name, Action<TElement> initMethod)
+    public static void AddObjectToArrayAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, string name, Action<TElement> initMethod)
         where TElement : ScriptableObject
     {
         TElement newElement = ScriptableObject.CreateInstance<TElement>();
@@ -106,7 +114,7 @@ public static class SerializedPropertyExtensions
         arrayProp.AddToObjectArray(newElement);
     }
 
-    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, Action<TElement> initMethod)
+    public static void AddObjectToArrayAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, Action<TElement> initMethod)
         where TElement : ScriptableObject
     {
         TElement newElement = ScriptableObject.CreateInstance<TElement>();
@@ -118,7 +126,7 @@ public static class SerializedPropertyExtensions
         arrayProp.AddToObjectArray(newElement);
     }
 
-    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, string name, Action<TElement> initMethod)
+    public static void AddObjectToArrayAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, string name, Action<TElement> initMethod)
         where TElement : ScriptableObject
     {
         TElement newElement = ScriptableObject.CreateInstance<TElement>();
@@ -128,7 +136,7 @@ public static class SerializedPropertyExtensions
         arrayProp.AddToObjectArray(newElement);
     }
 
-    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, string name)
+    public static void AddObjectToArrayAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, string name)
         where TElement : ScriptableObject
     {
         TElement newElement = ScriptableObject.CreateInstance<TElement>();
@@ -137,7 +145,7 @@ public static class SerializedPropertyExtensions
         arrayProp.AddToObjectArray(newElement);
     }
 
-    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, Action<TElement> initMethod)
+    public static void AddObjectToArrayAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, Action<TElement> initMethod)
         where TElement : ScriptableObject
     {
         TElement newElement = ScriptableObject.CreateInstance<TElement>();
@@ -147,7 +155,7 @@ public static class SerializedPropertyExtensions
         arrayProp.AddToObjectArray(newElement);
     }
 
-    public static void AddObjectAsSubAsset<TElement> (this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, string name, TElement newElement)
+    public static void AddObjectToArrayAsSubAsset<TElement> (this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, string name, TElement newElement)
         where TElement : ScriptableObject
     {
         if (hideSubAsset)
@@ -157,7 +165,7 @@ public static class SerializedPropertyExtensions
         arrayProp.AddToObjectArray(newElement);
     }
 
-    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, TElement newElement)
+    public static void AddObjectToArrayAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, bool hideSubAsset, TElement newElement)
         where TElement : ScriptableObject
     {
         if (hideSubAsset)
@@ -166,7 +174,7 @@ public static class SerializedPropertyExtensions
         arrayProp.AddToObjectArray(newElement);
     }
 
-    public static void AddObjectAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, string name, TElement newElement)
+    public static void AddObjectToArrayAsSubAsset<TElement>(this SerializedProperty arrayProp, Object collectionAsset, string name, TElement newElement)
         where TElement : ScriptableObject
     {
         AssetDatabase.AddObjectToAsset(newElement, collectionAsset);
@@ -174,7 +182,14 @@ public static class SerializedPropertyExtensions
         arrayProp.AddToObjectArray(newElement);
     }
 
-    public static void RemoveObjectAsSubAsset (this SerializedProperty arrayProp, int removeAtIndex)
+    public static void RemoveSubAssetFromProp (this SerializedProperty objectProp)
+    {
+        Object objectToDestory = objectProp.objectReferenceValue;
+        objectProp.objectReferenceValue = null;
+        Object.DestroyImmediate(objectToDestory, true);
+    }
+
+    public static void RemoveArrayElementObjectAsSubAsset (this SerializedProperty arrayProp, int removeAtIndex)
     {
         Object objectToDestroy = arrayProp.GetArrayElementAtIndex (removeAtIndex).objectReferenceValue;
         arrayProp.RemoveFromObjectArrayAt (removeAtIndex);

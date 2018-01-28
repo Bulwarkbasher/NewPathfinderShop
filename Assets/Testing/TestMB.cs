@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
+using System;
+using System.Reflection;
 
 public class TestMB : MonoBehaviour
 {
@@ -15,39 +18,30 @@ public class TestMB : MonoBehaviour
 
     private void Start ()
     {
-        /*string shopContents = "";
-        SpecificWeapon[] shop = new SpecificWeapon[weaponCount];
-        for(int i = 0; i < weaponCount; i++)
+        Type[] jsonableTypes = typeof(TestMB).Assembly.GetTypes().Where(t => SelectTypes(t)).ToArray();
+
+        string debug = "";
+
+        for(int i = 0; i < jsonableTypes.Length; i++)
         {
-            int actualBudget = Random.Range(-budgetRange / 2, budgetRange / 2) + budget;
-            SpecificWeapon specificWeapon = SpecificWeapon.CreateRandom(SpecificItem.PowerLevel.Minor, actualBudget, allWeapons, allWeaponQualities);
-            shopContents += specificWeapon.ToString() + "\n";
-            shop[i] = specificWeapon;
+            debug += jsonableTypes[i].Name + "\n";
         }
-        Debug.Log(shopContents);
 
-        string[] shopWeaponJsons = new string[weaponCount];
-        string shopJson = "";
-        for(int i = 0; i < weaponCount; i++)
-        {
-            shopWeaponJsons[i] = SpecificWeapon.GetJsonString(shop[i]);
-            shopJson += shopWeaponJsons[i] + "\n\n";
-        }
-        //Debug.Log(shopJson);
+        Debug.Log(debug);
 
-        string remadeShop = "";
-        SpecificWeapon[] remadeWeapons = new SpecificWeapon[weaponCount];
-        for(int i = 0; i < remadeWeapons.Length; i++)
-        {
-            remadeWeapons[i] = SpecificWeapon.CreateFromJsonString(shopWeaponJsons[i]);
-            remadeShop += remadeWeapons[i].ToString() + "\n";
-        }
-        Debug.Log(remadeShop);*/
+        var AllTypesOfIRepository = from x in Assembly.GetAssembly(typeof(TestMB)).GetTypes()
+                                    let y = x.BaseType
+                                    where !x.IsAbstract && !x.IsInterface &&
+                                    y != null && y.IsGenericType &&
+                                    y.GetGenericTypeDefinition() == typeof(Jsonable<>)
+                                    select x;
+    }
 
-        
-        string jsonString = Wrapper<float>.GetJsonString(someFloat);
-
-        float differentFloat = Wrapper<float>.CreateFromJsonString(jsonString);
-        Debug.Log(differentFloat);
+    bool SelectTypes (Type t)
+    {
+        bool isTypeSubclassOfJsonable = t.IsSubclassOf(typeof(Jsonable<>));
+        bool isTypeSubclassOfSaveable = t.IsSubclassOf(typeof(Saveable<>));
+        Debug.Log(t.Name + " " + isTypeSubclassOfJsonable + " " + isTypeSubclassOfSaveable);
+        return isTypeSubclassOfJsonable && !isTypeSubclassOfSaveable;
     }
 }

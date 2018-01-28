@@ -1,101 +1,81 @@
 ﻿using UnityEngine;
 using UnityEditor;
-
+// TODO: how to initialise null objects?  they need references to the asset in order to be added
 [CustomPropertyDrawer(typeof(Spell))]
 public class SpellDrawer : JsonableDrawer
 {
-    SerializedProperty m_AllowancesProp;
-    SerializedProperty m_PotionAllowanceProp;
-    SerializedProperty m_ScrollAllowanceProp;
-    SerializedProperty m_WandAllowanceProp;
-    SerializedProperty m_RaritiesProp;
-    SerializedProperty m_PotionRarityProp;
-    SerializedProperty m_ScrollRarityProp;
-    SerializedProperty m_WandRarityProp;
+    SerializedProperty m_ContainerAllowancesProp;
+    SerializedProperty m_ContainerRaritiesProp;
     SerializedProperty m_CreatorLevelsProp;
     SerializedProperty m_BookProp;
     SerializedProperty m_PageProp;
     SerializedProperty m_MaterialCostProp;
 
-    protected override int GetPropertyLineCount (SerializedProperty property, GUIContent label)
+    protected override float GetJsonablePropertyHeight (SerializedProperty property, GUIContent label)
     {
-        int count = 7;
-        if (m_AllowancesProp.isExpanded)
-            count += 3;
-        if (m_RaritiesProp.isExpanded)
-            count += 3;
-        if (m_CreatorLevelsProp.isExpanded)
-            count += EnumSettingEditorHelpers.GetEnumSettingIntPairingLineCount(m_CreatorLevelsProp);
-        return count;
+        if (!property.isExpanded)
+            return EditorGUIUtility.singleLineHeight;
+
+        float height = EditorGUIUtility.singleLineHeight;
+        height += EditorGUI.GetPropertyHeight(m_NameProp);
+        height += EditorGUI.GetPropertyHeight(m_ContainerAllowancesProp);
+        height += EditorGUI.GetPropertyHeight(m_ContainerRaritiesProp);
+        height += EditorGUI.GetPropertyHeight(m_CreatorLevelsProp);
+        height += EditorGUI.GetPropertyHeight(m_BookProp);
+        height += EditorGUI.GetPropertyHeight(m_PageProp);
+        height += EditorGUI.GetPropertyHeight(m_MaterialCostProp);
+
+        return height;
     }
 
     protected override void GetProperties (SerializedProperty property)
     {
-        m_AllowancesProp = m_SerializedObject.FindProperty ("allowances");
-        m_PotionAllowanceProp = m_AllowancesProp.FindPropertyRelative ("potionAllowance");
-        m_ScrollAllowanceProp = m_AllowancesProp.FindPropertyRelative("scrollAllowance");
-        m_WandAllowanceProp = m_AllowancesProp.FindPropertyRelative("wandAllowance");
-        m_RaritiesProp = m_SerializedObject.FindProperty("rarities");
-        m_PotionRarityProp = m_RaritiesProp.FindPropertyRelative("potionRarity");
-        m_ScrollRarityProp = m_RaritiesProp.FindPropertyRelative("scrollRarity");
-        m_WandRarityProp = m_RaritiesProp.FindPropertyRelative("wandRarity");
+        m_ContainerAllowancesProp = m_SerializedObject.FindProperty ("containerAllowances");
+        m_ContainerRaritiesProp = m_SerializedObject.FindProperty("containerRarities");
         m_CreatorLevelsProp = m_SerializedObject.FindProperty("creatorLevels");
         m_BookProp = m_SerializedObject.FindProperty("book");
         m_PageProp = m_SerializedObject.FindProperty("page");
         m_MaterialCostProp = m_SerializedObject.FindProperty("materialCost");
     }
 
-    protected override void OnElementGUI (Rect totalPropertyRect, SerializedProperty property, GUIContent label, Rect nameFoldoutLineRect)
+    protected override void OnJsonableGUI (Rect position, SerializedProperty property, GUIContent label)
     {
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EditorGUI.PropertyField(nameFoldoutLineRect, m_NameProp);
+        position.height = EditorGUIUtility.singleLineHeight;
+        property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, new GUIContent(m_NameProp.stringValue));
 
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        m_AllowancesProp.isExpanded = EditorGUI.Foldout (nameFoldoutLineRect, m_AllowancesProp.isExpanded, "Allowances");
+        if (!property.isExpanded)
+            return;
 
-        if (m_AllowancesProp.isExpanded)
-        {
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField (nameFoldoutLineRect, m_PotionAllowanceProp);
+        EditorGUI.indentLevel++;
 
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_ScrollAllowanceProp);
+        position.y += position.height;
+        position.height = EditorGUI.GetPropertyHeight(m_NameProp);
+        EditorGUI.PropertyField(position, m_NameProp);
 
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_WandAllowanceProp);
-        }
+        position.y += position.height;
+        position.height = EditorGUI.GetPropertyHeight(m_ContainerAllowancesProp);
+        EditorGUI.PropertyField(position, m_ContainerAllowancesProp);
 
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        m_RaritiesProp.isExpanded = EditorGUI.Foldout (nameFoldoutLineRect, m_RaritiesProp.isExpanded, "Rarities");
+        position.y += position.height;
+        position.height = EditorGUI.GetPropertyHeight(m_ContainerRaritiesProp);
+        EditorGUI.PropertyField(position, m_ContainerRaritiesProp);
 
-        if (m_RaritiesProp.isExpanded)
-        {
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_PotionRarityProp);
+        position.y += position.height;
+        position.height = EditorGUI.GetPropertyHeight(m_CreatorLevelsProp);
+        EditorGUI.PropertyField(position, m_CreatorLevelsProp);
 
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_ScrollRarityProp);
+        position.y += position.height;
+        position.height = EditorGUI.GetPropertyHeight(m_BookProp);
+        EditorGUI.PropertyField(position, m_BookProp);
 
-            nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-            EditorGUI.PropertyField(nameFoldoutLineRect, m_WandRarityProp);
-        }
+        position.y += position.height;
+        position.height = EditorGUI.GetPropertyHeight(m_PageProp);
+        EditorGUI.PropertyField(position, m_PageProp);
 
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        m_CreatorLevelsProp.isExpanded = EditorGUI.Foldout(nameFoldoutLineRect, m_CreatorLevelsProp.isExpanded, "Creator Levels");
+        position.y += position.height;
+        position.height = EditorGUI.GetPropertyHeight(m_MaterialCostProp);
+        EditorGUI.PropertyField(position, m_MaterialCostProp);
 
-        if (m_CreatorLevelsProp.isExpanded)
-        {
-            EnumSettingEditorHelpers.DrawEnumSettingIntPairing(m_CreatorLevelsProp, "Character Classes");
-        }
-
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EnumSettingEditorHelpers.DrawEnumSettingIndexPopup(nameFoldoutLineRect, m_BookProp);
-
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EditorGUI.PropertyField(nameFoldoutLineRect, m_PageProp);
-
-
-        nameFoldoutLineRect.y += nameFoldoutLineRect.height;
-        EditorGUI.PropertyField(nameFoldoutLineRect, m_MaterialCostProp);
+        EditorGUI.indentLevel--;
     }
 }

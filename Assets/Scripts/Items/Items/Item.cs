@@ -6,7 +6,6 @@ public abstract class Item<TItem> : Jsonable<TItem>
     where TItem : Item<TItem>
 {
     public float cost;
-    //public Item.Rarity rarity;
     public EnumValue rarity;
     public EnumValue book;
     public int page;

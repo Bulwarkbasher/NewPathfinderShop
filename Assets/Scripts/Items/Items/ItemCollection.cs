@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public abstract class ItemCollection<TItemCollectionFilter, TItemCollection, TItem> : Saveable<TItemCollection>
     where TItemCollectionFilter : ItemCollectionFilter<TItemCollectionFilter, TItemCollection, TItem>
@@ -9,6 +10,7 @@ public abstract class ItemCollection<TItemCollectionFilter, TItemCollection, TIt
     public EnumSetting rarities;
     public EnumSetting books;
     public TItemCollectionFilter itemCollectionFilter;
+    public bool isItemOrderLocked;  // TODO FRONTEND AND EDITOR: make sure this is set when the item is part of a matrix
     public TItem[] items = new TItem[0];
     public bool[] doesItemPassFilter = new bool[0];     // Do not serialized, call apply filter when loading instead.
 
@@ -22,7 +24,7 @@ public abstract class ItemCollection<TItemCollectionFilter, TItemCollection, TIt
         get { return items.Length; }
     }
 
-    public static TItemCollection Create(string name, EnumSetting books)
+    public static TItemCollection Create(string name, EnumSetting rarities, EnumSetting books)
     {
         TItemCollection newItemCollection = CreateInstance<TItemCollection>();
 
@@ -32,8 +34,10 @@ public abstract class ItemCollection<TItemCollectionFilter, TItemCollection, TIt
             throw new UnityException("Collection name invalid, name cannot start with Default");
 
         newItemCollection.name = name;
-        newItemCollection.items = new TItem[0];
+        newItemCollection.rarities = rarities;
         newItemCollection.books = books;
+        newItemCollection.itemCollectionFilter = ItemCollectionFilter<TItemCollectionFilter, TItemCollection, TItem>.CreateBlank(rarities, books);
+        newItemCollection.items = new TItem[0];
 
         SaveableHolder.AddSaveable(newItemCollection);
 
@@ -126,6 +130,66 @@ public abstract class ItemCollection<TItemCollectionFilter, TItemCollection, TIt
         return true;
     }
 
+    public void SortByNameAssending ()
+    {
+        if(!isItemOrderLocked)
+            items = items.OrderBy(item => item.name).ToArray();
+    }
+
+    public void SortByNameDecending ()
+    {
+        if (!isItemOrderLocked)
+            items = items.OrderByDescending(item => item.name).ToArray();
+    }
+
+    public void SortByCostAssending()
+    {
+        if (!isItemOrderLocked)
+            items = items.OrderBy(item => item.cost).ToArray();
+    }
+
+    public void SortByCostDecending()
+    {
+        if (!isItemOrderLocked)
+            items = items.OrderByDescending(item => item.cost).ToArray();
+    }
+
+    public void SortByRarityAssending()
+    {
+        if (!isItemOrderLocked)
+            items = items.OrderBy(item => item.rarity.GetIndex()).ToArray();
+    }
+
+    public void SortByRarityDecending()
+    {
+        if (!isItemOrderLocked)
+            items = items.OrderByDescending(item => item.rarity.GetIndex()).ToArray();
+    }
+
+    public void SortByBookAssending()
+    {
+        if (!isItemOrderLocked)
+            items = items.OrderBy(item => item.book.GetIndex()).ToArray();
+    }
+
+    public void SortByBookDecending()
+    {
+        if (!isItemOrderLocked)
+            items = items.OrderByDescending(item => item.book.GetIndex()).ToArray();
+    }
+
+    public void SortByPageAssending()
+    {
+        if (!isItemOrderLocked)
+            items = items.OrderBy(item => item.page).ToArray();
+    }
+
+    public void SortByPageDecending()
+    {
+        if (!isItemOrderLocked)
+            items = items.OrderByDescending(item => item.page).ToArray();
+    }
+
     protected override string ConvertToJsonString(string[] jsonSplitter)
     {
         string jsonString = "";
@@ -134,6 +198,7 @@ public abstract class ItemCollection<TItemCollectionFilter, TItemCollection, TIt
         jsonString += rarities.name + jsonSplitter[0];
         jsonString += books.name + jsonSplitter[0];
         jsonString += ItemCollectionFilter<TItemCollectionFilter, TItemCollection, TItem>.GetJsonString(itemCollectionFilter) + jsonSplitter[0];
+        jsonString += Wrapper<bool>.GetJsonString(isItemOrderLocked) + jsonSplitter[0];
 
         for (int i = 0; i < items.Length; i++)
         {
@@ -149,11 +214,12 @@ public abstract class ItemCollection<TItemCollectionFilter, TItemCollection, TIt
         rarities = EnumSetting.Load(splitJsonString[1]);
         books = EnumSetting.Load(splitJsonString[2]);
         itemCollectionFilter = ItemCollectionFilter<TItemCollectionFilter, TItemCollection, TItem>.CreateFromJsonString(splitJsonString[3]);
+        isItemOrderLocked = Wrapper<bool>.CreateFromJsonString(splitJsonString[4]);
 
-        items = new TItem[splitJsonString.Length - 4];
+        items = new TItem[splitJsonString.Length - 5];
         for (int i = 0; i < items.Length; i++)
         {
-            items[i] = Item<TItem>.CreateFromJsonString(splitJsonString[i + 4]);
+            items[i] = Item<TItem>.CreateFromJsonString(splitJsonString[i + 5]);
         }
         
         itemCollectionFilter.ApplyFilter(this as TItemCollection);

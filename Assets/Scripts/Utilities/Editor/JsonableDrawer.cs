@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
+// TODO NEXT: Make a PropertyDrawer for every Jsonable that is not a Saveable
 public abstract class JsonableDrawer : PropertyDrawer
 {
     protected SerializedObject m_SerializedObject;
@@ -13,13 +14,16 @@ public abstract class JsonableDrawer : PropertyDrawer
         if(!m_HasSetupRun)
             Setup (property);
 
-        if (!property.isExpanded)
-            return EditorGUIUtility.singleLineHeight;
-
-        return GetPropertyLineCount (property, label) * EditorGUIUtility.singleLineHeight;
+        return GetJsonablePropertyHeight (property, label);
     }
 
-    protected abstract int GetPropertyLineCount (SerializedProperty property, GUIContent label);
+    /// <summary>
+    /// Get and sum the heights of all the serialized properties to be drawn.  Don't forget m_Name if used.
+    /// </summary>
+    /// <param name="property"></param>
+    /// <param name="label"></param>
+    /// <returns>The sum height of all properties.</returns>
+    protected abstract float GetJsonablePropertyHeight (SerializedProperty property, GUIContent label);
 
     protected void Setup (SerializedProperty property)
     {
@@ -35,6 +39,10 @@ public abstract class JsonableDrawer : PropertyDrawer
         m_HasSetupRun = true;
     }
 
+    /// <summary>
+    /// Used to find all the serialized properties by name on the m_SerializedObject.  Also use for any other initial setup.
+    /// </summary>
+    /// <param name="property"></param>
     protected abstract void GetProperties (SerializedProperty property);
 
     public sealed override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
@@ -44,20 +52,16 @@ public abstract class JsonableDrawer : PropertyDrawer
 
         m_SerializedObject.Update();
 
-        Rect singleLineRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
-        property.isExpanded = EditorGUI.Foldout(singleLineRect, property.isExpanded, m_NameProp.stringValue);
-
-        if (!property.isExpanded)
-            return;
-
-        EditorGUI.indentLevel++;
-
-        OnElementGUI (position, property, label, singleLineRect);
-
-        EditorGUI.indentLevel--;
+        OnJsonableGUI (position, property, label);
 
         m_SerializedObject.ApplyModifiedProperties();
     }
 
-    protected abstract void OnElementGUI (Rect totalPropertyRect, SerializedProperty property, GUIContent label, Rect nameFoldoutLineRect);
+    /// <summary>
+    /// Draw the entire Jsonable.  No drawing is done outside of this method.
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="property"></param>
+    /// <param name="label"></param>
+    protected abstract void OnJsonableGUI (Rect position, SerializedProperty property, GUIContent label);
 }

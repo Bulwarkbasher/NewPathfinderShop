@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IntValuedEnum : JsonableWithEnumValues<IntValuedEnum, int>
+public class IntValuedEnum : JsonableEnumWithValues<IntValuedEnum, int>
 {
     public static IntValuedEnum Create (EnumSetting enumSetting, int[] enumedValues)
     {

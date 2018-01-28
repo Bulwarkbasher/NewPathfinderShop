@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlagsEnumSetting : JsonableWithEnumValues<FlagsEnumSetting, bool>
+public class FlagsEnumSetting : JsonableEnumWithValues<FlagsEnumSetting, bool>
 {
     public new bool this [int index]
     {
